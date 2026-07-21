@@ -28,7 +28,7 @@
     <main class="flex-grow pt-28 pb-16">
         <div class="max-w-7xl mx-auto px-6">
                 @if (isset($header))
-                <div class="text-purple-900 font-bold text-3xl md:text-2xl ml-3">
+                <div class="text-4xl md:text-5xl font-extrabold text-purple-900 tracking-tight">
                     {{ $header }}
                 </div>
                 @endif
