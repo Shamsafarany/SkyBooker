@@ -119,37 +119,37 @@
         </div>
     </div>
 
-    {{-- Stats Cards --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-5 border border-purple-100 hover:shadow-md transition">
-            <p class="text-xs text-purple-500 uppercase tracking-wider">
-                <i class="fa-regular fa-chair mr-1"></i>
-                Total Seats
-            </p>
-            <p class="text-2xl font-bold text-purple-900">{{ $flight['total_seats'] }}</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border border-purple-100 hover:shadow-md transition">
-            <p class="text-xs text-purple-500 uppercase tracking-wider">
-                <i class="fa-regular fa-user-check mr-1"></i>
-                Booked
-            </p>
-            <p class="text-2xl font-bold text-blue-600">{{ $flight['booked_seats'] }}</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border border-purple-100 hover:shadow-md transition">
-            <p class="text-xs text-purple-500 uppercase tracking-wider">
-                <i class="fa-regular fa-user-plus mr-1"></i>
-                Available
-            </p>
-            <p class="text-2xl font-bold text-emerald-600">{{ $flight['available_seats'] }}</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border border-purple-100 hover:shadow-md transition">
-            <p class="text-xs text-purple-500 uppercase tracking-wider">
-                <i class="fa-regular fa-dollar-sign mr-1"></i>
-                Price
-            </p>
-            <p class="text-2xl font-bold text-purple-700">${{ number_format($flight['price'], 2) }}</p>
-        </div>
-    </div>
+<x-stats
+    title="Seat Overview"
+    :stats="[
+        [
+            'label' => 'Total Seats',
+            'value' => $flight['total_seats'],
+            'icon' => 'fa-regular fa-chair text-purple-400',
+            'color' => 'text-purple-900',
+        ],
+        [
+            'label' => 'Booked',
+            'value' => $flight['booked_seats'],
+            'icon' => 'fa-regular fa-user-check text-blue-400',
+            'color' => 'text-blue-600',
+        ],
+        [
+            'label' => 'Available',
+            'value' => $flight['available_seats'],
+            'icon' => 'fa-regular fa-user-plus text-emerald-400',
+            'color' => 'text-emerald-600',
+        ],
+        [
+            'label' => 'Price',
+            'value' => '$' . number_format($flight['price'], 2),
+            'icon' => 'fa-regular fa-dollar-sign text-purple-400',
+            'color' => 'text-purple-700',
+        ],
+    ]"
+    :columns="4"
+    class="mb-8"
+/>
 
     {{-- Two Column Layout: Details + Sidebar --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

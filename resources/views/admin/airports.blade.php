@@ -1,13 +1,7 @@
-<x-layout>
-    <x-slot:title>
-        Airports
-    </x-slot:title>
+<x-layout title="Airports" header="Airports">
     <div class="mb-5 pb-3 border-b border-gray-200">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <x-slot:header>
-                Airports
-            </x-slot:header>
             <p class="text-gray-500 text-sm mt-2">
                 Manage all airports in the system
             </p>
@@ -21,6 +15,37 @@
             </a>
         </div>
     </div>
+    <hr class="p-1 mt-4">
+    <x-stats 
+        title="Airports Overview"
+        :stats="[
+            [
+                'label' => 'Total Airports',
+                'value' => count($airports),
+                'icon' => 'fa-regular fa-building text-purple-400',
+                'color' => 'text-purple-700',
+            ],
+            [
+                'label' => 'Active Airports',
+                'value' => collect($airports)->where('status', 'active')->count(),
+                'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                'color' => 'text-emerald-600',
+            ],
+            [
+                'label' => 'Inactive Airports',
+                'value' => collect($airports)->where('status', 'inactive')->count(),
+                'icon' => 'fa-regular fa-circle-xmark text-rose-400',
+                'color' => 'text-rose-600',
+            ],
+            [
+                'label' => 'Total Terminals',
+                'value' => collect($airports)->sum('terminals'),
+                'icon' => 'fa-regular fa-door-open text-blue-400',
+                'color' => 'text-blue-600',
+            ],
+        ]"
+        :columns="4"
+    />
 </div>
 
     <section class="bg-white rounded-3xl shadow-lg p-12 border border-purple-100">

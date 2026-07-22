@@ -14,39 +14,45 @@
                 </a>
             </div>
         </div>
+        <hr class="p-1 mt-4">
+        <x-stats 
+        title="Flight Overview"
+        :stats="[
+            [
+                'label' => 'Total Flights',
+                'value' => count($flights),
+                'icon' => 'fa-regular fa-calendar-check text-purple-400',
+                'color' => 'text-purple-700',
+            ],
+            [
+                'label' => 'Open for Booking',
+                'value' => collect($flights)->where('status', 'open')->count(),
+                'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                'color' => 'text-emerald-600',
+            ],
+            [
+                'label' => 'Almost Full',
+                'value' => collect($flights)->where('status', 'closing')->count(),
+                'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                'color' => 'text-amber-600',
+            ],
+            [
+                'label' => 'Completed',
+                'value' => collect($flights)->where('status', 'completed')->count(),
+                'icon' => 'fa-regular fa-triangle-exclamation text-blue-400',
+                'color' => 'text-blue-600',
+            ],
+            [
+                'label' => 'Total Revenue',
+                'value' => '$' . number_format(collect($flights)->sum('price'), 0),
+                'icon' => 'fa-regular fa-dollar-sign text-green-400',
+                'color' => 'text-green-600',
+            ],
+        ]"
+        :columns="5"
+    />
     </div>
-
-    {{-- Stats Summary --}}
-    <section class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p class="text-sm text-gray-500">Total Flights</p>
-            <p class="text-2xl font-bold text-gray-900">{{ count($flights) }}</p>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p class="text-sm text-gray-500">Open for Booking</p>
-            <p class="text-2xl font-bold text-emerald-600">
-                {{ collect($flights)->where('status', 'open')->count() }}
-            </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p class="text-sm text-gray-500">Almost Full</p>
-            <p class="text-2xl font-bold text-amber-600">
-                {{ collect($flights)->where('status', 'closing')->count() }}
-            </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p class="text-sm text-gray-500">Completed</p>
-            <p class="text-2xl font-bold text-gray-600">
-                {{ collect($flights)->where('status', 'completed')->count() }}
-            </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p class="text-sm text-gray-500">Total Revenue</p>
-            <p class="text-2xl font-bold text-purple-600">
-                ${{ number_format(collect($flights)->sum('price'), 2) }}
-            </p>
-        </div>
-    </section>
+    
 
     <section class="bg-white rounded-3xl shadow-xl p-12 border border-purple-100">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

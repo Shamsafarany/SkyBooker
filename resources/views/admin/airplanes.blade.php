@@ -1,14 +1,7 @@
-<x-layout>
-    <x-slot:title>
-        Airplanes
-    </x-slot:title>
-    
+<x-layout title="Airplanes" header="Airplanes">
     <div class="mb-5 pb-3 border-b border-gray-200">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <x-slot:header>
-                Airplanes
-            </x-slot:header>
             <p class="text-gray-500 text-sm mt-2">
                 Manage all airplanes in the system
             </p>
@@ -21,6 +14,44 @@
             </a>
         </div>
     </div>
+    <hr class="p-1 mt-4">
+    {{-- Airplane Specific Stats --}}
+    <x-stats 
+        title="Fleet Overview"
+        :stats="[
+            [
+                'label' => 'Total Aircraft',
+                'value' => count($airplanes),
+                'icon' => 'fa-regular fa-plane text-blue-400',
+                'color' => 'text-blue-700',
+            ],
+            [
+                'label' => 'Active Aircraft',
+                'value' => collect($airplanes)->where('status', 'active')->count(),
+                'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                'color' => 'text-emerald-600',
+            ],
+            [
+                'label' => 'Inactive Aircraft',
+                'value' => collect($airplanes)->where('status', 'inactive')->count(),
+                'icon' => 'fa-regular fa-circle-check text-red-400',
+                'color' => 'text-red-600',
+            ],
+            [
+                'label' => 'In Maintenance',
+                'value' => collect($airplanes)->where('status', 'maintenance')->count(),
+                'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                'color' => 'text-amber-600',
+            ],
+            [
+                'label' => 'Total Capacity',
+                'value' => collect($airplanes)->sum('capacity') . ' seats',
+                'icon' => 'fa-regular fa-users text-blue-400',
+                'color' => 'text-blue-600',
+            ],
+        ]"
+        :columns="5"
+    />
 </div>
 
     <section class="bg-white rounded-3xl shadow-xl p-12 border border-blue-100">
