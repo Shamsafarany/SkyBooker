@@ -8,6 +8,7 @@ class AirplaneController extends Controller
 {
     public function index()
     {
+        
         $airplanes = [
             [
                 'id' => 1,
@@ -90,7 +91,6 @@ class AirplaneController extends Controller
                 'image' => null,
             ],
         ];
-
         return view('admin.airplanes', compact('airplanes'));
     }
 
