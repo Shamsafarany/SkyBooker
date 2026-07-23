@@ -7,7 +7,7 @@
             </p>
         </div>
         
-        <div class="flex-shrink-0 md:self-center">
+        <div class="shrink-0 md:self-center">
             <a href="{{ route('admin.airports.create') }}" 
                class="bg-purple-800 text-white px-4 py-2.5 rounded-lg hover:bg-purple-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
                 <i class="fa-solid fa-plus"></i>

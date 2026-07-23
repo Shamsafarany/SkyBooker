@@ -6,14 +6,14 @@
                     SkyBooker
                 </span>
             </div>
-            <div class="flex space-x-8 text-sm font-medium">
+            <div class="flex gap-8 text-sm font-medium flex-wrap">
                 @php
                     $adminLinks = [
-                    ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'type' => 'a'],
-                    ['label' => 'Airports', 'route' => 'admin.airports.index', 'type' => 'a'],
-                    ['label' => 'Airplanes', 'route' => 'admin.airplanes.index', 'type' => 'a'],
-                    ['label' => 'Flights', 'route' => 'admin.flights.index', 'type' => 'a'],
-                    ['label' => 'Reservations', 'route' => 'admin.reservations.index', 'type' => 'a'],
+                    ['label' => 'Dashboard', 'route' => 'admin.dashboard'],
+                    ['label' => 'Airports', 'route' => 'admin.airports.index'],
+                    ['label' => 'Airplanes', 'route' => 'admin.airplanes.index'],
+                    ['label' => 'Flights', 'route' => 'admin.flights.index'],
+                    ['label' => 'Reservations', 'route' => 'admin.reservations.index'],
                     //['label' => 'Logout', 'route' => 'logout'],
                 ];
                 @endphp
@@ -22,7 +22,6 @@
                 <x-nav-link 
                     href="{{ route($link['route']) }}" 
                     :active="request()->routeIs($link['route'])" 
-                    type="{{ $link['type'] }}"
                 >
                     {{ $link['label'] }}
                 </x-nav-link>

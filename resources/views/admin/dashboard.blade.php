@@ -1,8 +1,4 @@
-<x-layout>
-    <x-slot:title>
-        Dashboard
-    </x-slot:title>
-
+<x-layout title="Dashboard">
     <section class="bg-white rounded-3xl shadow-lg p-12 border border-purple-100">
         <h1 class="text-4xl font-extrabold text-purple-800 mb-4">
             Welcome, Admin

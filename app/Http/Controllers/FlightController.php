@@ -266,6 +266,7 @@ class FlightController extends Controller
             abort(404, 'Flight not found');
         }
         $flight = $flights[$id];
+
         return view('admin.flights.show', compact('flight'));
     }
 
