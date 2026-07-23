@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('flights', function (Blueprint $table) {
-            $table->string('flight_number')->primary();
-            $table->string('airline');
+            $table->id();
+            $table->string('flight_number')->unique();
             $table->foreignId('origin_airport_id')->constrained('airports')->onDelete('cascade');
+            $table->foreignId('destination_airport_id')->constrained('airports')->onDelete('cascade');
             $table->foreignId('airplane_id')->constrained('airplanes')->onDelete('cascade');
+            $table->foreignId('airline_id')->constrained('airlines')->onDelete('cascade');
             $table->date('departure_date');
             $table->time('departure_time');
             $table->time('arrival_time');
@@ -25,7 +27,7 @@ return new class extends Migration
             $table->integer('booked_seats')->default(0);
             $table->integer('available_seats')->default(0);
             $table->enum('status', [
-                'scheduled', 'open', 'closing', 
+                'new','scheduled', 'open', 'closing', 
                 'completed', 'cancelled', 'delayed', 
                 'boarding', 'departed'
             ])->default('scheduled');
