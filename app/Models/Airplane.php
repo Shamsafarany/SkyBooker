@@ -18,4 +18,13 @@ class Airplane extends Model
         'year',
         'status',
     ];
+
+    public function flights()
+    {
+        return $this->hasMany(Flight::class);
+    }
+    public function getLabelAttribute(): string
+    {
+        return "{$this->model} ({$this->registration})";
+    }
 }

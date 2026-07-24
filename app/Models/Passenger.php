@@ -24,4 +24,29 @@ class Passenger extends Model
     protected $casts = [
         'date_of_birth' => 'date',
     ];
+
+    //relations
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
+    public function ticket()
+    {
+        return $this->hasOne(Ticket::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'email', 'email');
+    }
+
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
 }
+
+
+
+

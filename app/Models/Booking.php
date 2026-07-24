@@ -29,4 +29,22 @@ class Booking extends Model
         'cancelled_at' => 'datetime',
         'total_price' => 'decimal:2',
     ];
+
+    //relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function flight()
+    {
+        return $this->belongsTo(Flight::class);
+    }
+    public function passengers()
+    {
+        return $this->hasMany(Passenger::class);
+    }
+    public function tickets()
+    {
+        return $this->hasManyThrough(Ticket::class, Passenger::class);
+    }
 }

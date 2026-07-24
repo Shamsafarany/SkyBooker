@@ -17,4 +17,19 @@ class Airline extends Model
         'logo',
         'website',
     ];
+
+    public function flights()
+    {
+        return $this->hasMany(Flight::class);
+    }
+
+    public function getTotalFlightsAttribute(): int
+    {
+        return $this->flights()->count();
+    }
+
+    public function getLabelAttribute(): string
+    {
+        return "{$this->name} ({$this->code})";
+    }
 }

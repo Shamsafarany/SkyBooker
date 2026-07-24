@@ -22,4 +22,11 @@ class Ticket extends Model
     protected $casts = [
         'issued_at' => 'datetime',
     ];
+
+    public function passenger()
+    {
+        return $this->belongsTo(Passenger::class);
+    }
+
+
 }
