@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
             AirportSeeder::class,
             AirplaneSeeder::class,
             AirlineSeeder::class,
-            FlightSeeder::class
+            FlightSeeder::class,
+            BookingSeeder::class,
+            PassengerSeeder::class,
+            TicketSeeder::class
             ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Ticket;
+use App\Models\Passenger;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +18,26 @@ class TicketFactory extends Factory
      */
     public function definition(): array
     {
+        $passenger = Passenger::inRandomOrder()->first() ?? Passenger::factory()->create();
         return [
-            //
+            'passenger_id' => $passenger->id,
+            'ticket_number' => strtoupper('TKT-' . $this->faker->bothify('########')),
+            'seat_number' => $this->faker->optional()->bothify('##?'),
+            'class' => $this->faker->randomElement([
+                'economy',
+                'premium_economy',
+                'business',
+                'first'
+            ]),
+            'meal_preference' => $this->faker->randomElement([
+                'standard',
+                'full_meal',
+                'sandwitch',
+                'child_meal',
+                'none'
+            ]),
+            'issued_at' => now(),
+            'notes' => $this->faker->optional(0.3)->sentence(),
         ];
     }
 }

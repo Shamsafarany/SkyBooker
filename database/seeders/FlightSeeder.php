@@ -8,9 +8,6 @@ use App\Models\Flight;
 
 class FlightSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Flight::factory()->new()->count(10)->create();
