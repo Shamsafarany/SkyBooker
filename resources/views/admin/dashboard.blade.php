@@ -1,6 +1,6 @@
 <x-layout title="Dashboard">
-    <section class="bg-white rounded-3xl shadow-lg p-12 border border-purple-100">
-        <h1 class="text-4xl font-extrabold text-purple-800 mb-4">
+    <section class="bg-white rounded-3xl shadow-lg p-12 border border-gray-100">
+        <h1 class="text-4xl font-extrabold text-cyan-800 mb-4">
             Welcome, Admin
         </h1>
 
@@ -10,28 +10,28 @@
 
         <div class="mt-10 grid md:grid-cols-4 gap-8">
 
-            <a href="" class="bg-purple-50 hover:bg-purple-100 transition p-6 rounded-xl shadow-sm text-center">
-                <i class="fa-solid fa-building text-purple-800 text-3xl mb-3"></i>
+            <a href="" class="bg-cyan-50 hover:bg-cyan-100 transition p-6 rounded-xl shadow-sm text-center">
+                <i class="fa-solid fa-building text-cyan-800 text-3xl mb-3"></i>
                 <h3 class="font-semibold text-gray-800">Airports</h3>
             </a>
 
-            <a href="" class="bg-purple-50 hover:bg-purple-100 transition p-6 rounded-xl shadow-sm text-center">
-                <i class="fa-solid fa-plane text-purple-800 text-3xl mb-3"></i>
+            <a href="" class="bg-cyan-50 hover:bg-cyan-100 transition p-6 rounded-xl shadow-sm text-center">
+                <i class="fa-solid fa-plane text-cyan-800 text-3xl mb-3"></i>
                 <h3 class="font-semibold text-gray-800">Aircrafts</h3>
             </a>
 
-            <a href="" class="bg-purple-50 hover:bg-purple-100 transition p-6 rounded-xl shadow-sm text-center">
-                <i class="fa-solid fa-route text-purple-800 text-3xl mb-3"></i>
+            <a href="" class="bg-cyan-50 hover:bg-cyan-100 transition p-6 rounded-xl shadow-sm text-center">
+                <i class="fa-solid fa-route text-cyan-800 text-3xl mb-3"></i>
                 <h3 class="font-semibold text-gray-800">Routes</h3>
             </a>
 
-            <a href="" class="bg-purple-50 hover:bg-purple-100 transition p-6 rounded-xl shadow-sm text-center">
-                <i class="fa-solid fa-plane-departure text-purple-800 text-3xl mb-3"></i>
+            <a href="" class="bg-cyan-50 hover:bg-cyan-100 transition p-6 rounded-xl shadow-sm text-center">
+                <i class="fa-solid fa-plane-departure text-cyan-800 text-3xl mb-3"></i>
                 <h3 class="font-semibold text-gray-800">Flights</h3>
             </a>
 
-            <a href="" class="bg-purple-50 hover:bg-purple-100 transition p-6 rounded-xl shadow-sm text-center">
-                <i class="fa-solid fa-plane-departure text-purple-800 text-3xl mb-3"></i>
+            <a href="" class="bg-cyan-50 hover:bg-cyan-100 transition p-6 rounded-xl shadow-sm text-center">
+                <i class="fa-solid fa-plane-departure text-cyan-800 text-3xl mb-3"></i>
                 <h3 class="font-semibold text-gray-800">Reservations</h3>
             </a>
         </div>

@@ -9,7 +9,7 @@
         
         <div class="shrink-0 md:self-center">
             <a href="{{ route('admin.airports.create') }}" 
-               class="bg-purple-800 text-white px-4 py-2.5 rounded-lg hover:bg-purple-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+               class="bg-cyan-800 text-white px-4 py-2.5 rounded-lg hover:bg-cyan-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
                 <i class="fa-solid fa-plus"></i>
                 Add Airport
             </a>
@@ -22,8 +22,8 @@
             [
                 'label' => 'Total Airports',
                 'value' => count($airports),
-                'icon' => 'fa-regular fa-building text-purple-400',
-                'color' => 'text-purple-700',
+                'icon' => 'fa-regular fa-building text-cyan-400',
+                'color' => 'text-cyan-700',
             ],
             [
                 'label' => 'Active Airports',
@@ -54,16 +54,11 @@
     />
 </div>
 
-    <section class="bg-white rounded-3xl shadow-lg p-12 border border-purple-100">
+    <section class="bg-white rounded-3xl shadow-lg p-12 border border-gray-100">
         <div class=" grid md:grid-cols-4 gap-8">
         @forelse($airports as $airport)
             <x-cards.airport-card 
-                :name="$airport->name"
-                :code="$airport->code"
-                :city="$airport->city"
-                :country="$airport->country"
-                :terminals="$airport->terminals"
-                :status="$airport->status"
+                :airport="$airport"
             />
         @empty
             <div class="col-span-full text-center py-12 text-gray-500">

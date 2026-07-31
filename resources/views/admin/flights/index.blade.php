@@ -8,7 +8,7 @@
             </div>
             <div class="shrink-0 md:self-center">
                 <a href="{{ route('admin.flights.create') }}" 
-                    class="bg-purple-800 text-white px-4 py-2.5 rounded-lg hover:bg-purple-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+                    class="bg-cyan-800 text-white px-4 py-2.5 rounded-lg hover:bg-cyan-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
                     <i class="fa-solid fa-plus"></i>
                     Add Flight
                 </a>
@@ -21,8 +21,8 @@
             [
                 'label' => 'Total Flights',
                 'value' => count($flights),
-                'icon' => 'fa-regular fa-calendar-check text-purple-400',
-                'color' => 'text-purple-700',
+                'icon' => 'fa-regular fa-calendar-check text-cyan-400',
+                'color' => 'text-cyan-700',
             ],
             [
                 'label' => 'Open for Booking',
@@ -58,23 +58,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             @forelse($flights as $flight)
                 <x-cards.flights-card 
-                    :flight_number="$flight->flight_number"
-                    :airline="$flight->airline->name"
-                    :origin="$flight->origin->code"
-                    :origin_city="$flight->origin->city"
-                    :destination="$flight->destination->code"
-                    :destination_city="$flight->destination->city"
-                    :departure_date="$flight->departure_date->format('Y-m-d')"
-                    :departure_time="$flight->departure_time"
-                    :arrival_time="$flight->arrival_time"
-                    :duration="$flight->duration"
-                    :airplane="$flight->airplane->model"
-                    :price="$flight->price"
-                    :total_seats="$flight->total_seats"
-                    :booked_seats="$flight->booked_seats"
-                    :available_seats="$flight->available_seats"
-                    :status="$flight->status"
-                    :booking_deadline="$flight->booking_deadline ?? null"
+                    :flight="$flight"
                     :url="route('admin.flights.show', $flight['id'])"
                 />
                 

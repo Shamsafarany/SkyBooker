@@ -8,7 +8,7 @@
         </div>
         <div class="shrink-0 md:self-center">
             <a href="{{ route('admin.airports.create') }}" 
-            class="bg-purple-800 text-white px-4 py-2.5 rounded-lg hover:bg-purple-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+            class="bg-cyan-800 text-white px-4 py-2.5 rounded-lg hover:bg-cyan-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
                 <i class="fa-solid fa-plus"></i>
                 Add Airplane
             </a>
@@ -54,16 +54,11 @@
     />
 </div>
 
-    <section class="bg-white rounded-3xl shadow-xl p-12 border border-blue-100">
+    <section class="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($airplanes as $airplane)
                 <x-cards.airplane-card 
-                    :model="$airplane->model"
-                    :manufacturer="$airplane->manufacturer"
-                    :registration="$airplane->registration"
-                    :capacity="$airplane->capacity"
-                    :year="$airplane->year"
-                    :status="$airplane->status"
+                    :airplane="$airplane"
                 />
             @empty
                 <div class="col-span-full text-center py-12 text-gray-500">

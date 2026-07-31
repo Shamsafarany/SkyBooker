@@ -1,27 +1,31 @@
 @props([
-    'flight_number',
-    'airline',
-    'origin',
-    'origin_city',
-    'destination',
-    'destination_city',
-    'departure_date',
-    'departure_time',
-    'arrival_time',
-    'duration',
-    'airplane',
-    'price',
-    'total_seats',
-    'booked_seats',
-    'available_seats',
-    'status',
-    'booking_deadline',
+    'flight',
     'url' => '#',
     'editUrl' => '#',
-    'deleteUrl' => '#'
+    'deleteUrl' => '#',
 ])
-
 @php
+    //Extract data from the flight object
+    $flight_number = $flight->flight_number;
+    $airline = $flight->airline->name;
+    $origin = $flight->origin->code;
+    $origin_city = $flight->origin->city;
+    $destination = $flight->destination->code;
+    $destination_city = $flight->destination->city;
+    $departure_date = $flight->departure_date->format('M d, Y');
+    $departure_time = $flight->departure_time;
+    $arrival_time = $flight->arrival_time;
+    $duration = $flight->duration;
+    $airplane = $flight->airplane->model;
+    $price = $flight->price;
+    $total_seats = $flight->total_seats;
+    $booked_seats = $flight->booked_seats;
+    $available_seats = $flight->available_seats;
+    $status = $flight->status;
+    $booking_deadline = $flight->booking_deadline;
+    $id = $flight->id;
+    
+    
     // Admin status configurations
     $statusConfig = [
         'scheduled' => [
@@ -80,7 +84,7 @@
     $isBookable = in_array($status, ['open', 'closing']);
 @endphp
 
-<div class="group relative block bg-gray-50/80 hover:bg-cyan-100/40 backdrop-blur-sm transition-all duration-300 p-6 rounded-2xl shadow-md hover:shadow-2xl border border-gray-200/60 hover:scale-[1.02] active:scale-[0.98]">
+<div class="group relative block bg-gray-50/80 hover:bg-gray-100/40 backdrop-blur-sm transition-all duration-300 p-6 rounded-2xl shadow-md hover:shadow-2xl border border-gray-200/60 hover:scale-[1.02] active:scale-[0.98]">
     
     <div class="relative z-10">
         {{-- Header: Flight Number + Status --}}

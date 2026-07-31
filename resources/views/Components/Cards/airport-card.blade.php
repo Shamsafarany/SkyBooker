@@ -1,17 +1,20 @@
 @props([
-    'name',
-    'code',
-    'city',
-    'country',
-    'terminals',
-    'status',
+    'airport',
     'url' => '#',
     'editUrl' => '#',
     'deleteUrl' => '#',
-    'id' => 0
 ])
 
 @php
+
+    $name = $airport->name;
+    $code = $airport->code;
+    $city = $airport->city;
+    $country = $airport->country;
+    $terminals = $airport->terminals;
+    $status = $airport->status;
+    $id = $airport->id;
+
     $statusColors = [
         'active' => 'bg-emerald-100/80 text-emerald-700',
         'inactive' => 'bg-rose-100/80 text-rose-700',
@@ -29,24 +32,24 @@
     $statusIconClass = $statusIcon[$status] ?? 'fa-circle';
 @endphp
 
-<div class="group relative block bg-purple-50/80 hover:bg-purple-100/80 backdrop-blur-sm transition-all duration-300 p-6 rounded-2xl shadow-md hover:shadow-2xl border border-purple-200/60 hover:scale-[1.02] active:scale-[0.98]">
+<div class="group relative block bg-gray-50/80 hover:bg-cyan-80/50 backdrop-blur-sm transition-all duration-300 p-6 rounded-2xl shadow-md hover:shadow-2xl border border-gray-200/60 hover:scale-[1.02] active:scale-[0.98]">
     
     {{-- Subtle gradient overlay --}}
-    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-200/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+    <div class="absolute inset-0 rounded-2xl bg-gradient from-cyan-200/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
     
     <div class="relative z-10">
         {{-- Header: Icon + Badge --}}
         <div class="flex items-start justify-between mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center border border-purple-200/60">
-                <i class="fa-solid fa-building text-purple-800 text-xl"></i>
+            <div class="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center border border-cyan-200/60">
+                <i class="fa-solid fa-building text-cyan-800 text-xl"></i>
             </div>
-            <span class="px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-purple-100/80 text-purple-700 shadow-sm">
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-cyan-100/80 text-cyan-700 shadow-sm">
                 {{ $code }}
             </span>
         </div>
         
         {{-- Airport Name --}}
-        <h3 class="font-bold text-gray-800 text-lg leading-tight group-hover:text-purple-700 transition-colors duration-200">
+        <h3 class="font-bold text-gray-800 text-lg leading-tight group-hover:text-cyan-700 transition-colors duration-200">
             {{ $name }}
         </h3>
         
@@ -61,7 +64,7 @@
             {{-- Terminals --}}
             <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-500 flex items-center gap-1.5">
-                    <i class="fa-regular fa-door-open text-purple-400"></i>
+                    <i class="fa-regular fa-door-open text-cyan-400"></i>
                     Terminals
                 </span>
                 <span class="font-semibold text-gray-800">{{ $terminals }}</span>
@@ -70,7 +73,7 @@
             {{-- Status --}}
             <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-500 flex items-center gap-1.5">
-                    <i class="fa-regular fa-circle-check text-purple-400"></i>
+                    <i class="fa-regular fa-circle-check text-cyan-400"></i>
                     Status
                 </span>
                 <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $statusColor }}">
@@ -81,7 +84,7 @@
         </div>
         
         {{-- Footer --}}
-        <div class="mt-5 pt-4 border-t border-purple-200/60">
+        <div class="mt-5 pt-4 border-t border-cyan-200/60">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 {{-- Action Buttons --}}
                 <div class="flex items-center gap-2">
