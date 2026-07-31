@@ -38,6 +38,12 @@
                 'color' => 'text-rose-600',
             ],
             [
+                'label' => 'In Maintenance',
+                'value' => collect($airports)->where('status', 'maintenance')->count(),
+                'icon' => 'fa-regular fa-circle-xmark text-amber-400',
+                'color' => 'text-amber-600',
+            ],
+            [
                 'label' => 'Total Terminals',
                 'value' => collect($airports)->sum('terminals'),
                 'icon' => 'fa-regular fa-door-open text-blue-400',
@@ -52,12 +58,12 @@
         <div class=" grid md:grid-cols-4 gap-8">
         @forelse($airports as $airport)
             <x-cards.airport-card 
-                :name="$airport['name']"
-                :code="$airport['code']"
-                :city="$airport['city']"
-                :country="$airport['country']"
-                :terminals="$airport['terminals']"
-                :status="$airport['status']"
+                :name="$airport->name"
+                :code="$airport->code"
+                :city="$airport->city"
+                :country="$airport->country"
+                :terminals="$airport->terminals"
+                :status="$airport->status"
             />
         @empty
             <div class="col-span-full text-center py-12 text-gray-500">

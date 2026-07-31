@@ -28,5 +28,27 @@ class Ticket extends Model
         return $this->belongsTo(Passenger::class);
     }
 
+    public function flight()
+    {
+        return $this->hasOneThrough(
+            Flight::class,   
+            Booking::class,   
+            'id',          
+            'id',          
+            'passenger_id',   
+            'booking_id'
+        );
+    }
 
+    public function user()
+{
+    return $this->hasOneThrough(
+        User::class,      
+        Booking::class,   
+        'id',       
+        'id',  
+        'passenger_id', 
+        'booking_id'
+    );
+}
 }

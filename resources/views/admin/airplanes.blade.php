@@ -34,13 +34,13 @@
             [
                 'label' => 'Inactive Aircraft',
                 'value' => collect($airplanes)->where('status', 'inactive')->count(),
-                'icon' => 'fa-regular fa-circle-check text-red-400',
+                'icon' => 'fa-regular fa-circle-xmark text-rose-400',
                 'color' => 'text-red-600',
             ],
             [
                 'label' => 'In Maintenance',
                 'value' => collect($airplanes)->where('status', 'maintenance')->count(),
-                'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                'icon' => 'fa-regular fa-circle-xmark text-amber-400',
                 'color' => 'text-amber-600',
             ],
             [
@@ -58,13 +58,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($airplanes as $airplane)
                 <x-cards.airplane-card 
-                    :model="$airplane['model']"
-                    :manufacturer="$airplane['manufacturer']"
-                    :registration="$airplane['registration']"
-                    :capacity="$airplane['capacity']"
-                    :year="$airplane['year']"
-                    :status="$airplane['status']"
-                    :url="route('admin.airplanes.show', $airplane['id'])"
+                    :model="$airplane->model"
+                    :manufacturer="$airplane->manufacturer"
+                    :registration="$airplane->registration"
+                    :capacity="$airplane->capacity"
+                    :year="$airplane->year"
+                    :status="$airplane->status"
                 />
             @empty
                 <div class="col-span-full text-center py-12 text-gray-500">
@@ -74,14 +73,4 @@
             @endforelse
         </div>
     </section>
-
-
-
-
-
-
-
-
-
-
 </x-layout>

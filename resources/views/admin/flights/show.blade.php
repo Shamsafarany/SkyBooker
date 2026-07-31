@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>Flight {{ $flight['flight_number'] }}</x-slot:title>
+    <x-slot:title>Flight {{ $flight->flight_number }}</x-slot:title>
 
     {{-- Header --}}
     <div class="mb-6 pb-4 border-b border-purple-100">
@@ -8,23 +8,23 @@
                 <div class="flex items-center gap-3">
                     {{-- Back Button --}}
                     <a href="{{ route('admin.flights.index') }}" 
-                       class="text-purple-400 hover:text-purple-600 transition p-2 hover:bg-purple-50 rounded-lg">
+                        class="text-purple-900 hover:text-purple-500 transition p-2 hover:bg-purple-50 rounded-lg">
                         <i class="fa-solid fa-arrow-left text-lg"></i>
                     </a>
                     
                     {{-- Flight Number --}}
                     <h1 class="text-3xl md:text-4xl font-extrabold text-purple-900 tracking-tight">
-                        {{ $flight['flight_number'] }}
+                        {{ $flight->flight_number }}
                     </h1>
                     
                     {{-- Airline --}}
-                    <span class="text-sm text-purple-600 font-medium bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                    <span class="text-sm text-purple-700 font-medium bg-purple-50 px-3 py-1 rounded-full border border-purple-200 ml-2">
                         <i class="fa-regular fa-building mr-1"></i>
-                        {{ $flight['airline'] }}
+                        {{ $flight->airline->name }}
                     </span>
                     
                     {{-- Status Badge --}}
-                    <span class="px-3 py-1.5 rounded-full text-sm font-semibold
+                    <span class="px-3 py-1.5 rounded-full text-sm font-semibold ml-1
                         {{ $flight['status'] === 'scheduled' ? 'bg-blue-100 text-blue-800 border border-blue-200' : '' }}
                         {{ $flight['status'] === 'open' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : '' }}
                         {{ $flight['status'] === 'closing' ? 'bg-amber-100 text-amber-800 border border-amber-200' : '' }}
@@ -43,23 +43,23 @@
                             {{ $flight['status'] === 'boarding' ? 'fa-person-walking' : '' }}
                             {{ $flight['status'] === 'departed' ? 'fa-plane-departure' : '' }}
                             mr-1"></i>
-                        {{ ucfirst($flight['status']) }}
+                        {{ ucfirst($flight->status) }}
                     </span>
                 </div>
-                <p class="text-purple-500 mt-1 ml-14">
+                <p class="text-red-700 mt-1 ml-14">
                     <i class="fa-regular fa-calendar mr-1"></i>
-                    {{ date('l, F d, Y', strtotime($flight['departure_date'])) }}
+                    {{ date('l, F d, Y', strtotime($flight->departure_date)) }}
                 </p>
             </div>
             
             {{-- Action Buttons --}}
             <div class="flex gap-3">
-                <a href="#" class="bg-purple-600 text-white px-5 py-2.5 rounded-xl hover:bg-purple-700 transition flex items-center gap-2 shadow-sm hover:shadow-md">
+                <a href="#" class="bg-purple-800 text-white px-3 py-2 rounded-xl hover:bg-purple-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
                     <i class="fa-regular fa-pen"></i>
                     Edit
                 </a>
                 <button onclick="confirmDelete()" 
-                        class="bg-rose-500 text-white px-5 py-2.5 rounded-xl hover:bg-rose-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
+                        class="bg-rose-700 text-white px-3 py-2 rounded-xl hover:bg-rose-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
                     <i class="fa-regular fa-trash"></i>
                     Delete
                 </button>
@@ -68,19 +68,19 @@
     </div>
 
     {{-- Flight Route Map --}}
-    <div class="bg-gradient-to-br from-purple-50 via-purple-50/50 to-white rounded-2xl shadow-md p-8 mb-8 border border-purple-100">
+    <div class="bg--to-br from-purple-50 via-purple-50/50 to-white rounded-2xl shadow-md p-8 mb-8 border border-purple-100">
         <div class="flex items-center justify-between max-w-3xl mx-auto">
             {{-- Origin --}}
             <div class="text-center">
                 <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-purple-200">
                     <i class="fa-solid fa-plane-departure text-purple-600 text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-purple-900">{{ $flight['origin'] }}</p>
-                <p class="text-sm text-purple-600">{{ $flight['origin_city'] }}</p>
-                <p class="text-xs text-purple-400">{{ $flight['origin_name'] ?? $flight['origin'] }}</p>
-                <p class="text-sm font-semibold text-purple-700 mt-1 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                <p class="text-2xl font-bold text-purple-900">{{ $flight->origin->code }}</p>
+                <p class="text-sm text-purple-700">{{ $flight->origin->city }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ $flight->origin->name }}</p>
+                <p class="text-sm font-semibold text-purple-700 mt-4 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
                     <i class="fa-regular fa-clock mr-1"></i>
-                    {{ $flight['departure_time'] }}
+                    {{ $flight->departure_time }}
                 </p>
             </div>
             
@@ -92,13 +92,13 @@
                     
                     {{-- Plane icon --}}
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-100 px-3 rounded-full border border-purple-200">
-                        <i class="fa-solid fa-plane text-purple-600 text-lg"></i>
+                        <i class="fa-solid fa-plane text-purple-900 text-lg"></i>
                     </div>
                     
                     {{-- Duration --}}
-                    <p class="text-center text-xs text-purple-400 mt-3">
+                    <p class="text-center text-xs text-purple-400 mt-5">
                         <i class="fa-regular fa-clock mr-1"></i>
-                        {{ $flight['duration'] }}
+                        {{ $flight->duration }}
                     </p>
                 </div>
             </div>
@@ -108,12 +108,12 @@
                 <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-purple-200">
                     <i class="fa-solid fa-plane-arrival text-purple-600 text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-purple-900">{{ $flight['destination'] }}</p>
-                <p class="text-sm text-purple-600">{{ $flight['destination_city'] }}</p>
-                <p class="text-xs text-purple-400">{{ $flight['destination_name'] ?? $flight['destination'] }}</p>
-                <p class="text-sm font-semibold text-purple-700 mt-1 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                <p class="text-2xl font-bold text-purple-900">{{ $flight->destination->code }}</p>
+                <p class="text-sm text-purple-600">{{ $flight->destination->city }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ $flight->destination->name }}</p>
+                <p class="text-sm font-semibold text-purple-700 mt-4 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
                     <i class="fa-regular fa-clock mr-1"></i>
-                    {{ $flight['arrival_time'] }}
+                    {{ $flight->arrival_time }}
                 </p>
             </div>
         </div>
@@ -124,25 +124,25 @@
     :stats="[
         [
             'label' => 'Total Seats',
-            'value' => $flight['total_seats'],
-            'icon' => 'fa-regular fa-chair text-purple-400',
+            'value' => $flight->total_seats,
+            'icon' => 'fa-regular fa-circle-check text-purple-400',
             'color' => 'text-purple-900',
         ],
         [
             'label' => 'Booked',
-            'value' => $flight['booked_seats'],
-            'icon' => 'fa-regular fa-user-check text-blue-400',
+            'value' => $flight->booked_seats,
+            'icon' => 'fa-regular fa-circle-check text-blue-400',
             'color' => 'text-blue-600',
-        ],
+        ], 
         [
             'label' => 'Available',
-            'value' => $flight['available_seats'],
-            'icon' => 'fa-regular fa-user-plus text-emerald-400',
+            'value' => $flight->available_seats,
+            'icon' => 'fa-regular fa-circle-check text-emerald-400',
             'color' => 'text-emerald-600',
         ],
         [
             'label' => 'Price',
-            'value' => '$' . number_format($flight['price'], 2),
+            'value' => '$' . number_format($flight->price, 2),
             'icon' => 'fa-regular fa-dollar-sign text-purple-400',
             'color' => 'text-purple-700',
         ],
@@ -158,41 +158,41 @@
         <div class="lg:col-span-2">
             <div class="bg-white rounded-2xl shadow-md p-6 border border-purple-100">
                 <h2 class="font-semibold text-purple-800 text-lg mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-purple-600"></i>
+                    <i class="fa-solid fa-circle-info text-purple-800"></i>
                     Flight Details
                 </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Flight Number</p>
-                        <p class="font-mono font-bold text-purple-900 text-lg">{{ $flight['flight_number'] }}</p>
+                        <p class="font-mono font-bold text-purple-900 text-lg">{{ $flight->flight_number}}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Airline</p>
-                        <p class="font-semibold text-gray-900">{{ $flight['airline'] }}</p>
+                        <p class="font-semibold text-gray-900">{{ $flight->airline->name }}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Aircraft</p>
-                        <p class="font-semibold text-gray-900">{{ $flight['airplane'] }}</p>
+                        <p class="font-semibold text-gray-900">{{ $flight->airplane->model }}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Departure</p>
-                        <p class="font-semibold text-gray-900">{{ date('M d, Y', strtotime($flight['departure_date'])) }}</p>
-                        <p class="text-sm text-purple-600">{{ $flight['departure_time'] }}</p>
+                        <p class="font-semibold text-gray-900">{{ date('M d, Y', strtotime($flight->departure_date)) }}</p>
+                        <p class="text-sm text-purple-600">{{ $flight->departure_time }}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Arrival</p>
-                        <p class="font-semibold text-gray-900">{{ date('M d, Y', strtotime($flight['departure_date'])) }}</p>
-                        <p class="text-sm text-purple-600">{{ $flight['arrival_time'] }}</p>
+                        <p class="font-semibold text-gray-900">{{ date('M d, Y', strtotime($flight->arrival_date)) }}</p>
+                        <p class="text-sm text-purple-600">{{ $flight->arrival_time }}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Duration</p>
-                        <p class="font-semibold text-gray-900">{{ $flight['duration'] }}</p>
+                        <p class="font-semibold text-gray-900">{{ $flight->duration }}</p>
                     </div>
                     <div class="bg-purple-50/50 rounded-xl p-4 border border-purple-100 col-span-1 md:col-span-2">
                         <p class="text-xs text-purple-500 uppercase tracking-wider font-medium">Booking Deadline</p>
                         <p class="font-semibold text-gray-900">
-                            {{ isset($flight['booking_deadline']) ? date('M d, Y h:i A', strtotime($flight['booking_deadline'])) : 'N/A' }}
+                            {{ isset($flight->booking_deadline) ? date('M d, Y h:i A', strtotime($flight->booking_deadline)) : 'N/A' }}
                         </p>
                     </div>
                 </div>
@@ -215,10 +215,6 @@
                         <i class="fa-regular fa-triangle-exclamation mr-1"></i>
                         Mark as Closing
                     </button>
-                    <button class="w-full bg-yellow-600 text-white px-4 py-2.5 rounded-xl hover:bg-yellow-700 transition text-sm font-medium shadow-sm hover:shadow-md">
-                        <i class="fa-regular fa-clock mr-1"></i>
-                        Mark as Delayed
-                    </button>
                     <button class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-xl hover:bg-rose-700 transition text-sm font-medium shadow-sm hover:shadow-md">
                         <i class="fa-regular fa-circle-xmark mr-1"></i>
                         Cancel Flight
@@ -233,22 +229,22 @@
             {{-- Additional Info --}}
             <div class="mt-4 bg-white rounded-2xl shadow-md p-6 border border-purple-100">
                 <h3 class="font-semibold text-purple-800 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-regular fa-chart-pie text-purple-600"></i>
+                    <i class="fa-regular fa-chart-pie text-purple-800"></i>
                     Flight Summary
                 </h3>
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between py-2 border-b border-purple-50">
                         <span class="text-purple-500">Created</span>
-                        <span class="font-medium text-gray-700">{{ date('M d, Y', strtotime($flight['created_at'] ?? now())) }}</span>
+                        <span class="font-medium text-gray-700">{{ date('M d, Y', strtotime($flight->created_at ?? now())) }}</span>
                     </div>
                     <div class="flex justify-between py-2 border-b border-purple-50">
                         <span class="text-purple-500">Last Updated</span>
-                        <span class="font-medium text-gray-700">{{ date('M d, Y', strtotime($flight['updated_at'] ?? now())) }}</span>
+                        <span class="font-medium text-gray-700">{{ date('M d, Y', strtotime($flight->updated_at ?? now())) }}</span>
                     </div>
                     <div class="flex justify-between py-2">
                         <span class="text-purple-500">Seat Fill Rate</span>
                         <span class="font-medium text-purple-700">
-                            {{ $flight['total_seats'] > 0 ? round(($flight['booked_seats'] / $flight['total_seats']) * 100) : 0 }}%
+                            {{ $flight->total_seats > 0 ? round(($flight->booked_seats / $flight->total_seats) * 100) : 0 }}%
                         </span>
                     </div>
                 </div>
@@ -257,11 +253,11 @@
                 <div class="mt-3">
                     <div class="w-full bg-purple-100 rounded-full h-2">
                         <div class="bg-purple-600 h-2 rounded-full" 
-                             style="width: {{ $flight['total_seats'] > 0 ? round(($flight['booked_seats'] / $flight['total_seats']) * 100) : 0 }}%">
+                             style="width: {{ $flight['total_seats'] > 0 ? round(($flight->booked_seats / $flight->total_seats) * 100) : 0 }}%">
                         </div>
                     </div>
                     <p class="text-xs text-purple-400 mt-1 text-right">
-                        {{ $flight['booked_seats'] }} of {{ $flight['total_seats'] }} seats booked
+                        {{ $flight->booked_seats }} of {{ $flight->total_seats }} seats booked
                     </p>
                 </div>
             </div>
@@ -275,7 +271,7 @@
                 <i class="fa-solid fa-users text-purple-600"></i>
                 Passengers
                 <span class="text-sm font-normal text-purple-400">
-                    ({{ $flight['booked_seats'] }}/{{ $flight['total_seats'] }} seats filled)
+                    (<span class="text-purple-700 font-bold">{{ $flight->booked_seats}}</span>/{{ $flight->total_seats }} seats filled)
                 </span>
             </h2>
             <button class="text-sm text-purple-600 hover:text-purple-800 font-medium transition bg-white px-4 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50">
@@ -284,7 +280,7 @@
             </button>
         </div>
         
-        @if(isset($flight['passengers']) && count($flight['passengers']) > 0)
+        @if(isset($passengers) && count($passengers)>0)
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 border-b border-gray-100">
@@ -294,38 +290,52 @@
                             <th class="px-6 py-3 text-left text-xs font-semibold text-purple-500 uppercase tracking-wider">Seat</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-purple-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-right text-xs font-semibold text-purple-500 uppercase tracking-wider">Actions</th>
+                            <th class="tracking-wider"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($flight['passengers'] as $passenger)
+                        @foreach($passengers as $passenger)
                             <tr class="border-b border-gray-50 hover:bg-purple-50/30 transition">
                                 <td class="px-6 py-3 font-medium text-gray-900">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-xs font-bold border border-purple-200">
-                                            {{ strtoupper(substr($passenger['name'], 0, 1)) }}
+                                            {{ strtoupper(substr($passenger->getFullName(), 0, 1)) }}
                                         </div>
-                                        {{ $passenger['name'] }}
+                                        {{ $passenger->getFullName()}}
                                     </div>
                                 </td>
-                                <td class="px-6 py-3 text-gray-600">{{ $passenger['email'] }}</td>
-                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger['seat'] }}</td>
+                                <td class="px-6 py-3 text-gray-600">{{ $passenger->email}}</td>
+                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger->ticket->seat_number ?$passenger->ticket->seat_number : 'N/A' }}</td>
                                 <td class="px-6 py-3">
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                         <i class="fa-regular fa-circle-check mr-1"></i>
-                                        Confirmed
+                                        {{ $passenger->booking->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-right">
-                                    <a href="#" class="text-purple-600 hover:text-purple-800 text-sm mr-2 transition">
-                                        <i class="fa-regular fa-pen"></i>
-                                    </a>
-                                    <a href="#" class="text-rose-500 hover:text-rose-700 text-sm transition">
-                                        <i class="fa-regular fa-trash"></i>
-                                    </a>
+                                {{-- 👁️ VIEW TICKET BUTTON --}}
+                                <a href="{{ route('admin.tickets.show', $passenger->ticket->id) }}" 
+                                    class="text-purple-600 hover:text-purple-400 text-sm mr-2 transition inline-flex items-center gap-1">
+                                    <i class="fa-regular fa-eye"></i>
+                                    View Ticket
+                                </a>
                                 </td>
-                            </tr>
-                        @endforeach
+                                <td class="px-6 py-3 text-right flex items-center justify-end gap-2">
+                                    <a href="#" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:shadow-sm">
+                                    Edit
+                                </a>
+        
+                                {{-- Delete Button --}}
+                                <button onclick="confirmDelete({{ $passenger->id }})" 
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200 hover:shadow-sm">
+                                    <i class="fa-regular fa-trash text-xs"></i>
+                                    Delete
+                                </button>
+                                </td>
+                            </tr>    
                     </tbody>
+                    @endforeach
+                    </thead>
                 </table>
             </div>
         @else
@@ -352,9 +362,9 @@
 
 {{-- Hidden Delete Form --}}
 <form id="delete-form" 
-      action="{{ route('admin.flights.destroy', $flight['id']) }}" 
-      method="POST" 
-      style="display: none;">
+        action="{{ route('admin.flights.destroy', $flight['id']) }}" 
+        method="POST" 
+        style="display: none;">
     @csrf
     @method('DELETE')
 </form>

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('airline_id')->constrained('airlines')->onDelete('cascade');
             $table->date('departure_date');
             $table->time('departure_time');
+            $table->date('arrival_date');
             $table->time('arrival_time');
             $table->string('duration');
             $table->decimal('price', 10, 2);

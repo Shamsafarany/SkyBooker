@@ -12,11 +12,6 @@ use App\Models\Flight;
  */
 class BookingFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $flight = Flight::inRandomOrder()->first() ?? Flight::factory()->create();

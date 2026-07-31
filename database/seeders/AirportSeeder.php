@@ -299,14 +299,19 @@ class AirportSeeder extends Seeder
                 'terminals' => 2,
                 'status' => 'active',
             ],
+            [
+                'name' => 'Damascus International Airport',
+                'code' => 'DAM',
+                'city' => 'Damascus',
+                'country' => 'Syria',
+                'terminals' => 1,
+                'status' => 'maintenance',
+            ],
         ];
 
 
         foreach($airports as $airport){
             Airport::create($airport);
         }
-        $this->command->info('Total airports: ' . Airport::count());
-        $this->command->info('Active airports: ' . Airport::where('status', 'active')->count());
-        $this->command->info('In maintenance: ' . Airport::where('status', 'maintenance')->count());
     }
 }

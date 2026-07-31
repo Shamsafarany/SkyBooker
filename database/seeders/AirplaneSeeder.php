@@ -13,7 +13,7 @@ class AirplaneSeeder extends Seeder
      */
     public function run(): void
     {
-         $airplanes = [
+        $airplanes = [
             [
                 'model' => 'Boeing 737-800',
                 'manufacturer' => 'Boeing',
@@ -58,7 +58,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Boeing 777-300ER',
                 'manufacturer' => 'Boeing',
                 'registration' => 'N777GH',
-                'capacity' => 396,
+                'capacity' => 350,
                 'year' => 2021,
                 'status' => 'active',
             ],
@@ -66,7 +66,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Boeing 777-300ER',
                 'manufacturer' => 'Boeing',
                 'registration' => 'N777HI',
-                'capacity' => 396,
+                'capacity' => 350,
                 'year' => 2022,
                 'status' => 'active',
             ],
@@ -74,7 +74,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Boeing 787-9 Dreamliner',
                 'manufacturer' => 'Boeing',
                 'registration' => 'N787DC',
-                'capacity' => 330,
+                'capacity' => 300,
                 'year' => 2022,
                 'status' => 'active',
             ],
@@ -82,7 +82,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Boeing 787-9 Dreamliner',
                 'manufacturer' => 'Boeing',
                 'registration' => 'N787DD',
-                'capacity' => 330,
+                'capacity' => 300,
                 'year' => 2023,
                 'status' => 'active',
             ],
@@ -98,7 +98,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Boeing 747-8',
                 'manufacturer' => 'Boeing',
                 'registration' => 'N747BB',
-                'capacity' => 467,
+                'capacity' => 300,
                 'year' => 2017,
                 'status' => 'inactive',
             ],
@@ -147,7 +147,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Airbus A330-300',
                 'manufacturer' => 'Airbus',
                 'registration' => 'A330GG',
-                'capacity' => 440,
+                'capacity' => 300,
                 'year' => 2018,
                 'status' => 'active',
             ],
@@ -155,7 +155,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Airbus A330-300',
                 'manufacturer' => 'Airbus',
                 'registration' => 'A330HH',
-                'capacity' => 440,
+                'capacity' => 300,
                 'year' => 2019,
                 'status' => 'active',
             ],
@@ -179,7 +179,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Airbus A380',
                 'manufacturer' => 'Airbus',
                 'registration' => 'A380EF',
-                'capacity' => 853,
+                'capacity' => 300,
                 'year' => 2019,
                 'status' => 'inactive',
             ],
@@ -187,7 +187,7 @@ class AirplaneSeeder extends Seeder
                 'model' => 'Airbus A380',
                 'manufacturer' => 'Airbus',
                 'registration' => 'A380FG',
-                'capacity' => 853,
+                'capacity' => 300,
                 'year' => 2020,
                 'status' => 'maintenance',
             ],
@@ -229,9 +229,5 @@ class AirplaneSeeder extends Seeder
         foreach($airplanes as $airplane){
             Airplane::create($airplane);
         }
-        $this->command->info('Total airplanes: ' . Airplane::count());
-        $this->command->info('Active: ' . Airplane::where('status', 'active')->count());
-        $this->command->info('Inactive: ' . Airplane::where('status', 'inactive')->count());
-        $this->command->info('Maintenance: ' . Airplane::where('status', 'maintenance')->count());
     }
 }

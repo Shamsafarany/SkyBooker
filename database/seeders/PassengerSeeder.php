@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Passenger;
 use App\Models\Booking;
+use App\Models\Flight;
 
 class PassengerSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class PassengerSeeder extends Seeder
         $bookings = Booking::all();
         foreach ($bookings as $booking) {
             Passenger::factory()
-                ->count(rand(1, 3)) 
+                ->count($booking->number_of_seats) 
                 ->create([
                     'booking_id' => $booking->id
                 ]);
