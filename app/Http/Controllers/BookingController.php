@@ -3,27 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Booking;
+use App\Models\Flight;
 
 class BookingController extends Controller
 {
 
     private function getBookings(){
-        $bookings = Booking::with([
-            'user',
-            'flight.airline',
-            'flight.origin',
-            'flight.destination',
-            'passengers',
-            'passengers.ticket',
-        ])->paginate(15); ;
-        return $bookings;
+        $flights = Flight::with([
+            'bookings.user',
+            'bookings.passengers',
+            'origin',
+            'destination',
+            'airline',
+        ])->orderBy('departure_date')->paginate(10);
+        return $flights;
     }
 
     public function index()
     {
-        $bookings = $this->getBookings();
-        return view('admin.bookings.index', compact('bookings'));
+        $flights = $this->getBookings();
+        return view('admin.bookings.index', compact('flights'));
     }
 
     public function create()

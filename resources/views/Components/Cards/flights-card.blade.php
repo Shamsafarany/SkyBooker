@@ -173,7 +173,7 @@
             <div class="flex items-center justify-between">
                 {{-- View Link --}}
                 <a href="{{ $url }}" 
-                   class="text-sm font-medium text-cyan-800 hover:text-purple-800 transition flex items-center gap-1 group">
+                   class="text-sm font-medium text-cyan-800 hover:text-cyan-800 transition flex items-center gap-1 group">
                     <i class="fa-regular fa-eye mr-0.5"></i>
                     View Flight
                     <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>

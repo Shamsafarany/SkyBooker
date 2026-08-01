@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Flight;
 use App\Models\Passenger;
+use App\Models\Airline;
 class FlightController extends Controller
 {
     
@@ -21,7 +22,22 @@ class FlightController extends Controller
     public function index(){
         
         $flights = $this->getFlights();
-        return view('admin.flights.index', compact('flights'));
+        $airlines = Airline::with(['flights' => function ($query) {
+            $query->with([
+                'origin',
+                'destination',
+                'airplane',
+            ])->orderBy('departure_date');
+        }])->has('flights')->get();
+        $stats = [
+            'total' => $flights->count(),
+            'total_airlines' => $airlines->count(),
+            'open' => $flights->where('status', 'open')->count(),
+            'closing' => $flights->where('status', 'closing')->count(),
+            'completed' => $flights->where('status', 'completed')->count(),
+            'revenue' => $flights->sum('price'),
+        ];
+        return view('admin.flights.index', compact('flights', 'airlines', 'stats'));
 
     }
 
@@ -45,7 +61,7 @@ class FlightController extends Controller
         ])->findOrFail($id);
         $passengers = Passenger::whereHas('booking', function ($query) use ($id) {
         $query->where('flight_id', $id);
-            })->with(['ticket'])->get();
+            })->with(['ticket'])->paginate(15);
         return view('admin.flights.show', compact('flight', 'passengers'));
     }
 

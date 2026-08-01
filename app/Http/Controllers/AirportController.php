@@ -13,12 +13,13 @@ class AirportController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.airports', compact('airports'));
+        return view('admin.airports.index', compact('airports'));
     }
 
     public function create()
     {
         //
+        return view('admin.airports.create');
     }
 
     public function store(Request $request)

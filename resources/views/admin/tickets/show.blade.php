@@ -4,25 +4,25 @@
     <div class="max-w-4xl mx-auto">
         {{-- Back Button --}}
         <div class="mb-6">
-            <a href="{{ url()->previous() }}" class="text-purple-600 hover:text-purple-800 transition">
+            <a href="{{ url()->previous() }}" class="text-cyan-600 hover:text-cyan-800 transition">
                 <i class="fa-solid fa-arrow-left mr-2"></i>
                 Back
             </a>
         </div>
 
         {{-- Ticket Card --}}
-        <div class="bg-white rounded-2xl shadow-lg border border-purple-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg border border-cyan-100 overflow-hidden">
             {{-- Ticket Header --}}
-            <div class="bg-gradient-to-r from-purple-600 to-purple-800 px-8 py-6">
+            <div class="bg-gradient-to-r from-cyan-600 to-cyan-800 px-8 py-6">
                 <div class="flex justify-between items-center">
                     <div>
-                        <p class="text-purple-200 text-sm uppercase tracking-wider">Boarding Pass</p>
+                        <p class="text-cyan-800 text-sm uppercase tracking-wider">Boarding Pass</p>
                         <h1 class="text-3xl font-bold text-white">{{ $ticket->ticket_number }}</h1>
                     </div>
                     <div class="text-right">
-                        <p class="text-purple-200 text-sm">Status</p>
+                        <p class="text-cyan-200 text-sm">Status</p>
                         <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $ticket->status_color }}">
-                            {{ $ticket->status_label }}
+                            {{ $ticket->status }}
                         </span>
                     </div>
                 </div>
@@ -38,9 +38,9 @@
                     </div>
                     <div class="flex-1 mx-4">
                         <div class="relative">
-                            <div class="border-t-2 border-purple-400 border-dashed"></div>
+                            <div class="border-t-2 border-cyan-400 border-dashed"></div>
                             <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-white px-2">
-                                <i class="fa-solid fa-plane text-purple-600"></i>
+                                <i class="fa-solid fa-plane text-cyan-600"></i>
                             </div>
                             <p class="text-center text-xs text-gray-400 mt-2">{{ $ticket->passenger->booking->flight->duration }}</p>
                         </div>
@@ -65,7 +65,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wider">Seat</p>
-                        <p class="text-lg font-semibold text-purple-700">{{ $ticket->seat_number ?? 'N/A' }}</p>
+                        <p class="text-lg font-semibold text-cyan-700">{{ $ticket->seat_number ?? 'N/A' }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wider">Class</p>
@@ -77,7 +77,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wider">Booking Reference</p>
-                        <p class="text-lg font-mono text-purple-600">{{ $ticket->passenger->booking->booking_reference }}</p>
+                        <p class="text-lg font-mono text-cyan-600">{{ $ticket->passenger->booking->booking_reference }}</p>
                     </div>
                 </div>
 
@@ -103,10 +103,10 @@
             <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 flex justify-between items-center">
                 <span class="text-xs text-gray-400">Ticket #{{ $ticket->ticket_number }}</span>
                 <div class="flex gap-2">
-                    <button onclick="window.print()" class="text-purple-600 hover:text-purple-800 text-sm transition">
+                    <button onclick="window.print()" class="text-cyan-600 hover:text-cyan-800 text-sm transition">
                         <i class="fa-regular fa-print mr-1"></i> Print
                     </button>
-                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="text-purple-600 hover:text-purple-800 text-sm transition">
+                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="text-cyan-600 hover:text-cyan-800 text-sm transition">
                         <i class="fa-regular fa-rotate-right mr-1"></i> Refresh
                     </a>
                 </div>
