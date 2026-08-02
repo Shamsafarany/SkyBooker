@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Booking extends Model
 {
@@ -47,4 +48,17 @@ class Booking extends Model
     {
         return $this->hasManyThrough(Ticket::class, Passenger::class);
     }
+
+    public static function generateReference(): string
+    {
+        $reference = 'BK-' . date('Y') . '-' . strtoupper(Str::random(6));
+
+        while (self::where('booking_reference', $reference)->exists()) {
+            $reference = 'BK-' . date('Y') . '-' . strtoupper(Str::random(6));
+        }
+
+        return $reference;
+    }
+
+
 }

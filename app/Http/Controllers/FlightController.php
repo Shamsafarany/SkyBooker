@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Flight;
 use App\Models\Passenger;
 use App\Models\Airline;
+use App\Models\Airport;
+use App\Models\Airplane;
 class FlightController extends Controller
 {
     
@@ -43,7 +45,11 @@ class FlightController extends Controller
 
     public function create()
     {
-        //
+        $airlines = Airline::orderBy('name')->get();
+        $airports = Airport::orderBy('name')->get();
+        $airplanes = Airplane::where('status', 'active')->orderBy('model')->get();
+
+        return view('admin.flights.create', compact('airlines', 'airports', 'airplanes'));
     }
 
     public function store(Request $request)

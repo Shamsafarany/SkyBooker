@@ -14,12 +14,12 @@ class AirplaneController extends Controller
             ->orderBy('manufacturer')
             ->orderBy('model')
             ->get();
-        return view('admin.airplanes', compact('airplanes'));
+        return view('admin.airplanes.index', compact('airplanes'));
     }
 
     public function create()
     {
-        //
+        return view('admin.airplanes.create');
     }
 
     public function store(Request $request)

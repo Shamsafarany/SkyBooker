@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Flight;
+use App\Models\User;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
@@ -27,7 +29,13 @@ class BookingController extends Controller
 
     public function create()
     {
-        //
+    $users = User::orderBy('first_name')->get();
+    $flights = Flight::with(['origin', 'destination'])
+        ->where('departure_date', '>=', now())
+        ->orderBy('departure_date')
+        ->get();
+    $bookingReference = Booking::generateReference();
+    return view('admin.bookings.create', compact('users', 'flights', 'bookingReference'));
     }
 
     public function store(Request $request)

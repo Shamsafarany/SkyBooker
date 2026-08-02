@@ -7,8 +7,8 @@
             </p>
         </div>
         <div class="shrink-0 md:self-center">
-            <a href="{{ route('admin.airports.create') }}" 
-            class="bg-cyan-800 text-white px-4 py-2.5 rounded-lg hover:bg-cyan-900 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+            <a href="{{ route('admin.airplanes.create') }}" 
+            class="bg-cyan-800 text-white px-4 py-2.5 rounded-lg hover:bg-cyan-600 transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
                 <i class="fa-solid fa-plus"></i>
                 Add Airplane
             </a>
