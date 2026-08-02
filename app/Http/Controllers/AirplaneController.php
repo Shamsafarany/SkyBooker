@@ -14,7 +14,15 @@ class AirplaneController extends Controller
             ->orderBy('manufacturer')
             ->orderBy('model')
             ->get();
-        return view('admin.airplanes.index', compact('airplanes'));
+        $stats = [
+            'total' => $airplanes->count(),
+            'active' => $airplanes->where('status', 'active')->count(),
+            'inactive' => $airplanes->where('status', 'inactive')->count(),
+            'maintenance' => $airplanes->where('status', 'maintenance')->count(),
+            'total_capacity' => $airplanes->sum('capacity'),
+            'total_flights' => $airplanes->sum('flights_count'),
+        ];
+        return view('admin.airplanes.index', compact('airplanes','stats'));
     }
 
     public function create()

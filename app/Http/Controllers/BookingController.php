@@ -24,7 +24,24 @@ class BookingController extends Controller
     public function index()
     {
         $flights = $this->getBookings();
-        return view('admin.bookings.index', compact('flights'));
+        $bookings = Booking::all();
+        $stats = [
+            'total' => $bookings->count(),
+            'pending' => $bookings->where('status', 'pending')->count(),
+            'confirmed' => $bookings->where('status', 'confirmed')->count(),
+            'cancelled' => $bookings->where('status', 'cancelled')->count(),
+            'completed' => $bookings->where('status', 'completed')->count(),
+            'failed' => $bookings->where('status', 'failed')->count(),
+            'refunded' => $bookings->where('status', 'refunded')->count(),
+            'total_revenue' => $bookings->sum('total_price'),
+            'total_seats' => $bookings->sum('number_of_seats'),
+            'today' => $bookings->where('booking_date', '>=', now()->startOfDay())->count(),
+            'this_week' => $bookings->where('booking_date', '>=', now()->startOfWeek())->count(),
+            'this_month' => $bookings->where('booking_date', '>=', now()->startOfMonth())->count(),
+            'average_seats' => $bookings->avg('number_of_seats') ? round($bookings->avg('number_of_seats'), 1) : 0,
+            'average_price' => $bookings->avg('total_price') ? round($bookings->avg('total_price'), 2) : 0,
+        ];
+        return view('admin.bookings.index', compact('flights', 'stats'));
     }
 
     public function create()

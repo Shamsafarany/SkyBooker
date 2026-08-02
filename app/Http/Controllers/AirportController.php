@@ -13,12 +13,24 @@ class AirportController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.airports.index', compact('airports'));
+        $stats = [
+            'total' => $airports->count(),
+            'active' => $airports->where('status', 'active')->count(),
+            'inactive' => $airports->where('status', 'inactive')->count(),
+            'maintenance' => $airports->where('status', 'maintenance')->count(),
+            'closed' => $airports->where('status', 'closed')->count(),
+            'total_terminals' => $airports->sum('terminals'),
+            'total_departing' => $airports->sum('departing_flights_count'),
+            'total_arriving' => $airports->sum('arriving_flights_count'),
+            'total_flights' => $airports->sum('departing_flights_count') + $airports->sum('arriving_flights_count'),
+            'by_country' => $airports->groupBy('country')->map->count()->sortDesc()->take(5),
+        ];
+
+        return view('admin.airports.index', compact('airports', 'stats'));
     }
 
     public function create()
     {
-        //
         return view('admin.airports.create');
     }
 

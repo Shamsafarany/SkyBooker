@@ -12,8 +12,39 @@
             </a>
         </div>
     </div>
-
-
+    <hr class="p-1 mt-4">
+    <x-stats 
+        title="Booking Overview"
+        :stats="[
+            [
+                'label' => 'Total Bookings',
+                'value' => $stats['total'],
+                'icon' => 'fa-regular fa-calendar-check text-cyan-400',
+                'color' => 'text-cyan-700',
+            ],
+            [
+                'label' => 'Confirmed',
+                'value' => $stats['confirmed'],
+                'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                'color' => 'text-emerald-600',
+            ],
+            [
+                'label' => 'Pending',
+                'value' => $stats['pending'],
+                'icon' => 'fa-regular fa-clock text-yellow-400',
+                'color' => 'text-yellow-600',
+            ],
+            [
+                'label' => 'Revenue',
+                'value' => '$' . number_format($stats['total_revenue'], 0),
+                'icon' => 'fa-regular fa-dollar-sign text-cyan-400',
+                'color' => 'text-cyan-600',
+            ],
+        ]"
+        :columns="4"
+        class="mb-8"
+    />
+    <hr class="p-1 mb-3">
     {{-- Bookings Grouped by Flight (Collapsible) --}}
     <div class="space-y-4">
         @forelse($flights as $flight)

@@ -19,39 +19,39 @@
     <x-stats 
         title="Fleet Overview"
         :stats="[
-            [
-                'label' => 'Total Aircraft',
-                'value' => count($airplanes),
-                'icon' => 'fa-regular fa-plane text-blue-400',
-                'color' => 'text-blue-700',
-            ],
-            [
-                'label' => 'Active Aircraft',
-                'value' => collect($airplanes)->where('status', 'active')->count(),
-                'icon' => 'fa-regular fa-circle-check text-emerald-400',
-                'color' => 'text-emerald-600',
-            ],
-            [
-                'label' => 'Inactive Aircraft',
-                'value' => collect($airplanes)->where('status', 'inactive')->count(),
-                'icon' => 'fa-regular fa-circle-xmark text-rose-400',
-                'color' => 'text-red-600',
-            ],
-            [
-                'label' => 'In Maintenance',
-                'value' => collect($airplanes)->where('status', 'maintenance')->count(),
-                'icon' => 'fa-regular fa-circle-xmark text-amber-400',
-                'color' => 'text-amber-600',
-            ],
-            [
-                'label' => 'Total Capacity',
-                'value' => collect($airplanes)->sum('capacity') . ' seats',
-                'icon' => 'fa-regular fa-users text-blue-400',
-                'color' => 'text-blue-600',
-            ],
-        ]"
-        :columns="5"
-    />
+                [
+                    'label' => 'Total Aircraft',
+                    'value' => $stats['total'],
+                    'icon' => 'fa-regular fa-plane text-cyan-400',
+                    'color' => 'text-cyan-700',
+                ],
+                [
+                    'label' => 'Active',
+                    'value' => $stats['active'],
+                    'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                    'color' => 'text-emerald-600',
+                ],
+                [
+                    'label' => 'In Maintenance',
+                    'value' => $stats['maintenance'],
+                    'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                    'color' => 'text-amber-600',
+                ],
+                [
+                    'label' => 'Total Capacity',
+                    'value' => $stats['total_capacity'] . ' seats',
+                    'icon' => 'fa-regular fa-users text-blue-400',
+                    'color' => 'text-blue-600',
+                ],
+                [
+                    'label' => 'Total Flights',
+                    'value' => $stats['total_flights'],
+                    'icon' => 'fa-regular fa-calendar-check text-cyan-400',
+                    'color' => 'text-cyan-600',
+                ],
+            ]"
+            :columns="5"
+        />
 </div>
 
     <section class="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">

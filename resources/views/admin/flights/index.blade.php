@@ -44,19 +44,13 @@
                     'color' => 'text-amber-600',
                 ],
                 [
-                    'label' => 'Completed',
-                    'value' => $stats['completed'],
-                    'icon' => 'fa-regular fa-flag-checkered text-blue-400',
-                    'color' => 'text-blue-600',
-                ],
-                [
                     'label' => 'Total Revenue',
                     'value' => '$' . number_format($stats['revenue'], 0),
                     'icon' => 'fa-regular fa-dollar-sign text-cyan-400',
                     'color' => 'text-cyan-600',
                 ],
             ]"
-            :columns="6"
+            :columns="5"
         />
     </div>
 

@@ -15,7 +15,38 @@
             </a>
         </div>
     </div>
+    
     <hr class="p-1 mt-4">
+    <x-stats 
+            title="Airport Overview"
+            :stats="[
+                [
+                    'label' => 'Total Airports',
+                    'value' => $stats['total'],
+                    'icon' => 'fa-regular fa-building text-cyan-400',
+                    'color' => 'text-cyan-700',
+                ],
+                [
+                    'label' => 'Active',
+                    'value' => $stats['active'],
+                    'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                    'color' => 'text-emerald-600',
+                ],
+                [
+                    'label' => 'In Maintenance',
+                    'value' => $stats['maintenance'],
+                    'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                    'color' => 'text-amber-600',
+                ],
+                [
+                    'label' => 'Total Terminals',
+                    'value' => $stats['total_terminals'],
+                    'icon' => 'fa-regular fa-door-open text-blue-400',
+                    'color' => 'text-blue-600',
+                ],
+            ]"
+            :columns="4"
+        />
     
 </div>
 
