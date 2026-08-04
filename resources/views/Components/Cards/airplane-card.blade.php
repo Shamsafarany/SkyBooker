@@ -99,7 +99,6 @@
                 <div class="flex items-center gap-3">
                     {{-- Registration Span --}}
                     <span class="text-xs text-gray-400 flex items-center gap-1">
-                        <i class="fa-regular fa-clock"></i>
                         {{ $registration }}
                     </span>
 

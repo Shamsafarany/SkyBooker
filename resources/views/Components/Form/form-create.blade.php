@@ -5,7 +5,7 @@
     'method' => 'POST',
     'submitLabel' => 'Create',
     'cancelRoute' => '#',
-    'icon' => 'fa-plus',
+    'icon' => '',
 ])
 
 <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">

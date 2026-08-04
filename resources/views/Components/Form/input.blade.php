@@ -33,6 +33,7 @@
             id="{{ $name }}"
             value="{{ $readonly ? $value : old($name, $value) }}"
             placeholder="{{ $placeholder }}"
+            min="{{ $type === 'number' ? 1 : '' }}"
             {{ $required ? 'required' : '' }}
             {{ $readonly ? 'readonly' : '' }}
             {{ $attributes->merge(['class' => 'w-full ' . ($icon ? 'pl-10' : 'pl-4') . ' pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:ring-3 focus:ring-cyan-200 transition-all duration-200 focus:outline-none ' . ($readonly ? 'bg-gray-100 cursor-not-allowed' : '')]) }}

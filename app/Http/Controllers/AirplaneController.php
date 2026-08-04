@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Airplane;
+use Illuminate\Validation\Rule;
 
 class AirplaneController extends Controller
 {
@@ -32,7 +33,18 @@ class AirplaneController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'model' => 'required|string|max:255',
+            'manufacturer' => 'required|string|max:255',
+            'registration' => 'required|string|max:255|unique:airplanes,registration',
+            'capacity' => 'required|integer|min:1|max:1000',
+            'year' => 'required|integer|min:1950|max:' . date('Y'),
+            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'retired'])],
+        ]);
+        $airplane = Airplane::create($validated);
+        return redirect()
+            ->route('admin.airplanes.index')
+            ->with('success', 'Airplane "' . $airplane->model . '" created successfully!');
     }
 
     public function show(string $id)

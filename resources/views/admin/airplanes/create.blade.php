@@ -63,7 +63,7 @@
                 placeholder="e.g. 2018"
                 icon="fa-calendar"
                 required
-                min="1900"
+                min="1950"
                 max="{{ date('Y') }}"
             />
 

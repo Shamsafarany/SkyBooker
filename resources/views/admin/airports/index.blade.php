@@ -55,6 +55,7 @@
         @forelse($airports as $airport)
             <x-cards.airport-card 
                 :airport="$airport"
+                editUrl="{{ route('admin.airports.edit', $airport) }}"
             />
         @empty
             <div class="col-span-full text-center py-12 text-gray-500">
