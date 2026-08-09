@@ -1,4 +1,4 @@
-<x-layout title="Add Flight" header="Add Flight">
+<x-layout title="Edit Flight {{ $flight->flight_number  }}" header="Edit Flight">
     <div class="mb-6">
         <a href="{{ route('admin.flights.index') }}" 
            class="text-cyan-600 hover:text-cyan-800 transition group flex items-center gap-2 mt-2">
@@ -8,12 +8,12 @@
     </div>
 
     <x-form.form-create
-        title="Add New Flight"
-        subtitle="Enter the details of the new Flight"
-        action="{{ route('admin.flights.store') }}"
-        submitLabel="Create Flight"
-        cancelRoute="{{ route('admin.flights.index') }}"
-        icon="fa-plus"
+        title="Edit Flight: {{ $flight->flight_number }}"
+        subtitle="Edit flight info"
+        action="{{ route('admin.flights.update', $flight) }}"
+        method="PUT"
+        submitLabel="Update"
+        cancelRoute="{{ route('admin.flights.show', $flight) }}"
     >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- Flight Number --}}
@@ -23,6 +23,8 @@
                 placeholder="e.g. SKY101"
                 icon="fa-tag"
                 required
+                value="{{ old('flight_number', $flight->flight_number) }}"
+                readonly
             />
 
             {{-- Airline --}}
@@ -32,6 +34,7 @@
                 icon="fa-building"
                 :options="$airlines->pluck('name', 'id')->toArray()"
                 required
+                selected="{{ old('airline_id', $flight->airline_id) }}"
             />
 
             {{-- Origin Airport --}}
@@ -41,6 +44,7 @@
                 icon="fa-plane-departure"
                 :options="$airports->pluck('name', 'id')->toArray()"
                 required
+                selected="{{ old('origin_airport_id', $flight->origin_airport_id) }}"
             />
 
             {{-- Destination Airport --}}
@@ -50,6 +54,8 @@
                 icon="fa-plane-arrival"
                 :options="$airports->pluck('name', 'id')->toArray()"
                 required
+                selected="{{ old('destination_airport_id', $flight->destination_airport_id) }}"
+                selected="{{ old('destination_airport_id', $flight->destination_airport_id) }}"
             />
 
             {{-- Airplane --}}
@@ -59,6 +65,7 @@
                 icon="fa-plane"
                 :options="$airplanes->pluck('model', 'id')->toArray()"
                 required
+                selected="{{ old('airplane_id', $flight->airplane_id) }}"
             />
 
             {{-- Departure Date --}}
@@ -68,6 +75,7 @@
                 type="date"
                 icon="fa-calendar"
                 required
+                :value="old('departure_date', $flight->departure_date?->format('Y-m-d'))"
             />
 
             {{-- Departure Time --}}
@@ -77,6 +85,7 @@
                 type="time"
                 icon="fa-clock"
                 required
+                value="{{ old('departure_time', $flight->departure_time)}}"
             />
 
             {{-- Arrival Date --}}
@@ -86,6 +95,7 @@
                 type="date"
                 icon="fa-calendar"
                 required
+                :value="old('arrival_date', $flight->arrival_date?->format('Y-m-d'))"
             />
 
             {{-- Arrival Time --}}
@@ -95,6 +105,7 @@
                 type="time"
                 icon="fa-clock"
                 required
+                value="{{ old('arrival_time', $flight->arrival_time )}}"
             />
 
             {{-- Duration --}}
@@ -105,6 +116,7 @@
                 icon="fa-clock"
                 required
                 helper="Format: Xh Ym (e.g. 5h 30m)"
+                value="{{ old('duration', $flight->duration) }}"
             />
 
             {{-- Price --}}
@@ -117,6 +129,7 @@
                 required
                 step="0.01"
                 min="0"
+                value="{{ old('price', $flight->price) }}"
             />
 
             {{-- Total Seats --}}
@@ -128,6 +141,7 @@
                 icon="fa-chair"
                 required
                 min="1"
+                value="{{ old('total_seats', $flight->total_seats) }}"
             />
 
             {{-- Status --}}
@@ -145,6 +159,7 @@
                 ]"
                 selected="scheduled"
                 required
+                selected="{{ old('status', $flight->status) }}"
             />
 
             {{-- Booking Deadline --}}
@@ -154,6 +169,7 @@
                 type="datetime-local"
                 icon="fa-clock"
                 helper="Leave empty if no deadline"
+                :value="old('booking_deadline', $flight->booking_deadline?->format('Y-m-d\TH:i'))"
             />
     
         </div>

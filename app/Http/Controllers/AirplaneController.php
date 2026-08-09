@@ -52,17 +52,32 @@ class AirplaneController extends Controller
         //
     }
 
-    public function edit(string $id)
+    public function edit(Airplane $airplane)
     {
-        //
+        return view('admin.airplanes.edit', compact('airplane'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, Airplane $airplane)
     {
-        //
+        $validated = $request->validate([
+            'model' => 'required|string|max:255',
+            'manufacturer' => 'required|string|max:255',
+            'registration' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('airplanes', 'registration')->ignore($airplane->id), 
+            ],
+            'capacity' => 'required|integer|min:1|max:1000',
+            'year' => 'required|integer|min:1950|max:' . date('Y'),
+            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'retired'])],
+        ]);
+        $airplane->update($validated);
+        return redirect()->route('admin.airplanes.index')->with('success', 'Airplane updated successfully!');
     }
-    public function destroy(string $id)
+    public function destroy(Airplane $airplane)
     {
-        //
+        $airplane->delete();
+        return redirect()->route('admin.airplanes.index')->with('success', 'Airplane deleted successfully!');
     }
 }

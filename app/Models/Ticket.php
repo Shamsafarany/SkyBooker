@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Ticket extends Model
 {
-    /** @use HasFactory<\Database\Factories\TicketFactory> */
     use HasFactory;
     protected $fillable = [
         'passenger_id',
@@ -22,6 +22,22 @@ class Ticket extends Model
     protected $casts = [
         'issued_at' => 'datetime',
     ];
+
+    public static function generateTicketNumber(): string
+    {
+        $prefix = 'TKT';
+        $year = date('Y');
+        $random = strtoupper(Str::random(6));
+
+        $ticketNumber = $prefix . $year . $random;
+
+        while (self::where('ticket_number', $ticketNumber)->exists()) {
+            $random = strtoupper(Str::random(6));
+            $ticketNumber = $prefix . $year . $random;
+        }
+
+        return $ticketNumber;
+    }
 
     public function passenger()
     {

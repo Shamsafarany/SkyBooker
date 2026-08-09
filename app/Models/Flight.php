@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Flight extends Model
 {
-    /** @use HasFactory<\Database\Factories\FlightFactory> */
-    use HasFactory;
-
     protected $fillable = [
         'flight_number',
         'airline_id',
@@ -18,6 +15,7 @@ class Flight extends Model
         'airplane_id',
         'departure_date',
         'departure_time',
+        'arrival_date',
         'arrival_time',
         'duration',
         'price',
@@ -29,11 +27,12 @@ class Flight extends Model
     ];
     protected $casts = [
         'departure_date' => 'date',
+        'arrival_date' => 'date',
         'booking_deadline' => 'datetime',
         'price' => 'decimal:2',
     ];
 
-    //routes
+    //relations
     public function airline()
     {
         return $this->belongsTo(Airline::class);

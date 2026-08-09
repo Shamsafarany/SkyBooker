@@ -107,16 +107,20 @@
                         {{-- Edit Button --}}
                         <a href="{{ $editUrl }}" 
                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                            <i class="fa-regular fa-pen text-xs"></i>
                             Edit
                         </a>
                         
-                        {{-- Delete Button --}}
-                        <button onclick="confirmDelete({{ $id }})" 
-                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                            <i class="fa-regular fa-trash text-xs"></i>
+                        <form method="POST" action="{{ $deleteUrl }}" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" 
+                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-700
+                                hover: text-rose-400 
+                                transition-all duration-200"
+                                onclick="return confirm('Are you sure you want to delete this?')">
                             Delete
                         </button>
+                    </form>
                     </div>
                 </div>
             </div>

@@ -98,6 +98,8 @@
                                 <x-cards.flights-card 
                                     :flight="$flight"
                                     :url="route('admin.flights.show', $flight->id)"
+                                    :editUrl="route('admin.flights.edit', $flight)"
+                                    :deleteUrl="route('admin.flights.destroy', $flight)"
                                 />
                             @endforeach
                         </div>

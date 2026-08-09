@@ -27,5 +27,10 @@ class Airplane extends Model
     {
         return "{$this->model} ({$this->registration})";
     }
+
+    public function getRouteKeyName()
+    {
+        return 'registration';  
+    }
     
 }

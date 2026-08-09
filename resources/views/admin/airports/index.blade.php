@@ -56,6 +56,7 @@
             <x-cards.airport-card 
                 :airport="$airport"
                 editUrl="{{ route('admin.airports.edit', $airport) }}"
+                deleteUrl="{{ route('admin.airports.destroy', $airport) }}"
             />
         @empty
             <div class="col-span-full text-center py-12 text-gray-500">

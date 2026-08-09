@@ -90,8 +90,9 @@ class PassengerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Passenger $passenger)
     {
-        //
+        //$passenger->delete();
+        //return redirect()->back()->with('success', 'Passenger removed successfully!');
     }
 }

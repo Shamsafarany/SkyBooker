@@ -81,8 +81,9 @@ class AirportController extends Controller
         return redirect()->route('admin.airports.index')
     ->with('success', 'Airport updated successfully!');
     }
-    public function destroy(string $id)
+    public function destroy(Airport $airport)
     {
-        //
+        $airport->delete();
+        return redirect()->route('admin.airports.index')->with('success', 'Airport deleted successfully!');
     }
 }

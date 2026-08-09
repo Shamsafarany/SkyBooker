@@ -8,8 +8,6 @@ use Illuminate\Support\Str;
 
 class Booking extends Model
 {
-    /** @use HasFactory<\Database\Factories\BookingFactory> */
-    use HasFactory;
     protected $fillable = [
         'user_id',
         'flight_id',

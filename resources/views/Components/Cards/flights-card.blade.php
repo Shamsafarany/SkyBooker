@@ -12,7 +12,7 @@
     $origin_city = $flight->origin->city;
     $destination = $flight->destination->code;
     $destination_city = $flight->destination->city;
-    $departure_date = $flight->departure_date->format('M d, Y');
+    $departure_date = $flight->departure_date;
     $departure_time = $flight->departure_time;
     $arrival_time = $flight->arrival_time;
     $duration = $flight->duration;
@@ -188,10 +188,16 @@
                     </a>
                     
                     {{-- Delete Button --}}
-                    <button onclick="confirmDelete({{ $flight['id'] ?? 0 }})" 
-                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                        Delete
-                    </button>
+                    <form method="POST" action="{{ $deleteUrl }}" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" 
+                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-700
+                                transition-all duration-200"
+                                onclick="return confirm('Are you sure you want to delete this flight?')">
+                            Delete
+                        </button>
+                    </form>
                 </div>
             </div>
             
@@ -209,7 +215,7 @@
 {{-- Delete Confirmation Script --}}
 <script>
     function confirmDelete(id) {
-        if (confirm('Are you sure you want to delete flight #' + id + '?')) {
+        if (confirm('Are you sure you want to delete flight ' + id + '?')) {
             // Submit delete form or redirect
             document.getElementById('delete-form-' + id).submit();
         }

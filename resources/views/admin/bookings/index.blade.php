@@ -65,14 +65,15 @@
                             <span class="text-gray-400">•</span>
                             <span class="text-gray-700">{{ $flight->origin->city }} → {{ $flight->destination->city }}</span>
                         </div>
+                        <span class="text-gray-400">•</span>
                         <div class="text-sm text-gray-700">
+                            
                             <i class="fa-regular fa-calendar mr-1"></i>
                             {{ $flight->departure_date->format('M d, Y') }}
                         </div>
                     </div>
                     <div class="flex items-center gap-3 text-sm">
                         <span class="text-gray-700">
-                            <i class="fa-regular fa-users mr-1"></i>
                             {{ $flight->bookings->count() }} bookings
                         </span>
                         <span class="text-cyan-600 font-semibold">
@@ -152,7 +153,6 @@
                                                     <a href="{{ route('admin.bookings.edit', $booking->id) }}" 
                                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all duration-200"
                                                        title="Edit Booking">
-                                                        <i class="fa-regular fa-pen"></i>
                                                         Edit
                                                     </a>
                                                     
@@ -164,7 +164,6 @@
                                                                 class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200"
                                                                 title="Delete Booking"
                                                                 onclick="return confirm('Delete this booking?')">
-                                                            <i class="fa-regular fa-trash"></i>
                                                             Delete
                                                         </button>
                                                     </form>

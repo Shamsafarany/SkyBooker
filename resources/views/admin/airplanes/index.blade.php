@@ -59,6 +59,9 @@
             @forelse($airplanes as $airplane)
                 <x-cards.airplane-card 
                     :airplane="$airplane"
+                    editUrl="{{ route('admin.airplanes.edit', $airplane) }}"
+                    deleteUrl="{{ route('admin.airplanes.destroy', $airplane) }}"
+                    
                 />
             @empty
                 <div class="col-span-full text-center py-12 text-gray-500">
