@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Airport;
+use App\Http\Requests\Airport\StoreAirportRequest;
+use App\Http\Requests\Airport\UpdateAirportRequest;
 
 class AirportController extends Controller
 {
@@ -34,16 +36,9 @@ class AirportController extends Controller
         return view('admin.airports.create');
     }
 
-    public function store(Request $request) 
+    public function store(StoreAirportRequest $request) 
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|size:3|unique:airports,code',
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'terminals' => 'required|integer|min:1',
-            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'closed'])],
-        ]);
+        $validated = $request->validated();
 
         $airport = Airport::create($validated);
         
@@ -62,21 +57,9 @@ class AirportController extends Controller
         return view('admin.airports.edit', compact('airport'));
     }
 
-    public function update(Request $request, Airport $airport)
+    public function update(UpdateAirportRequest $request, Airport $airport)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => [
-            'required',
-            'string',
-            'size:3',
-            Rule::unique('airports', 'code')->ignore($airport->id), 
-            ],
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'terminals' => 'required|integer|min:1',
-            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'closed'])],
-        ]);
+        $validated = $request->validated();
         $airport->update($validated);
         return redirect()->route('admin.airports.index')
     ->with('success', 'Airport updated successfully!');

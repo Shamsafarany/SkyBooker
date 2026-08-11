@@ -9,6 +9,8 @@ use App\Models\Passenger;
 use App\Models\Airline;
 use App\Models\Airport;
 use App\Models\Airplane;
+use App\Http\Requests\Flight\StoreFlightRequest;
+use App\Http\Requests\Flight\UpdateFlightRequest;
 class FlightController extends Controller
 {
     
@@ -22,7 +24,7 @@ class FlightController extends Controller
         ])->orderBy('departure_date')->get();
         return $flights;
     }
-    public function index(){
+    public function index(Request $request){
         
         $flights = $this->getFlights();
         $airlines = Airline::with(['flights' => function ($query) {
@@ -53,24 +55,9 @@ class FlightController extends Controller
         return view('admin.flights.create', compact('airlines', 'airports', 'airplanes'));
     }
 
-    public function store(Request $request)
+    public function store(StoreFlightRequest $request)
     {
-        $validated = $request->validate([
-            'flight_number' => 'required|string|max:255|unique:flights,flight_number',
-            'airline_id' => 'required|exists:airlines,id',
-            'origin_airport_id' => 'required|exists:airports,id|different:destination_airport_id',
-            'destination_airport_id' => 'required|exists:airports,id|different:origin_airport_id',
-            'airplane_id' => 'required|exists:airplanes,id',
-            'departure_date' => 'required|date|after_or_equal:today',
-            'departure_time' => 'required',
-            'arrival_date' => 'required|date|after_or_equal:departure_date',
-            'arrival_time' => 'required',
-            'duration' => 'required|string|max:50',
-            'price' => 'required|numeric|min:0|max:99999.99',
-            'total_seats' => 'required|integer|min:1|max:1000',
-            'status' => ['required', Rule::in(['scheduled', 'open', 'closing', 'completed', 'cancelled', 'delayed', 'boarding', 'departed'])],
-            'booking_deadline' => 'nullable|date|before:departure_date',
-        ]);
+        $validated = $request->validated();
 
         $flight = Flight::create($validated);
         return redirect()->route('admin.flights.show', $flight)->with('success', 'Flight created successfully');
@@ -99,29 +86,9 @@ class FlightController extends Controller
         return view('admin.flights.edit', compact('flight', 'airlines', 'airports', 'airplanes'));
     }
 
-    public function update(Request $request, Flight $flight)
+    public function update(UpdateFlightRequest $request, Flight $flight)
     {
-        $validated = $request->validate([
-            'flight_number' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('flights', 'flight_number')->ignore($flight->id),
-            ],
-            'airline_id' => 'required|exists:airlines,id',
-            'origin_airport_id' => 'required|exists:airports,id|different:destination_airport_id',
-            'destination_airport_id' => 'required|exists:airports,id|different:origin_airport_id',
-            'airplane_id' => 'required|exists:airplanes,id',
-            'departure_date' => 'required|date',
-            'departure_time' => 'required',
-            'arrival_date' => 'required|date|after_or_equal:departure_date',
-            'arrival_time' => 'required',
-            'duration' => 'required|string|max:50',
-            'price' => 'required|numeric|min:0|max:99999.99',
-            'total_seats' => 'required|integer|min:1|max:1000',
-            'status' => ['required', Rule::in(['scheduled', 'open', 'closing', 'completed', 'cancelled', 'delayed', 'boarding', 'departed'])],
-            'booking_deadline' => 'nullable|date|before:departure_date',
-        ]);
+        $validated = $request->validated();
         $flight->update($validated);
         return redirect()
             ->route('admin.flights.show', $flight)
@@ -132,4 +99,24 @@ class FlightController extends Controller
         $flight->delete();
         return redirect()->route('admin.flights.index')->with('success', 'Flight deleted successfully!');
     }
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

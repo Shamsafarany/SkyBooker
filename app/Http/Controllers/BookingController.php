@@ -9,6 +9,8 @@ use App\Models\Booking;
 use App\Models\Passenger;
 use App\Models\Ticket;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\Booking\StoreBookingRequest;
+use App\Http\Requests\booking\UpdateBookingRequest;
 
 class BookingController extends Controller
 {
@@ -59,34 +61,9 @@ class BookingController extends Controller
         return view('admin.bookings.create', compact('users', 'flights', 'bookingReference'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBookingRequest $request)
     {
-        $validated = $request->validate([
-            // Booking Information
-            'user_id' => 'required|exists:users,id',
-            'flight_id' => 'required|exists:flights,id',
-            'booking_reference' => 'nullable|string|max:255',
-            'number_of_seats' => 'required|integer|min:1',
-            'booking_date' => 'required|date',
-            'total_price' => 'required|numeric|min:1',
-            'status' => ['required', Rule::in(['pending', 'confirmed', 'cancelled', 'completed', 'failed', 'refunded'])],
-            'notes' => 'nullable|string|max:1000',
-            'special_requests' => 'nullable|string|max:1000',
-            
-            //Passenger Validation
-            'passengers' => 'required|array|min:1',
-            'passengers.*.first_name' => 'required|string|max:255',
-            'passengers.*.last_name' => 'required|string|max:255',
-            'passengers.*.email' => 'required|email|max:255',
-            'passengers.*.phone' => 'nullable|string|max:255',
-            'passengers.*.date_of_birth' => 'nullable|date|before:today',
-            'passengers.*.nationality' => 'required|string|max:255',
-            'passengers.*.passport_number' => 'required|string|max:255',
-            'passengers.*.id_number' => 'required|string|max:255',
-            'passengers.*.seat_number' => 'nullable|string|max:10',
-            'passengers.*.meal_preference' => ['nullable', Rule::in(['standard', 'vegetarian', 'vegan', 'gluten_free', 'kosher', 'halal', 'child_meal', 'none'])],
-            'passengers.*.status' => ['nullable', Rule::in(['pending', 'confirmed', 'checked_in', 'boarded', 'cancelled'])],
-        ]);
+        $validated = $request->validated();
 
         // Get the flight
         $flight = Flight::findOrFail($validated['flight_id']);
@@ -140,60 +117,71 @@ class BookingController extends Controller
         return view('admin.bookings.edit', compact(['booking', 'users', 'flights']));
     }
 
-    public function update(Request $request, Booking $booking)
+    public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        $validated = $request->validate([
-            // Booking Information
-            'user_id' => 'required|exists:users,id',
-            'flight_id' => 'required|exists:flights,id',
-            'booking_reference' => 'nullable|string|max:255',
-            'number_of_seats' => 'required|integer|min:1',
-            'booking_date' => 'required|date',
-            'total_price' => 'required|numeric|min:1',
-            'status' => ['required', Rule::in(['pending', 'confirmed', 'cancelled', 'completed', 'failed', 'refunded'])],
-            'notes' => 'nullable|string|max:1000',
-            'special_requests' => 'nullable|string|max:1000',
-            
-            // Passenger Validation
-            'passengers' => 'sometimes|array|min:1',
-            'passengers.*.id' => 'sometimes|exists:passengers,id',
-            'passengers.*.first_name' => 'required_with:passengers|string|max:255',
-            'passengers.*.last_name' => 'required_with:passengers|string|max:255',
-            'passengers.*.email' => 'required_with:passengers|email|max:255',
-            'passengers.*.phone' => 'nullable|string|max:255',
-            'passengers.*.date_of_birth' => 'nullable|date|before:today',
-            'passengers.*.nationality' => 'nullable|string|max:255',
-            'passengers.*.passport_number' => 'nullable|string|max:255',
-            'passengers.*.id_number' => 'nullable|string|max:255',
-            'passengers.*.seat_number' => 'nullable|string|max:10',
-            'passengers.*.meal_preference' => ['nullable', Rule::in(['standard', 'vegetarian', 'vegan', 'gluten_free', 'kosher', 'halal', 'child_meal', 'none'])],
-            'passengers.*.status' => ['nullable', Rule::in(['pending', 'confirmed', 'checked_in', 'boarded', 'cancelled'])],
-        ]);
+        $validated = $request->validated();
         $oldFlight = $booking->flight;        
         $newFlight = Flight::findOrFail($validated['flight_id']);  
         $oldSeats = $booking->number_of_seats;
         $newSeats = $validated['number_of_seats'];
-        if ($booking->flight_id != $validated['flight_id'] || $oldSeats != $newSeats) {
-            
-            // If flight changed - return seats to old flight
-            if ($booking->flight_id != $validated['flight_id']) {
-                $oldFlight->increment('available_seats', $oldSeats);
-                $oldFlight->decrement('booked_seats', $oldSeats);
-            }
+        
+        if ($booking->flight_id != $validated['flight_id']) {
+        // CASE 1: Flight changed
+        // return old seats
+        $oldFlight->increment('available_seats', $oldSeats);
+        $oldFlight->decrement('booked_seats', $oldSeats);
 
-            // Check if new flight has enough seats
-            if ($newFlight->available_seats < $newSeats) {
+        // check new flight
+        if ($newFlight->available_seats < $newSeats) {
+            return back()->withErrors(['number_of_seats' => 'Not enough seats available!']);
+        }
+        if ($newFlight->departure_date < now()) {
+            return back()->withErrors(['flight_id' => 'Cannot modify a booking for a departed flight']);
+        }
+
+        // book new seats
+        $newFlight->decrement('available_seats', $newSeats);
+        $newFlight->increment('booked_seats', $newSeats);
+
+    } else {
+        // CASE 2: Same flight, seats changed
+        if ($newSeats > $oldSeats) {
+            $difference = $newSeats - $oldSeats;
+
+            if ($newFlight->available_seats < $difference) {
                 return back()->withErrors(['number_of_seats' => 'Not enough seats available!']);
             }
 
-            // Book new seats on new flight
-            $newFlight->decrement('available_seats', $newSeats);
-            $newFlight->increment('booked_seats', $newSeats);
+            $newFlight->decrement('available_seats', $difference);
+            $newFlight->increment('booked_seats', $difference);
+
+        } elseif ($newSeats < $oldSeats) {
+            $difference = $oldSeats - $newSeats;
+
+            $newFlight->increment('available_seats', $difference);
+            $newFlight->decrement('booked_seats', $difference);
         }
+    }
+
+            $booking->update($validated); 
+            if (isset($validated['passengers'])) {
+                $booking->passengers()->delete();
+                foreach ($validated['passengers'] as $passengerData) {
+                    $passenger = $booking->passengers()->create($passengerData);
+                    $this->createTicketForPassenger($passenger);
+                }
+            }
+        return redirect()->route('admin.bookings.show', $booking)
+    ->with('success', 'Booking updated successfully');
+
     }
 
     public function destroy(Booking $booking)
     {
+        $flight = $booking->flight;
+        $flight->increment('available_seats', $booking->number_of_seats);
+        $flight->decrement('booked_seats', $booking->number_of_seats);
+        $booking->passengers()->delete();
         $booking->delete();
         return redirect()->route('admin.bookings.index')->with('success', 'Booking deleted successfully!');
     }

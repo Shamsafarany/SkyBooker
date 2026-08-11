@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Airplane;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\Airplane\StoreAirplaneRequest;
+use App\Http\Requests\Airplane\UpdateAirplaneRequest;
 
 class AirplaneController extends Controller
 {
@@ -31,16 +33,9 @@ class AirplaneController extends Controller
         return view('admin.airplanes.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreAirplaneRequest $request)
     {
-        $validated = $request->validate([
-            'model' => 'required|string|max:255',
-            'manufacturer' => 'required|string|max:255',
-            'registration' => 'required|string|max:255|unique:airplanes,registration',
-            'capacity' => 'required|integer|min:1|max:1000',
-            'year' => 'required|integer|min:1950|max:' . date('Y'),
-            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'retired'])],
-        ]);
+        $validated = $request->validated();
         $airplane = Airplane::create($validated);
         return redirect()
             ->route('admin.airplanes.index')
@@ -49,7 +44,7 @@ class AirplaneController extends Controller
 
     public function show(string $id)
     {
-        //
+        
     }
 
     public function edit(Airplane $airplane)
@@ -57,21 +52,9 @@ class AirplaneController extends Controller
         return view('admin.airplanes.edit', compact('airplane'));
     }
 
-    public function update(Request $request, Airplane $airplane)
+    public function update(UpdateAirplaneRequest $request, Airplane $airplane)
     {
-        $validated = $request->validate([
-            'model' => 'required|string|max:255',
-            'manufacturer' => 'required|string|max:255',
-            'registration' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('airplanes', 'registration')->ignore($airplane->id), 
-            ],
-            'capacity' => 'required|integer|min:1|max:1000',
-            'year' => 'required|integer|min:1950|max:' . date('Y'),
-            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'retired'])],
-        ]);
+        $validated = $request->validated();
         $airplane->update($validated);
         return redirect()->route('admin.airplanes.index')->with('success', 'Airplane updated successfully!');
     }
