@@ -33,8 +33,8 @@ class Airport extends Model
     {
         return "{$this->name} ({$this->code})";
     }
-    // public function getRouteKeyName()
-    // {
-    //     return 'code';  
-    // }
+    public function getRouteKeyName()
+    {
+        return 'code';  
+    }
 }

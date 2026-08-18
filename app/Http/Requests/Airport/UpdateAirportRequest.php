@@ -34,18 +34,11 @@ class UpdateAirportRequest extends FormRequest
     public function messages(): array
     {
         return [
-
-            'name.sometimes' => 'The airport name is sometimes.',
-            'code.sometimes' => 'The airport code is sometimes.',
             'code.size' => 'The airport code must be exactly 3 characters long.',
             'code.unique' => 'This airport code is already in use.',
-            'city.sometimes' => 'The city name is sometimes.',
-            'country.sometimes' => 'The country name is sometimes.',
-            'terminals.sometimes' => 'The number of terminals is sometimes.',
             'terminals.integer' => 'The number of terminals must be a valid number.',
             'terminals.min' => 'The airport must have at least 1 terminal.',
             // Status validation messages
-            'status.sometimes' => 'The airport status is sometimes.',
             'status.in' => 'Invalid status selected. Please select from: active, inactive, maintenance, or closed.',
         ];
     }

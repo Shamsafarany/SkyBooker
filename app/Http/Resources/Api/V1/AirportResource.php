@@ -10,6 +10,7 @@ class AirportResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'type' => 'airport',
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
@@ -26,5 +27,12 @@ class AirportResource extends JsonResource
             'destination_flights_count' => $this->whenCounted('destinationFlights'),
             'flights' => FlightResource::collection($this->whenLoaded('flights')),
         ];
+    }
+    public function withResponse($request, $response)
+    {
+        $response->header('Accept', 'application/json');
+        $response->header('X-API-Version', '1.0.0');
+        $response->header('X-Resource-Type', 'Airplane');
+        $response->header('X-Response-Time', microtime(true) - LARAVEL_START);
     }
 }

@@ -3,48 +3,199 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\V1\BookingCollection;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use App\Http\Resources\Api\V1\BookingResource;
+use App\Http\Requests\Booking\StoreBookingRequest;
+use App\Http\Requests\Booking\UpdateBookingRequest;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Bookings',
+    description: 'API Endpoints for managing Bookings'
+)]
 class BookingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    #[OA\Get(
+        path: '/api/v1/bookings',
+        tags: ['Bookings'],
+        summary: 'List all bookings with pagination',
+        parameters: [
+            new OA\Parameter(
+                name: 'page',
+                description: 'Page number',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', default: 1)
+            ),
+            new OA\Parameter(
+                name: 'per_page',
+                description: 'Items per page',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', default: 15)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of bookings with pagination'
+            )
+        ]
+    )]
     public function index()
     {
-        //
+        $bookings = Booking::with(['user', 'flight', 'passengers'])->paginate(15);
+        return new BookingCollection($bookings);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    #[OA\Post(
+        path: '/api/v1/bookings',
+        tags: ['Bookings'],
+        summary: 'Create a new booking',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['user_id', 'flight_id', 'number_of_seats', 'total_price', 'status', 'passengers'],
+                properties: [
+                    new OA\Property(property: 'user_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'flight_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'number_of_seats', type: 'integer', example: 2),
+                    new OA\Property(property: 'total_price', type: 'number', format: 'float', example: 999.98),
+                    new OA\Property(property: 'status', type: 'string', example: 'pending'),
+                    new OA\Property(property: 'notes', type: 'string', example: 'Window seats preferred', nullable: true),
+                    new OA\Property(property: 'special_requests', type: 'string', example: 'Wheelchair assistance', nullable: true),
+                    new OA\Property(
+                        property: 'passengers',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(property: 'email', type: 'string', example: 'john@example.com'),
+                                new OA\Property(property: 'phone', type: 'string', example: '+1234567890', nullable: true),
+                                new OA\Property(property: 'date_of_birth', type: 'string', example: '1990-01-01', nullable: true),
+                                new OA\Property(property: 'nationality', type: 'string', example: 'USA'),
+                                new OA\Property(property: 'passport_number', type: 'string', example: 'AB123456'),
+                                new OA\Property(property: 'id_number', type: 'string', example: 'ID123456'),
+                                new OA\Property(property: 'seat_number', type: 'string', example: '12A', nullable: true),
+                                new OA\Property(property: 'meal_preference', type: 'string', example: 'vegetarian', nullable: true),
+                                new OA\Property(property: 'status', type: 'string', example: 'pending', nullable: true),
+                            ]
+                        )
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Booking created successfully'
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error'
+            )
+        ]
+    )]
+    public function store(StoreBookingRequest $request)
     {
-        //
+        return response()->json(
+            new BookingResource(Booking::create($request->validated())),
+            201
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
+    #[OA\Get(
+        path: '/api/v1/bookings/{booking}',
+        tags: ['Bookings'],
+        summary: 'Get booking by ID',
+        parameters: [
+            new OA\Parameter(
+                name: 'booking',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Booking retrieved successfully'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Booking not found'
+            )
+        ]
+    )]
     public function show(Booking $booking)
     {
-        //
+        $booking->load(['user', 'flight', 'passengers']);
+        return new BookingResource($booking);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Booking $booking)
+    #[OA\Put(
+        path: '/api/v1/bookings/{booking}',
+        tags: ['Bookings'],
+        summary: 'Update a booking',
+        parameters: [
+            new OA\Parameter(
+                name: 'booking',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'user_id', type: 'integer', example: 2),
+                    new OA\Property(property: 'flight_id', type: 'integer', example: 2),
+                    new OA\Property(property: 'number_of_seats', type: 'integer', example: 3),
+                    new OA\Property(property: 'total_price', type: 'number', format: 'float', example: 1499.97),
+                    new OA\Property(property: 'status', type: 'string', example: 'confirmed'),
+                    new OA\Property(property: 'notes', type: 'string', example: 'Updated notes'),
+                    new OA\Property(property: 'special_requests', type: 'string', example: 'Updated requests'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Booking updated successfully'
+            )
+        ]
+    )]
+    public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        //
+        $booking->update($request->validated());
+        return new BookingResource($booking);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    #[OA\Delete(
+        path: '/api/v1/bookings/{booking}',
+        tags: ['Bookings'],
+        summary: 'Delete a booking',
+        parameters: [
+            new OA\Parameter(
+                name: 'booking',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Booking deleted successfully'
+            )
+        ]
+    )]
     public function destroy(Booking $booking)
     {
-        //
+        $booking->delete();
+        return response()->json(null, 204);
     }
 }

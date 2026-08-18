@@ -12,6 +12,204 @@
         }
     ],
     "paths": {
+        "/api/v1/airplanes": {
+            "get": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "List all Airplanes",
+                "operationId": "5501a0a4318b4961b3c0c079c2573961",
+                "responses": {
+                    "200": {
+                        "description": "List of Airplanes"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Create a new Airplane",
+                "operationId": "301b3ffbd5040be116ff8bb8e51255f5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "model",
+                                    "manufacturer",
+                                    "registration",
+                                    "capacity",
+                                    "year",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Boeing 737-800"
+                                    },
+                                    "manufacturer": {
+                                        "type": "string",
+                                        "example": "Boeing"
+                                    },
+                                    "registration": {
+                                        "type": "string",
+                                        "example": "N12345"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 189
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "example": 2020
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active",
+                                        "enum": [
+                                            "active",
+                                            "inactive",
+                                            "maintenance",
+                                            "retired"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Airplane created successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/airplanes/{airplane}": {
+            "get": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Get Airplane by ID",
+                "operationId": "4d9fb7af14ebb0273f0303863a1fc3d9",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Airplane retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Update an Airplane",
+                "operationId": "60c6a3a80a3500fe06a6dceb5b9cc94e",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Boeing 737-900"
+                                    },
+                                    "manufacturer": {
+                                        "type": "string",
+                                        "example": "Boeing"
+                                    },
+                                    "registration": {
+                                        "type": "string",
+                                        "example": "N67890"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 200
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "example": 2022
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "maintenance",
+                                        "enum": [
+                                            "active",
+                                            "inactive",
+                                            "maintenance",
+                                            "retired"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Airplane updated successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Delete an Airplane",
+                "operationId": "5fffce1ea1b3aec3ad864851e64487fe",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Airplane deleted successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            }
+        },
         "/api/v1/airports": {
             "get": {
                 "tags": [
@@ -82,21 +280,22 @@
                 }
             }
         },
-        "/api/v1/airports/{airport}": {
+        "/api/v1/airports/{code}": {
             "get": {
                 "tags": [
                     "Airports"
                 ],
-                "summary": "Get airport by ID",
-                "operationId": "2b85f70df7df019515a017e8cbbec43f",
+                "summary": "Get airport by code",
+                "operationId": "b31a4f1d4a3615200d7276dcdae8b3ec",
                 "parameters": [
                     {
-                        "name": "airport",
+                        "name": "code",
                         "in": "path",
-                        "description": "Airport ID",
+                        "description": "Airport code (3 letters)",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "example": "JFK"
                         }
                     }
                 ],
@@ -114,15 +313,16 @@
                     "Airports"
                 ],
                 "summary": "Update an airport",
-                "operationId": "e27da09e18527c1477059f0e61a2970d",
+                "operationId": "da84d726176849b19365f79fcde5d0c4",
                 "parameters": [
                     {
-                        "name": "airport",
+                        "name": "code",
                         "in": "path",
-                        "description": "Airport ID",
+                        "description": "Airport code (3 letters)",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "example": "JFK"
                         }
                     }
                 ],
@@ -172,15 +372,16 @@
                     "Airports"
                 ],
                 "summary": "Delete an airport",
-                "operationId": "af685dbae261b35f1a7ad0dff3cd30cd",
+                "operationId": "b80ad43db9652b4e6878a096c449f5fe",
                 "parameters": [
                     {
-                        "name": "airport",
+                        "name": "code",
                         "in": "path",
-                        "description": "Airport ID",
+                        "description": "Airport code (3 letters)",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "example": "JFK"
                         }
                     }
                 ],
@@ -193,12 +394,678 @@
                     }
                 }
             }
+        },
+        "/api/v1/airports/search": {
+            "get": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Search airports",
+                "description": "Search airports by code, name, or city",
+                "operationId": "ea67c96237568e9b735e52b52e11b8d0",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Airport code",
+                        "schema": {
+                            "type": "string",
+                            "example": "JFK"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Airport name",
+                        "schema": {
+                            "type": "string",
+                            "example": "John F"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City name",
+                        "schema": {
+                            "type": "string",
+                            "example": "New York"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results"
+                    }
+                }
+            }
+        },
+        "/api/v1/bookings": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "List all bookings with pagination",
+                "operationId": "2f7e7260c708227e4c44de9d5b59ea36",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings with pagination"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Create a new booking",
+                "operationId": "9ec8aa3de0d1efdd0cfe72c27eac745c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "flight_id",
+                                    "number_of_seats",
+                                    "total_price",
+                                    "status",
+                                    "passengers"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "flight_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "number_of_seats": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "total_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 999.98
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "pending"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Window seats preferred",
+                                        "nullable": true
+                                    },
+                                    "special_requests": {
+                                        "type": "string",
+                                        "example": "Wheelchair assistance",
+                                        "nullable": true
+                                    },
+                                    "passengers": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "first_name": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "last_name": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "+1234567890",
+                                                    "nullable": true
+                                                },
+                                                "date_of_birth": {
+                                                    "type": "string",
+                                                    "example": "1990-01-01",
+                                                    "nullable": true
+                                                },
+                                                "nationality": {
+                                                    "type": "string",
+                                                    "example": "USA"
+                                                },
+                                                "passport_number": {
+                                                    "type": "string",
+                                                    "example": "AB123456"
+                                                },
+                                                "id_number": {
+                                                    "type": "string",
+                                                    "example": "ID123456"
+                                                },
+                                                "seat_number": {
+                                                    "type": "string",
+                                                    "example": "12A",
+                                                    "nullable": true
+                                                },
+                                                "meal_preference": {
+                                                    "type": "string",
+                                                    "example": "vegetarian",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Booking created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/bookings/{booking}": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get booking by ID",
+                "operationId": "274c0a8ca69c9b806bbca9bb67511b30",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Booking retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Booking not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Update a booking",
+                "operationId": "28ce32832486f9a9711254c32ea84dac",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "flight_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "number_of_seats": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "total_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1499.97
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "confirmed"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Updated notes"
+                                    },
+                                    "special_requests": {
+                                        "type": "string",
+                                        "example": "Updated requests"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Booking updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Delete a booking",
+                "operationId": "81743b411a3b756bb7340296d42b3317",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Booking deleted successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "List all Flights with pagination",
+                "operationId": "0181da5af73cf8fb4c93a2f04ce0fcf1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of Flights with pagination"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Create a new Flight",
+                "operationId": "f6ebc8d1e7dfd1999e0354166fe9df1d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "flight_number",
+                                    "airline_id",
+                                    "origin_airport_id",
+                                    "destination_airport_id",
+                                    "airplane_id",
+                                    "departure_date",
+                                    "departure_time",
+                                    "arrival_date",
+                                    "arrival_time",
+                                    "duration",
+                                    "price",
+                                    "total_seats",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "flight_number": {
+                                        "type": "string",
+                                        "example": "AA123"
+                                    },
+                                    "airline_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "origin_airport_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "destination_airport_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "airplane_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "departure_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-20"
+                                    },
+                                    "departure_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "10:00:00"
+                                    },
+                                    "arrival_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-20"
+                                    },
+                                    "arrival_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "14:00:00"
+                                    },
+                                    "duration": {
+                                        "type": "string",
+                                        "example": "4h 30m"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 499.99
+                                    },
+                                    "total_seats": {
+                                        "type": "integer",
+                                        "example": 189
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "scheduled",
+                                        "enum": [
+                                            "scheduled",
+                                            "open",
+                                            "closing",
+                                            "completed",
+                                            "cancelled",
+                                            "delayed",
+                                            "boarding",
+                                            "departed"
+                                        ]
+                                    },
+                                    "booking_deadline": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-19",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Flight created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights/{flight}": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Get Flight by ID",
+                "operationId": "346062cb1496c197566ba533d3f986db",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "description": "Flight ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flight retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Update a Flight",
+                "operationId": "4fb080cc593b17ca9e4c7e1a76bfbe31",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "description": "Flight ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "flight_number": {
+                                        "type": "string",
+                                        "example": "AA456"
+                                    },
+                                    "airline_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "origin_airport_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "destination_airport_id": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "airplane_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "departure_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-21"
+                                    },
+                                    "departure_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "11:00:00"
+                                    },
+                                    "arrival_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-21"
+                                    },
+                                    "arrival_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "15:00:00"
+                                    },
+                                    "duration": {
+                                        "type": "string",
+                                        "example": "4h 00m"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 599.99
+                                    },
+                                    "total_seats": {
+                                        "type": "integer",
+                                        "example": 200
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "boarding",
+                                        "enum": [
+                                            "scheduled",
+                                            "open",
+                                            "closing",
+                                            "completed",
+                                            "cancelled",
+                                            "delayed",
+                                            "boarding",
+                                            "departed"
+                                        ]
+                                    },
+                                    "booking_deadline": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-20",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Flight updated successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Delete a Flight",
+                "operationId": "d1de382152a384d9f0735ea83552b3e5",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "description": "Flight ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flight deleted successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights/{flight}/bookings": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Get all bookings for a flight",
+                "operationId": "d3d9495ffc389cb86e1450f5431168df",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings for the flight"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            }
         }
     },
     "tags": [
         {
+            "name": "Airplanes",
+            "description": "API Endpoints for managing Airplanes"
+        },
+        {
             "name": "Airports",
             "description": "API Endpoints for managing airports"
+        },
+        {
+            "name": "Bookings",
+            "description": "API Endpoints for managing Bookings"
+        },
+        {
+            "name": "Flights",
+            "description": "API Endpoints for managing Flights"
         }
     ]
 }

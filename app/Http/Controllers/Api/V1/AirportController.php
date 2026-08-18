@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\AirportResource;
 use App\Models\Airport;
+use App\Models\Flight;
+use Illuminate\Http\Request;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
+use App\Http\Resources\Api\V1\FlightCollection;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -29,7 +32,6 @@ class AirportController extends Controller
     public function index()
     {
         $airports = Airport::all();
-
         return AirportResource::collection($airports);
     }
 
@@ -100,16 +102,16 @@ class AirportController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/v1/airports/{airport}',
+        path: '/api/v1/airports/{code}',
         tags: ['Airports'],
-        summary: 'Get airport by ID',
+        summary: 'Get airport by code',
         parameters: [
             new OA\Parameter(
-                name: 'airport',
-                description: 'Airport ID',
+                name: 'code',
+                description: 'Airport code (3 letters)',
                 in: 'path',
                 required: true,
-                schema: new OA\Schema(type: 'integer')
+                schema: new OA\Schema(type: 'string', example: 'JFK')
             )
         ],
         responses: [
@@ -129,16 +131,16 @@ class AirportController extends Controller
     }
 
     #[OA\Put(
-        path: '/api/v1/airports/{airport}',
+        path: '/api/v1/airports/{code}',
         tags: ['Airports'],
         summary: 'Update an airport',
         parameters: [
             new OA\Parameter(
-                name: 'airport',
-                description: 'Airport ID',
+                name: 'code',
+                description: 'Airport code (3 letters)',
                 in: 'path',
                 required: true,
-                schema: new OA\Schema(type: 'integer')
+                schema: new OA\Schema(type: 'string', example: 'JFK')
             )
         ],
         requestBody: new OA\RequestBody(
@@ -194,16 +196,16 @@ class AirportController extends Controller
     }
 
     #[OA\Delete(
-        path: '/api/v1/airports/{airport}',
+        path: '/api/v1/airports/{code}',
         tags: ['Airports'],
         summary: 'Delete an airport',
         parameters: [
             new OA\Parameter(
-                name: 'airport',
-                description: 'Airport ID',
+                name: 'code',
+                description: 'Airport code (3 letters)',
                 in: 'path',
                 required: true,
-                schema: new OA\Schema(type: 'integer')
+                schema: new OA\Schema(type: 'string', example: 'JFK')
             )
         ],
         responses: [
@@ -220,7 +222,95 @@ class AirportController extends Controller
     public function destroy(Airport $airport)
     {
         $airport->delete();
-
         return response()->json(null, 204);
+    }
+
+    /**
+     * Search airports by code, name, or city
+     */
+    #[OA\Get(
+        path: '/api/v1/airports/search',
+        tags: ['Airports'],
+        summary: 'Search airports',
+        parameters: [
+            new OA\Parameter(
+                name: 'code',
+                description: 'Airport code',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', example: 'JFK')
+            ),
+            new OA\Parameter(
+                name: 'name',
+                description: 'Airport name',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', example: 'John F')
+            ),
+            new OA\Parameter(
+                name: 'city',
+                description: 'City name',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', example: 'New York')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Search results'
+            )
+        ]
+    )]
+    public function search(Request $request)
+    {
+        $query = Airport::query();
+        
+        if ($request->has('code')) {
+            $query->where('code', 'LIKE', '%' . $request->code . '%');
+        }
+        
+        if ($request->has('name')) {
+            $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+        
+        if ($request->has('city')) {
+            $query->where('city', 'LIKE', '%' . $request->city . '%');
+        }
+        
+        $airports = $query->get();
+        
+        return AirportResource::collection($airports);
+    }
+    #[OA\Get(
+        path: '/api/v1/airports/{code}/flights',
+        tags: ['Airports'],
+        summary: 'Get all flights for an airport',
+        parameters: [
+            new OA\Parameter(
+                name: 'code',
+                description: 'Airport code (3 letters)',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: 'JFK')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of flights for the airport'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Airport not found'
+            )
+        ]
+    )]
+    public function flights($code)
+    {
+    $airport = Airport::where('code', $code)->firstOrFail();
+    $flights = Flight::where('origin_airport_id', $airport->id)
+        ->orWhere('destination_airport_id', $airport->id)
+        ->with(['airline', 'origin', 'destination', 'airplane'])
+        ->paginate(15); 
+    
+    return new FlightCollection($flights);
     }
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\TicketController;
 
 
-Route::prefix('v1')->name('api.v1')->group(function() {
+Route::prefix('v1')->name('api.v1.')->group(function() {
     Route::apiResource('airports', AirportController::class);
     Route::apiResource('airplanes', AirplaneController::class);
     Route::apiResource('airlines', AirlineController::class);
@@ -18,4 +18,7 @@ Route::prefix('v1')->name('api.v1')->group(function() {
     Route::apiResource('bookings', BookingController::class);
     Route::apiResource('passengers', PassengerController::class);
     Route::apiResource('tickets', TicketController::class);
+    Route::get('/airports/{airport}/flights', [AirportController::class, 'flights'])
+        ->name('airports.flights');
+    Route::get('flights/{flight}/bookings', [FlightController::class, 'bookings'])->name('flights.bookings');
 });
