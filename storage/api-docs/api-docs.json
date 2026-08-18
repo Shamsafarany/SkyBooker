@@ -1,0 +1,204 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SkyBooker API",
+        "description": "Flight Booking System API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/airports": {
+            "get": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "List all airports",
+                "operationId": "79fcfcd17e9ea160f2d511c059520196",
+                "responses": {
+                    "200": {
+                        "description": "List of airports"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Create a new airport",
+                "operationId": "17319851f20fb94dcf11209c2f34741e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "name",
+                                    "city",
+                                    "country",
+                                    "terminals",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "AMS"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Amsterdam Schiphol"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Amsterdam"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Netherlands"
+                                    },
+                                    "terminals": {
+                                        "type": "integer",
+                                        "example": 7
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Airport created successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/airports/{airport}": {
+            "get": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Get airport by ID",
+                "operationId": "2b85f70df7df019515a017e8cbbec43f",
+                "parameters": [
+                    {
+                        "name": "airport",
+                        "in": "path",
+                        "description": "Airport ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Airport retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Airport not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Update an airport",
+                "operationId": "e27da09e18527c1477059f0e61a2970d",
+                "parameters": [
+                    {
+                        "name": "airport",
+                        "in": "path",
+                        "description": "Airport ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Name"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "New City"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "New Country"
+                                    },
+                                    "terminals": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "maintenance"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Airport updated successfully"
+                    },
+                    "404": {
+                        "description": "Airport not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Delete an airport",
+                "operationId": "af685dbae261b35f1a7ad0dff3cd30cd",
+                "parameters": [
+                    {
+                        "name": "airport",
+                        "in": "path",
+                        "description": "Airport ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Airport deleted successfully"
+                    },
+                    "404": {
+                        "description": "Airport not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Airports",
+            "description": "API Endpoints for managing airports"
+        }
+    ]
+}

@@ -10,24 +10,24 @@ class UpdateAirportRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     public function rules(): array
     {
         $airport = $this->route('airport');
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'code' => [
-            'required',
+            'sometimes',
             'string',
             'size:3',
             Rule::unique('airports', 'code')->ignore($airport->id), 
             ],
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'terminals' => 'required|integer|min:1',
-            'status' => ['required', Rule::in(['active', 'inactive', 'maintenance', 'closed'])],
+            'city' => 'sometimes|string|max:255',
+            'country' => 'sometimes|string|max:255',
+            'terminals' => 'sometimes|integer|min:1',
+            'status' => ['sometimes', Rule::in(['active', 'inactive', 'maintenance', 'closed'])],
         ];
     }
 
@@ -35,17 +35,17 @@ class UpdateAirportRequest extends FormRequest
     {
         return [
 
-            'name.required' => 'The airport name is required.',
-            'code.required' => 'The airport code is required.',
+            'name.sometimes' => 'The airport name is sometimes.',
+            'code.sometimes' => 'The airport code is sometimes.',
             'code.size' => 'The airport code must be exactly 3 characters long.',
             'code.unique' => 'This airport code is already in use.',
-            'city.required' => 'The city name is required.',
-            'country.required' => 'The country name is required.',
-            'terminals.required' => 'The number of terminals is required.',
+            'city.sometimes' => 'The city name is sometimes.',
+            'country.sometimes' => 'The country name is sometimes.',
+            'terminals.sometimes' => 'The number of terminals is sometimes.',
             'terminals.integer' => 'The number of terminals must be a valid number.',
             'terminals.min' => 'The airport must have at least 1 terminal.',
             // Status validation messages
-            'status.required' => 'The airport status is required.',
+            'status.sometimes' => 'The airport status is sometimes.',
             'status.in' => 'Invalid status selected. Please select from: active, inactive, maintenance, or closed.',
         ];
     }
