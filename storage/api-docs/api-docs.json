@@ -439,6 +439,35 @@
                 }
             }
         },
+        "/api/v1/airports/{code}/flights": {
+            "get": {
+                "tags": [
+                    "Airports"
+                ],
+                "summary": "Get all flights for an airport",
+                "operationId": "abd5ba6a911eb7c2a5721ada80b5098b",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Airport code (3 letters)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "JFK"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of flights for the airport"
+                    },
+                    "404": {
+                        "description": "Airport not found"
+                    }
+                }
+            }
+        },
         "/api/v1/bookings": {
             "get": {
                 "tags": [
@@ -704,6 +733,9 @@
                 "responses": {
                     "200": {
                         "description": "Booking deleted successfully"
+                    },
+                    "404": {
+                        "description": "Booking not found"
                     }
                 }
             }
@@ -1048,6 +1080,72 @@
                     }
                 }
             }
+        },
+        "/api/v1/passengers": {
+            "get": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "List all passengers",
+                "operationId": "860b66ecb93ed7ddadeccca6f0e2b1b2",
+                "responses": {
+                    "200": {
+                        "description": "List of passengers"
+                    }
+                }
+            }
+        },
+        "/api/v1/passengers/{passenger}": {
+            "get": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Get passenger by ID",
+                "operationId": "e4509c973e2c1687cb8d4e20b7b5d5fc",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Passenger retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Passenger not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Delete a passenger",
+                "operationId": "19a6e7253dfe230922b551ed46e4f3b7",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Passenger deleted successfully"
+                    },
+                    "404": {
+                        "description": "Passenger not found"
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -1066,6 +1164,10 @@
         {
             "name": "Flights",
             "description": "API Endpoints for managing Flights"
+        },
+        {
+            "name": "Passengers",
+            "description": "API Endpoints for managing Passengers"
         }
     ]
 }

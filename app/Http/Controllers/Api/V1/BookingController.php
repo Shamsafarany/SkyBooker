@@ -190,6 +190,10 @@ class BookingController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Booking deleted successfully'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Booking not found'
             )
         ]
     )]
