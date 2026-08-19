@@ -64,11 +64,7 @@ class BookingController extends Controller
     public function store(StoreBookingRequest $request)
     {
         $validated = $request->validated();
-
-        // Get the flight
         $flight = Flight::findOrFail($validated['flight_id']);
-
-        // Check seat availability
         if ($flight->available_seats < $validated['number_of_seats']) {
             return back()
                 ->with('error', 'Not enough seats available! Only ' . $flight->available_seats . ' seats left.')

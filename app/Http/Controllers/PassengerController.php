@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Passenger;
+use App\Models\Booking;
+use App\Http\Requests\Passenger\StorePassengerRequest;
+use App\Http\Requests\Passenger\UpdatePassengerRequest;
 
 class PassengerController extends Controller
 {
@@ -49,31 +52,41 @@ class PassengerController extends Controller
 
     public function create()
     {
-        //
+        $bookings = Booking::with(['user', 'flight'])->get();
+        return view('admin.passengers.create', compact('bookings'));
     }
-    public function store(Request $request)
+    public function store(StorePassengerRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $passenger = Passenger::create($validated);
+        $booking = $passenger->booking_id();
+        $booking->increment('number_of_seats', 1);
+        return redirect()->route('admin.bookings.show', $booking->id)
+            ->with('success', 'Passenger added successfully!');
     }
-    public function show(string $id)
+    public function show(Passenger $passenger)
     {
-        //
+        $passenger->load(['booking', 'ticket']);
+        return redirect()->route('admin.bookings.show', $passenger->booking_id);
     }
 
-    public function edit(string $id)
+    public function edit(Passenger $passenger)
     {
-        //
+        $bookings = Booking::with(['user', 'flight'])->get();
+        return view('admin.passengers.edit', compact('passenger', 'bookings'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdatePassengerRequest $request, Passenger $passenger)
     {
-        //
+        $validated = $request->validated();
+        $passenger->update($validated);
+        return redirect()->route('admin.bookings.show', $passenger->booking_id)->with('success', 'Passenger "' . $passenger->id . '" updated successfully!');
     }
     public function destroy(Passenger $passenger)
     {
         $booking = $passenger->booking_id;
         $booking->decrement('number_of_seats', 1);
         $passenger->delete();
-        return redirect()->back()->with('success', 'Passenger removed successfully!');
+        return redirect()->route('admin.bookings.show', $booking->id)->with('success', 'Passenger removed successfully!');
     }
 }

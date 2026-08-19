@@ -31,7 +31,7 @@ class AirportController extends Controller
     )]
     public function index()
     {
-        $airports = Airport::all();
+        $airports = Airport::with(['departingFlights', 'arrivingFlights'])->get();
         return AirportResource::collection($airports);
     }
 
@@ -94,7 +94,7 @@ class AirportController extends Controller
     public function store(StoreAirportRequest $request)
     {
         $airport = Airport::create($request->validated());
-
+        $airport->load(['departingFlights', 'arrivingFlights']);
         return response()->json(
             new AirportResource($airport),
             201
@@ -127,6 +127,7 @@ class AirportController extends Controller
     )]
     public function show(Airport $airport)
     {
+        $airport->load(['departingFlights', 'arrivingFlights']);
         return new AirportResource($airport);
     }
 
@@ -191,7 +192,7 @@ class AirportController extends Controller
         Airport $airport
     ) {
         $airport->update($request->validated());
-
+        $airport->load(['departingFlights', 'arrivingFlights']);
         return new AirportResource($airport);
     }
 
@@ -303,7 +304,7 @@ class AirportController extends Controller
             )
         ]
     )]
-    public function flights($code)
+    public function flights(String $code)
     {
     $airport = Airport::where('code', $code)->firstOrFail();
     $flights = Flight::where('origin_airport_id', $airport->id)

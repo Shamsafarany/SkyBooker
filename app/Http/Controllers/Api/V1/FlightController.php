@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\FlightCollection;
 use App\Http\Resources\Api\V1\BookingCollection;
+use App\Http\Resources\Api\V1\TicketCollection;
 use App\Models\Flight;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use App\Http\Resources\Api\V1\FlightResource;
 use App\Http\Requests\Flight\StoreFlightRequest;
@@ -389,5 +391,38 @@ class FlightController extends Controller
             ->paginate(15);
         
         return new BookingCollection($bookings);
+    }
+
+    #[OA\Get(
+    path: '/api/v1/flights/{flight}/tickets',
+    tags: ['Flights'],
+    summary: 'Get all tickets for a flight',
+    parameters: [
+        new OA\Parameter(
+            name: 'flight',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer')
+        )
+    ],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'List of tickets for the flight'
+        ),
+        new OA\Response(
+            response: 404,
+            description: 'Flight not found'
+        )
+    ]
+)]
+    public function tickets(Flight $flight)
+    {
+        // Get all tickets through bookings → passengers
+        $tickets = Ticket::whereHas('passenger.booking', function ($query) use ($flight) {
+            $query->where('flight_id', $flight->id);
+        })->with(['passenger'])->paginate(15);
+        
+        return new TicketCollection($tickets);
     }
 }

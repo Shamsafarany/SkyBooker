@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\BookingCollection;
+use App\Http\Resources\Api\V1\PassengerCollection;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Resources\Api\V1\BookingResource;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\Booking\UpdateBookingRequest;
+use App\Http\Resources\Api\V1\TicketCollection;
+use App\Models\Ticket;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -100,8 +103,11 @@ class BookingController extends Controller
     )]
     public function store(StoreBookingRequest $request)
     {
+        $booking = Booking::create($request->validated());
+        $booking->load(['user', 'flight', 'passengers.ticket']);
+        
         return response()->json(
-            new BookingResource(Booking::create($request->validated())),
+            new BookingResource($booking),
             201
         );
     }
@@ -171,6 +177,7 @@ class BookingController extends Controller
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
         $booking->update($request->validated());
+        $booking->load(['user', 'flight']);
         return new BookingResource($booking);
     }
 
@@ -202,4 +209,66 @@ class BookingController extends Controller
         $booking->delete();
         return response()->json(null, 204);
     }
-}
+        #[OA\Get(
+        path: '/api/v1/bookings/{booking}/passengers',
+        tags: ['Bookings'],
+        summary: 'Get all passengers for a booking',
+        parameters: [
+            new OA\Parameter(
+                name: 'booking',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of passengers for the booking'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Booking not found'
+            )
+        ]
+    )]
+    public function passengers(Booking $booking)
+    {
+        $passengers = $booking->passengers()
+            ->with(['ticket'])
+            ->paginate(15);
+        
+        return new PassengerCollection($passengers);
+    }
+    #[OA\Get(
+    path: '/api/v1/bookings/{booking}/tickets',
+    tags: ['Bookings'],
+    summary: 'Get all tickets for a booking',
+    parameters: [
+        new OA\Parameter(
+            name: 'booking',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer')
+        )
+    ],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'List of tickets for the booking'
+        ),
+        new OA\Response(
+            response: 404,
+            description: 'Booking not found'
+        )
+    ]
+)]
+    public function tickets(Booking $booking)
+    {
+        $tickets = Ticket::whereHas('passenger', function ($query) use ($booking) {
+            $query->where('booking_id', $booking->id);
+        })->with(['passenger'])->paginate(15);
+        
+        return new TicketCollection($tickets);
+    }
+    }
