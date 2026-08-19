@@ -129,10 +129,11 @@
                 <i class="fa-solid fa-users text-cyan-600"></i>
                 Passengers
             </h2>
-            <button class="text-sm text-cyan-50  bg-cyan-600 font-medium transition px-4 py-1.5 rounded-lg border hover:bg-cyan-500">
-                <i class="fa-regular fa-plus mr-1"></i>
-                Add Passenger to Booking
-            </button>
+            <a href="{{ route('admin.passengers.create', ['booking_id' => $booking->id]) }}" 
+            class="text-sm text-cyan-600 hover:text-cyan-800 font-medium transition inline-flex items-center gap-1">
+            <i class="fa-regular fa-plus mr-1"></i>
+            Add Passenger to Booking
+            </a>
         </div>
         
         @if(count($booking->passengers)>0)
@@ -182,16 +183,18 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-3 text-right flex items-center justify-end gap-2">
-                                    <a href="#" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                                    Edit
-                                </a>
-        
-                                {{-- Delete Button --}}
-                                <button onclick="confirmDelete({{ $passenger->id }})" 
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                                    <i class="fa-regular fa-trash text-xs"></i>
-                                    Delete
-                                </button>
+                                   <a href="{{ route('admin.passengers.edit', $passenger) }}" class="text-cyan-600 hover:text-cyan-800 text-sm">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('admin.passengers.destroy', $passenger) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="text-rose-500 hover:text-rose-700 text-sm"
+                                                    onclick="return confirm('Remove this passenger?')">
+                                                Delete
+                                            </button>
+                                        </form>
                                 </td>
                             </tr>    
                     </tbody>

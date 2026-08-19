@@ -280,10 +280,11 @@
                     ({{ $booking->passengers->count() }} passengers)
                 </span>
             </h2>
-            <button class="text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
-                <i class="fa-regular fa-plus mr-1"></i>
-                Add Passenger
-            </button>
+            <a href="{{ route('admin.passengers.create', ['booking_id' => $booking->id]) }}" 
+            class="text-sm text-cyan-600 hover:text-cyan-800 font-medium transition inline-flex items-center gap-1">
+            <i class="fa-regular fa-plus mr-1"></i>
+            Add Passenger
+            </a>
         </div>
 
         @if($booking->passengers->isNotEmpty())
@@ -313,7 +314,7 @@
                                 </td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->email ?? 'N/A' }}</td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->phone ?? 'N/A' }}</td>
-                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger->ticket->seat_number ?? 'N/A' }}</td>
+                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger->ticket->seat_number ?$passenger->ticket->seat_number : 'N/A' }}</td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->nationality ?? 'N/A' }}</td>
                                 <td class="px-6 py-3">
                                         {{ $passenger->booking->status }}
@@ -321,14 +322,19 @@
                                 </td>
                                 <td class="px-6 py-3 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.tickets.show', $passenger) }}" class="text-blue-600 hover:text-blue-800 text-sm">
+                                        @if($passenger->ticket)
+                                        <a href="{{ route('admin.tickets.show', $passenger->ticket) }}" 
+                                        class="text-cyan-600 hover:text-cyan-600 text-sm mr-2 transition inline-flex items-center gap-1">
                                             <i class="fa-regular fa-eye"></i>
                                             View Ticket
                                         </a>
-                                        <a href="#" class="text-cyan-600 hover:text-cyan-800 text-sm">
+                                    @else
+                                        <span class="text-gray-400 text-sm">No ticket available</span>
+                                    @endif
+                                        <a href="{{ route('admin.passengers.edit', $passenger) }}" class="text-cyan-600 hover:text-cyan-800 text-sm">
                                             Edit
                                         </a>
-                                        <form action="#" method="POST" class="inline">
+                                        <form action="{{ route('admin.passengers.destroy', $passenger) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 

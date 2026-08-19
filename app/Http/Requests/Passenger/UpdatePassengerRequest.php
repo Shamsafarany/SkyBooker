@@ -37,7 +37,7 @@ class UpdatePassengerRequest extends FormRequest
             'phone' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date|before:today',
             'seat_number' => 'nullable|string|max:10',
-            'meal_preference' => ['nullable', Rule::in(['standard', 'vegetarian', 'vegan', 'gluten_free', 'kosher', 'halal', 'child_meal', 'none'])],
+            'meal_preference' => ['nullable', Rule::in(['standard','full_meal','sandwitch','child_meal','none'])],
             'status' => ['nullable', Rule::in(['pending', 'confirmed', 'checked_in', 'boarded', 'cancelled'])],
         ];
     }

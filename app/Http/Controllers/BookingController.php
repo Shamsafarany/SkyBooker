@@ -100,6 +100,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
+        $booking->load(['user', 'flight', 'passengers.ticket']);
         return view('admin.bookings.show', compact('booking'));
     }
 
@@ -177,6 +178,11 @@ class BookingController extends Controller
         $flight = $booking->flight;
         $flight->increment('available_seats', $booking->number_of_seats);
         $flight->decrement('booked_seats', $booking->number_of_seats);
+        foreach ($booking->passengers as $passenger) {
+            if ($passenger->ticket) {
+                $passenger->ticket->delete();
+            }
+        }
         $booking->passengers()->delete();
         $booking->delete();
         return redirect()->route('admin.bookings.index')->with('success', 'Booking deleted successfully!');

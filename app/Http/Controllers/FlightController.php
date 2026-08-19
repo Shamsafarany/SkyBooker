@@ -96,6 +96,16 @@ class FlightController extends Controller
     }
     public function destroy(Flight $flight)
     {
+        $flight->load(['bookings.passengers.ticket']);
+        foreach ($flight->bookings as $booking) {
+            foreach ($booking->passengers as $passenger) {
+                if ($passenger->ticket) {
+                    $passenger->ticket->delete();
+                }
+                $passenger->delete();
+            }
+            $booking->delete();
+        }
         $flight->delete();
         return redirect()->route('admin.flights.index')->with('success', 'Flight deleted successfully!');
     }

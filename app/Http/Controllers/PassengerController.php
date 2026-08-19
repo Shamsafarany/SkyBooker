@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Passenger;
 use App\Models\Booking;
+use App\Models\Ticket;
 use App\Http\Requests\Passenger\StorePassengerRequest;
 use App\Http\Requests\Passenger\UpdatePassengerRequest;
 
@@ -50,17 +51,24 @@ class PassengerController extends Controller
         return view('admin.passengers.index', compact('passengers', 'stats'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $bookings = Booking::with(['user', 'flight'])->get();
-        return view('admin.passengers.create', compact('bookings'));
+        $bookingId = $request->query('booking_id');
+        $booking = Booking::with(['flight', 'user'])->findOrFail($bookingId);
+        return view('admin.passengers.create', compact('booking'));
     }
     public function store(StorePassengerRequest $request)
     {
         $validated = $request->validated();
         $passenger = Passenger::create($validated);
-        $booking = $passenger->booking_id();
+        $booking = $passenger->booking;
         $booking->increment('number_of_seats', 1);
+        $flight = $booking->flight;
+        $newTotal = $booking->passengers()->count() * $flight->price;
+        $booking->update(['total_price' => $newTotal]);
+        $flight->decrement('available_seats');
+        $flight->increment('booked_seats');
+        $ticket = $this->createTicketForPassenger($passenger, $validated['seat_number'] ?? null);
         return redirect()->route('admin.bookings.show', $booking->id)
             ->with('success', 'Passenger added successfully!');
     }
@@ -80,13 +88,56 @@ class PassengerController extends Controller
     {
         $validated = $request->validated();
         $passenger->update($validated);
+        if ($passenger->ticket) {
+            $passenger->ticket->update([
+                'first_name' => $validated['first_name'] ?? $passenger->first_name,
+                'last_name' => $validated['last_name'] ?? $passenger->last_name,
+                'email' => $validated['email'] ?? $passenger->email,
+                'phone' => $validated['phone'] ?? $passenger->phone,
+                'seat_number' => $validated['seat_number'] ?? $passenger->ticket->seat_number,
+                'meal_preference' => $validated['meal_preference'] ?? $passenger->ticket->meal_preference,
+        ]);
+    }
         return redirect()->route('admin.bookings.show', $passenger->booking_id)->with('success', 'Passenger "' . $passenger->id . '" updated successfully!');
     }
     public function destroy(Passenger $passenger)
     {
-        $booking = $passenger->booking_id;
+        $booking = $passenger->booking;
+        $flight = $booking->flight;
+        if ($passenger->ticket) {
+        $passenger->ticket->delete();
+    }
         $booking->decrement('number_of_seats', 1);
         $passenger->delete();
+        $booking->update([
+        'total_price' => $booking->passengers()->count() * $flight->price
+        ]);
+        $flight->increment('available_seats');
+        $flight->decrement('booked_seats');
+        if ($booking->passengers()->count() === 0) {
+        $booking->update([
+            'status' => 'cancelled',
+            'number_of_seats' => 0,
+            'total_price' => 0,
+        ]);
+        }
         return redirect()->route('admin.bookings.show', $booking->id)->with('success', 'Passenger removed successfully!');
+    }
+    protected function createTicketForPassenger(Passenger $passenger, $seatNumber = null)
+    {
+        $ticket = Ticket::create([
+            'passenger_id' => $passenger->id,
+            'ticket_number' => Ticket::generateTicketNumber(),
+            'first_name' => $passenger->first_name,
+            'last_name' => $passenger->last_name,
+            'email' => $passenger->email,
+            'phone' => $passenger->phone,
+            'seat_number' => $seatNumber,
+            'class' => 'economy', // Default class
+            'meal_preference' => $passenger->meal_preference ?? 'standard',
+            'status' => 'issued',
+            'issued_at' => now(),
+        ]);
+        return $ticket;
     }
 }

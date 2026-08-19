@@ -34,10 +34,6 @@ class Passenger extends Model
     {
         return $this->hasOne(Ticket::class);
     }
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'email', 'email');
-    }
 
 
     public function getFullName(): string

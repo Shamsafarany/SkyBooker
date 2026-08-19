@@ -216,11 +216,8 @@
                                         label="Meal Preference"
                                         :options="[
                                             'standard' => 'Standard',
-                                            'vegetarian' => 'Vegetarian',
-                                            'vegan' => 'Vegan',
-                                            'gluten_free' => 'Gluten Free',
-                                            'kosher' => 'Kosher',
-                                            'halal' => 'Halal',
+                                            'full_meal' => 'Full Meal',
+                                            'sandwitch' => 'Sandwich',
                                             'child_meal' => 'Child Meal',
                                             'none' => 'No Meal',
                                         ]"

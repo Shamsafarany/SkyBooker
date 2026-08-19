@@ -245,10 +245,6 @@
                     (<span class="text-cyan-700 font-bold">{{ $flight->booked_seats}}</span>/{{ $flight->total_seats }} seats filled)
                 </span>
             </h2>
-            <button class="text-sm text-cyan-50  bg-cyan-600 font-medium transition px-4 py-1.5 rounded-lg border hover:bg-cyan-500">
-                <i class="fa-regular fa-plus mr-1"></i>
-                Add Passenger
-            </button>
         </div>
         
         @if(isset($passengers) && count($passengers)>0)
@@ -261,6 +257,7 @@
                             <th class="px-6 py-3 text-left text-xs font-semibold text-cyan-700 uppercase tracking-wider">Seat</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-cyan-700 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-right text-xs font-semibold text-cyan-700 uppercase tracking-wider">Actions</th>
+                            <th class="tracking-wider"></th>
                             <th class="tracking-wider"></th>
                         </tr>
                     </thead>
@@ -295,18 +292,6 @@
                                     @else
                                         <span class="text-gray-400 text-sm">No ticket available</span>
                                     @endif
-                                </td>
-                                <td class="px-6 py-3 text-right flex items-center justify-end gap-2">
-                                    <a href="#" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                                    Edit
-                                </a>
-        
-                                {{-- Delete Button --}}
-                                <button onclick="confirmDeletePassenger({{ $passenger->id }})" 
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200 hover:shadow-sm">
-                                    <i class="fa-regular fa-trash text-xs"></i>
-                                    Delete
-                                </button>
                                 </td>
                             </tr>    
                     </tbody>
