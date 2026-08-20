@@ -21,7 +21,7 @@
 
                 @if($errors->any())
                     <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
-                        <i class="fa-regular fa-circle-exclamation"></i>
+                        <i class="fa fa-circle-exclamation"></i>
                         {{ $errors->first() }}
                     </div>
                 @endif
@@ -95,6 +95,7 @@
                     {{-- Submit Button --}}
                     <button type="submit" 
                             class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa fa-user-plus"></i>
                         Sign In
                     </button>
                 </form>
