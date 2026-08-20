@@ -21,28 +21,20 @@ return new class extends Migration
             $table->index('booking_reference');
             $table->index('user_id');
             $table->index('flight_id');
-            $table->index('status');
         });
         Schema::table('passengers', function (Blueprint $table) {
             $table->index('booking_id');
-            $table->index('passport_number');
-            $table->index('status');
         });
         Schema::table('tickets', function (Blueprint $table) {
             $table->index('ticket_number');
             $table->index('passenger_id');
-            $table->index('status');
-            $table->index('seat_number');
         });
         Schema::table('airlines', function (Blueprint $table) {
             $table->index('code');
-            $table->index('name');
         });
 
         Schema::table('airports', function (Blueprint $table) {
             $table->index('code');
-            $table->index('city');
-            $table->index('country');
         });
     }
 
@@ -61,31 +53,23 @@ return new class extends Migration
             $table->dropIndex(['booking_reference']);
             $table->dropIndex(['user_id']);
             $table->dropIndex(['flight_id']);
-            $table->dropIndex(['status']);
         });
 
         Schema::table('passengers', function (Blueprint $table) {
             $table->dropIndex(['booking_id']);
-            $table->dropIndex(['passport_number']);
-            $table->dropIndex(['status']);
         });
 
         Schema::table('tickets', function (Blueprint $table) {
             $table->dropIndex(['ticket_number']);
             $table->dropIndex(['passenger_id']);
-            $table->dropIndex(['status']);
-            $table->dropIndex(['seat_number']);
         });
 
         Schema::table('airlines', function (Blueprint $table) {
             $table->dropIndex(['code']);
-            $table->dropIndex(['name']);
         });
 
         Schema::table('airports', function (Blueprint $table) {
             $table->dropIndex(['code']);
-            $table->dropIndex(['city']);
-            $table->dropIndex(['country']);
         });
     }
 };

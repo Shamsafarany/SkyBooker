@@ -1,7 +1,7 @@
 <x-layout title="Dashboard">
     <section class="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
         <h1 class="text-4xl font-extrabold text-cyan-800 mb-4">
-            Welcome, Admin
+            Welcome, {{ auth()->user()->getFullNameAttribute()}}!
         </h1>
 
         <p class="text-gray-600 text-lg max-w-2xl">
