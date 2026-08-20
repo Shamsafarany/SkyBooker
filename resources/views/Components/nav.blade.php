@@ -9,12 +9,12 @@
             <div class="flex gap-8 text-sm font-medium flex-wrap">
                 @php
                     $adminLinks = [
+                    ['label' => 'Login', 'route' => 'login'],
                     ['label' => 'Dashboard', 'route' => 'admin.dashboard'],
                     ['label' => 'Airports', 'route' => 'admin.airports.index'],
                     ['label' => 'Airplanes', 'route' => 'admin.airplanes.index'],
                     ['label' => 'Flights', 'route' => 'admin.flights.index'],
                     ['label' => 'Bookings', 'route' => 'admin.bookings.index'],
-                    //['label' => 'Logout', 'route' => 'logout'],
                 ];
                 @endphp
                 
@@ -26,6 +26,14 @@
                     {{ $link['label'] }}
                 </x-nav-link>
             @endforeach
+            <x-nav-link >
+            <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="font-bold text-cyan-700">
+                        LOGOUT
+                    </button>
+                </form>
+            </x-nav-link>
             </div>
         </div>
 </nav>

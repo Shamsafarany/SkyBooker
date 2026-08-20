@@ -91,6 +91,23 @@
                         icon="fa-calendar"
                         readonly
                     />
+                    <div class="md:col-span-2">
+                    <x-form.textarea 
+                        name="notes"
+                        label="Notes"
+                        placeholder="Any additional notes about this booking..."
+                        rows="3"
+                    />
+                </div>
+
+                <div class="md:col-span-2">
+                    <x-form.textarea 
+                        name="special_requests"
+                        label="Special Requests"
+                        placeholder="e.g. Wheelchair assistance, meal preferences, etc."
+                        rows="3"
+                    />
+                </div>
 
                     {{-- Status --}}
                     <x-form.select 

@@ -99,7 +99,6 @@
                 required
             />
 
-            {{-- Notes
             <div class="md:col-span-2">
                 <x-form.textarea 
                     name="notes"
@@ -110,8 +109,7 @@
                 />
             </div>
 
-            {{-- Special Requests --}}
-            {{-- <div class="md:col-span-2">
+            <div class="md:col-span-2">
                 <x-form.textarea 
                     name="special_requests"
                     label="Special Requests"
@@ -119,7 +117,7 @@
                     placeholder="e.g. Wheelchair assistance, meal preferences, etc."
                     rows="3"
                 />
-            </div> --}} 
+            </div>
         </div>
     </x-form.form-create>
         {{-- Passenger List --}}
