@@ -1,39 +1,54 @@
 <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-plane-departure text-cyan-800 text-2xl"></i>
-                <span class="text-2xl font-extrabold tracking-tight text-cyan-800">
-                    SkyBooker
-                </span>
-            </div>
-            <div class="flex gap-8 text-sm font-medium flex-wrap">
-                @php
-                    $adminLinks = [
-                    ['label' => 'Login', 'route' => 'login'],
-                    ['label' => 'Dashboard', 'route' => 'admin.dashboard'],
-                    ['label' => 'Airports', 'route' => 'admin.airports.index'],
-                    ['label' => 'Airplanes', 'route' => 'admin.airplanes.index'],
-                    ['label' => 'Flights', 'route' => 'admin.flights.index'],
-                    ['label' => 'Bookings', 'route' => 'admin.bookings.index'],
-                ];
-                @endphp
-                
-            @foreach($adminLinks as $link)
-                <x-nav-link 
-                    href="{{ route($link['route']) }}" 
-                    :active="request()->routeIs($link['route'])" 
-                >
-                    {{ $link['label'] }}
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {{-- Logo --}}
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-plane-departure text-cyan-800 text-2xl"></i>
+            <span class="text-2xl font-extrabold tracking-tight text-cyan-800">
+                SkyBooker
+            </span>
+        </div>
+
+        {{-- Navigation Links --}}
+        <div class="flex gap-6 text-sm font-medium flex-wrap items-center">
+            @guest
+                <x-nav-link href="{{ route('login') }}" :active="request()->routeIs('login')">
+                    Login
                 </x-nav-link>
-            @endforeach
-            <x-nav-link >
-            <form action="{{ route('logout') }}" method="POST" class="inline">
+                <x-nav-link href="{{ route('register') }}" :active="request()->routeIs('register')">
+                    Register
+                </x-nav-link>
+            @endguest
+
+            @auth
+                <span class="text-gray-600 border-r-2 border-gray-200 pr-4">
+                    Hi, <span class="font-semibold text-cyan-700">{{ Auth::user()->first_name }}</span>!
+                </span>
+
+                {{-- Admin links --}}
+                <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
+                    Dashboard
+                </x-nav-link>
+                <x-nav-link href="{{ route('admin.airports.index') }}" :active="request()->routeIs('admin.airports.*')">
+                    Airports
+                </x-nav-link>
+                <x-nav-link href="{{ route('admin.airplanes.index') }}" :active="request()->routeIs('admin.airplanes.*')">
+                    Airplanes
+                </x-nav-link>
+                <x-nav-link href="{{ route('admin.flights.index') }}" :active="request()->routeIs('admin.flights.*')">
+                    Flights
+                </x-nav-link>
+                <x-nav-link href="{{ route('admin.bookings.index') }}" :active="request()->routeIs('admin.bookings.*')">
+                    Bookings
+                </x-nav-link>
+
+                {{-- Logout --}}
+                <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="font-bold text-cyan-700">
+                    <button type="submit" class="text-cyan-700 hover:text-cyan-500 font-bold transition">
                         LOGOUT
                     </button>
                 </form>
-            </x-nav-link>
-            </div>
+            @endauth
         </div>
+    </div>
 </nav>

@@ -13,19 +13,25 @@ use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('home');
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', LoginController::class)->name('login');
-Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', RegisterController::class)->name('register');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); 
 
-Route::prefix('admin')->name('admin.')->group(function() {
-    Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');    
-    Route::resource('/airports', AirportController::class)->names('airports');
-    Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
-    Route::resource('/flights', FlightController::class)->names('flights');
-    Route::resource('/bookings', BookingController::class)->names('bookings');  
-    Route::resource('/passengers', PassengerController::class)->names('passengers'); 
-    Route::resource('/tickets', TicketController::class)->names('tickets');  
+Route::middleware('guest')->group(function(){
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', LoginController::class)->name('login');
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', RegisterController::class)->name('register');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); 
 });
+
+Route::middleware('auth')->group(function(){
+    Route::prefix('admin')->name('admin.')->group(function() {
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');    
+        Route::resource('/airports', AirportController::class)->names('airports');
+        Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
+        Route::resource('/flights', FlightController::class)->names('flights');
+        Route::resource('/bookings', BookingController::class)->names('bookings');  
+        Route::resource('/passengers', PassengerController::class)->names('passengers'); 
+        Route::resource('/tickets', TicketController::class)->names('tickets');  
+    });
+});
+
 
