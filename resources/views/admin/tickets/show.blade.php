@@ -8,6 +8,11 @@
                 <i class="fa-solid fa-arrow-left mr-2"></i>
                 Back
             </a>
+            <a href="{{ route('admin.tickets.pdf', $ticket) }}" 
+            class="text-cyan-600 hover:text-cyan-800 text-sm inline-flex items-center gap-1">
+                <i class="fa-regular fa-file-pdf"></i>
+                Download PDF
+            </a>
         </div>
 
         {{-- Ticket Card --}}

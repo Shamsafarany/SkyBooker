@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function(){
         Route::resource('/flights', FlightController::class)->names('flights');
         Route::resource('/bookings', BookingController::class)->names('bookings');  
         Route::resource('/passengers', PassengerController::class)->names('passengers'); 
-        Route::resource('/tickets', TicketController::class)->names('tickets');  
+        Route::resource('/tickets', TicketController::class)->names('tickets');
+        Route::get('/tickets/{ticket}/pdf', [TicketController::class, 'generatePDF'])->name('tickets.pdf');  
         Route::put('/profiles/password', [ProfileController::class, 'updatePassword'])->name('profiles.password');
         Route::resource('/profiles', ProfileController::class)
         ->only(['index', 'edit', 'update', 'destroy'])
