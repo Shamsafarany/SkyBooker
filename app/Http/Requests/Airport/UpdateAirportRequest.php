@@ -42,4 +42,20 @@ class UpdateAirportRequest extends FormRequest
             'status.in' => 'Invalid status selected. Please select from: active, inactive, maintenance, or closed.',
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => $this->sanitize($this->name),
+            'code' => $this->sanitize($this->code),
+            'city' => $this->sanitize($this->city),
+            'country' => $this->sanitize($this->country),
+        ]);
+    }
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 }

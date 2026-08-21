@@ -42,4 +42,19 @@ class UpdateAirplaneRequest extends FormRequest
             'status.in' => 'Invalid status selected.',
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'model' => $this->sanitize($this->model),
+            'manufacturer' => $this->sanitize($this->manufacturer),
+            'registration' => $this->sanitize($this->registration),
+        ]);
+    }
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 }

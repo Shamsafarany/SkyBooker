@@ -44,4 +44,19 @@ class UpdateTicketRequest extends FormRequest
             'meal_preference.in' => 'Invalid meal preference.',
         ];
     }
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'seat_number' => $this->sanitize($this->seat_number),
+            'meal_preference' => $this->sanitize($this->meal_preference),
+            'status' => $this->sanitize($this->status),
+            'notes' => $this->sanitize($this->notes),
+        ]);
+    }
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 }

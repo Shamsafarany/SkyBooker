@@ -72,4 +72,42 @@ class StoreBookingRequest extends FormRequest
             'passengers.*.status.in' => 'Invalid passenger status.',
         ];
     }
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'booking_reference' => $this->sanitize($this->booking_reference),
+            'notes' => $this->sanitize($this->notes),
+            'special_requests' => $this->sanitize($this->special_requests),
+            'status' => $this->sanitize($this->status),
+            'number_of_seats' => (int) $this->number_of_seats,
+            'total_price' => (float) $this->total_price,
+        ]);
+
+        // Sanitize passengers
+        if ($this->has('passengers')) {
+            $passengers = collect($this->passengers)->map(function ($passenger) {
+                return [
+                    'first_name' => $this->sanitize($passenger['first_name'] ?? ''),
+                    'last_name' => $this->sanitize($passenger['last_name'] ?? ''),
+                    'email' => $this->sanitize($passenger['email'] ?? ''),
+                    'phone' => $this->sanitize($passenger['phone'] ?? ''),
+                    'date_of_birth' => $passenger['date_of_birth'] ?? null,
+                    'nationality' => $this->sanitize($passenger['nationality'] ?? ''),
+                    'passport_number' => $this->sanitize($passenger['passport_number'] ?? ''),
+                    'id_number' => $this->sanitize($passenger['id_number'] ?? ''),
+                    'seat_number' => $this->sanitize($passenger['seat_number'] ?? ''),
+                    'meal_preference' => $this->sanitize($passenger['meal_preference'] ?? 'standard'),
+                    'status' => $this->sanitize($passenger['status'] ?? 'pending'),
+                ];
+            })->toArray();
+            
+            $this->merge(['passengers' => $passengers]);
+        }
+    }
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 }

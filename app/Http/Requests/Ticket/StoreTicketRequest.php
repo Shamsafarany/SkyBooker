@@ -43,12 +43,20 @@ class StoreTicketRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        // ✅ Merge before validation
         $this->merge([
             'ticket_number' => Ticket::generateTicketNumber(),
             'issued_at' => now(),
+            'seat_number' => $this->sanitize($this->seat_number),
+            'meal_preference' => $this->sanitize($this->meal_preference),
+            'status' => $this->sanitize($this->status),
+            'notes' => $this->sanitize($this->notes),
         ]);
     }
-
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 
 }

@@ -57,4 +57,21 @@ class StoreFlightRequest extends FormRequest
             'booking_deadline.before' => 'Booking deadline must be before departure date.',
         ];
     }
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'flight_number' => $this->sanitize($this->flight_number),
+            'duration' => $this->sanitize($this->duration),
+            'status' => $this->sanitize($this->status),
+            'price' => (float) $this->price,
+            'total_seats' => (int) $this->total_seats,
+        ]);
+    }
+    
+    private function sanitize($value)
+    {
+        return is_string($value)
+            ? trim(strip_tags($value))
+            : $value;
+    }
 }
