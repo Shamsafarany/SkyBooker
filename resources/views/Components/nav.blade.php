@@ -20,8 +20,12 @@
             @endguest
 
             @auth
-                <span class="text-gray-600 border-r-2 border-gray-200 pr-4">
-                    Hi, <span class="font-semibold text-cyan-700">{{ Auth::user()->first_name }}</span>!
+                <span class="text-gray-600 border-r-2 border-gray-200 pr-4 transition duration-300 ease-in-out hover:scale-105 inline-block">
+                    Hi, 
+                    <a href="{{ route('admin.profiles.index') }}">
+                        <span class="font-semibold text-cyan-700 hover:text-cyan-500">{{ Auth::user()->first_name }}</span>!
+                    </a>
+                        
                 </span>
 
                 {{-- Admin links --}}
