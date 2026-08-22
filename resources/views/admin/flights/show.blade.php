@@ -301,12 +301,13 @@
             </div>
         @else
             <div class="px-6 py-12 text-center text-cyan-400">
-                <i class="fa-solid fa-users text-3xl mb-3 block"></i>
-                <p>No passengers booked on this flight yet.</p>
-                <button class="mt-2 text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
+                <i class="fa-solid fa-ticket text-3xl mb-3 block"></i>
+                <p>No bookings found for this flight yet.</p>
+                <a href="{{ route('admin.bookings.create', ['flight_id' => $flight->id]) }}" 
+                class="mt-2 inline-block text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
                     <i class="fa-regular fa-plus mr-1"></i>
-                    Add first passenger
-                </button>
+                    Create Booking
+                </a>
             </div>
         @endif
     </div>
@@ -317,6 +318,7 @@
 </x-layout>
 
 {{-- Delete Confirmation Script --}}
+@if(isset($passengers) && count($passengers)>0)
 <script>
     function confirmDelete() {
         if (confirm('Are you sure you want to delete flight {{ $flight['flight_number'] }}?')) {
@@ -346,3 +348,4 @@
     @csrf
     @method('DELETE')
 </form>
+@endif

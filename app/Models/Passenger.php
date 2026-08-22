@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class Passenger extends Model
 {
@@ -39,6 +40,25 @@ class Passenger extends Model
     public function getFullName(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function setPassportNumberAttribute($value)
+    {
+        $this->attributes['passport_number'] = $value ? Crypt::encrypt($value) : null;
+    }
+
+    public function getPassportNumberAttribute($value)
+    {
+        return $value ? Crypt::decrypt($value) : null;
+    }
+    public function setIdNumberAttribute($value)
+    {
+        $this->attributes['id_number'] = $value ? Crypt::encrypt($value) : null;
+    }
+
+    public function getIdNumberAttribute($value)
+    {
+        return $value ? Crypt::decrypt($value) : null;
     }
 
 }

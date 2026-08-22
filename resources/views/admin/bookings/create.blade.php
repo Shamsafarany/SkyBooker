@@ -358,7 +358,7 @@
                         <button type="button" 
                                 class="text-rose-600 hover:text-rose-800 text-sm font-medium remove-passenger"
                                 onclick="this.closest('.bg-gray-50').remove(); updatePassengerCount();">
-                            <i class="fa-regular fa-trash mr-1"></i> Remove
+                            <i class="fa fa-trash mr-1"></i> Remove
                         </button>
                     </div>
                     <div class="p-4">
@@ -427,13 +427,10 @@
                                 <select name="passengers[${i}][meal_preference]" 
                                         class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200 appearance-none">
                                     <option value="standard">Standard</option>
-                                    <option value="vegetarian">Vegetarian</option>
-                                    <option value="vegan">Vegan</option>
-                                    <option value="gluten_free">Gluten Free</option>
-                                    <option value="kosher">Kosher</option>
-                                    <option value="halal">Halal</option>
-                                    <option value="child_meal">Child Meal</option>
-                                    <option value="none">No Meal</option>
+                                    <option value="vegetarian">Full Meal</option>
+                                    <option value="vegan">Sandwich</option>
+                                    <option value="gluten_free">Child Meal</option>
+                                    <option value="gluten_free">No Meal</option>
                                 </select>
                             </div>
                             <div>
