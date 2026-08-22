@@ -311,7 +311,7 @@
             }
         });
 
-        // Get flight prices from the JSON
+        // Get flight prices from the JSON`
         const flightPrices = @json($flights->pluck('price', 'id'));
 
         function calculateTotalPrice() {

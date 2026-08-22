@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -41,6 +42,9 @@ class ProfileController extends Controller
             ],
         ]);
         $user->update($validated);
+        Log::channel('auth')->info('Profile updated successfully', [
+            'username' => $user->username,
+        ]);
 
         return redirect()->route('admin.profiles.index')
             ->with('success', 'Profile updated successfully!');
@@ -63,6 +67,11 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        Log::channel('auth')->warning('Profile deleted successfully', [
+            'user_id' => $user->id,
+            'username' => $user->username,
+        ]);
+
         return redirect('/login')
             ->with('success', 'Your account has been deleted successfully.');
     }
@@ -78,6 +87,10 @@ class ProfileController extends Controller
 
         $user->update([
             'password' => Hash::make($validated['password']),
+        ]);
+
+        Log::channel('auth')->warning('Password updated successfully', [
+            'user_id' => $user->id,
         ]);
 
         return redirect()->route('admin.profiles.index')

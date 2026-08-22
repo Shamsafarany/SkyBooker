@@ -14,7 +14,7 @@
             'text' => 'text-emerald-700',
         ],
         'error' => [
-            'icon' => 'fa-regular fa-circle-exclamation',
+            'icon' => 'fa fa-circle-exclamation',
             'color' => 'text-red-500',
             'bg' => 'bg-red-50',
             'border' => 'border-red-200',
@@ -57,7 +57,7 @@
                 @if($dismissible)
                     <button onclick="dismissFlash('{{ $id }}')" 
                             class="text-gray-400 hover:text-gray-600 transition">
-                        <i class="fa-regular fa-xmark text-lg"></i>
+                        <i class="fa fa-xmark text-lg"></i>
                     </button>
                 @endif
             </div>

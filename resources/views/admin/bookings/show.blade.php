@@ -247,7 +247,7 @@
                 <div class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
                     <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
                         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                            <i class="fa-regular fa-pencil text-cyan-600"></i>
+                            <i class="fa fa-pencil text-cyan-600"></i>
                             Notes
                         </h2>
                     </div>

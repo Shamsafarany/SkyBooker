@@ -57,10 +57,17 @@
                 <a href="{{ route('admin.flights.edit', $flight) }}" class="bg-cyan-800 text-white px-3 py-2 rounded-xl hover:bg-cyan-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
                     Edit
                 </a>
-                <button onclick="confirmDelete()" 
-                        class="bg-rose-700 text-white px-3 py-2 rounded-xl hover:bg-rose-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
-                    Delete
-                </button>
+                <form action="{{ route('admin.flights.destroy', $flight) }}" 
+                    method="POST" 
+                    class="inline"
+                    onsubmit="return confirm('Are you sure you want to delete flight {{ $flight->flight_number }}?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="bg-rose-700 text-white px-3 py-2 rounded-xl hover:bg-rose-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
+                        Delete
+                    </button>
+                </form>
             </div>
         </div>
     </div>

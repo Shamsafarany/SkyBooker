@@ -25,10 +25,10 @@
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
     
     <x-nav />
-    <div class="max-w-7xl mx-auto px-6 mt-4">
-        <x-flash-messages />
-    </div>
     <main class="grow pt-28 pb-16">
+        <div class="max-w-7xl mx-auto px-6 mt-2">
+            <x-flash-messages />
+        </div>
         <div class="max-w-7xl mx-auto px-6">
                 @if (isset($header))
                 <div class="text-4xl md:text-5xl font-extrabold text-cyan-900 tracking-tight">

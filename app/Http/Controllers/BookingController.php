@@ -11,6 +11,8 @@ use App\Models\Ticket;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\booking\UpdateBookingRequest;
+use Illuminate\Support\Facades\Log;
+
 
 class BookingController extends Controller
 {
@@ -62,41 +64,141 @@ class BookingController extends Controller
     }
 
     public function store(StoreBookingRequest $request)
-    {
+{
+    try {
+        Log::channel('booking')->info('Booking creation started', [
+            'flight_id' => $request->flight_id,
+            'number_of_seats' => $request->number_of_seats,
+            'total_price' => $request->total_price,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         $validated = $request->validated();
+        if (!isset($validated['passengers']) || empty($validated['passengers'])) {
+            Log::channel('booking')->warning('Booking attempted with no passengers', [
+                'flight_id' => $validated['flight_id'],
+            ]);
+            return back()
+                ->with('error', 'At least one passenger is required.')
+                ->withInput();
+        }
+
         $flight = Flight::findOrFail($validated['flight_id']);
+        
         if ($flight->available_seats < $validated['number_of_seats']) {
+            Log::channel('booking')->warning('Insufficient seats for booking', [
+                'flight_id' => $flight->id,
+                'flight_number' => $flight->flight_number,
+                'requested' => $validated['number_of_seats'],
+                'available' => $flight->available_seats,
+            ]);
             return back()
                 ->with('error', 'Not enough seats available! Only ' . $flight->available_seats . ' seats left.')
                 ->withInput();
         }
-
         $booking = Booking::create($validated);
-        foreach ($validated['passengers'] as $passengerData) {
-        $passenger = Passenger::create([
+
+        Log::channel('booking')->info('Booking record created', [
             'booking_id' => $booking->id,
-            'first_name' => $passengerData['first_name'],
-            'last_name' => $passengerData['last_name'],
-            'email' => $passengerData['email'],
-            'phone' => $passengerData['phone'] ?? null,
-            'date_of_birth' => $passengerData['date_of_birth'] ?? null,
-            'nationality' => $passengerData['nationality'],
-            'passport_number' => $passengerData['passport_number'],
-            'id_number' => $passengerData['id_number'],
-            'seat_number' => $passengerData['seat_number'] ?? null,
-            'meal_preference' => $passengerData['meal_preference'] ?? 'standard',
-            'status' => $passengerData['status'] ?? 'pending',
+            'booking_reference' => $booking->booking_reference,
         ]);
-        $ticket = $this->createTicketForPassenger($passenger);
+
+        $passengerCount = 0;
+        foreach ($validated['passengers'] as $passengerData) {
+            $passenger = Passenger::create([
+                'booking_id' => $booking->id,
+                'first_name' => $passengerData['first_name'],
+                'last_name' => $passengerData['last_name'],
+                'email' => $passengerData['email'],
+                'phone' => $passengerData['phone'] ?? null,
+                'date_of_birth' => $passengerData['date_of_birth'] ?? null,
+                'nationality' => $passengerData['nationality'],
+                'passport_number' => $passengerData['passport_number'],
+                'id_number' => $passengerData['id_number'],
+                'seat_number' => $passengerData['seat_number'] ?? null,
+                'meal_preference' => $passengerData['meal_preference'] ?? 'standard',
+                'status' => $passengerData['status'] ?? 'pending',
+            ]);
+
+            Log::channel('booking')->info('Passenger added to booking', [
+                'booking_id' => $booking->id,
+                'passenger_id' => $passenger->id,
+                'passenger_name' => $passenger->first_name . ' ' . $passenger->last_name,
+                'seat_number' => $passenger->seat_number,
+            ]);
+
+            $ticket = $this->createTicketForPassenger($passenger);
+            $passengerCount++;
+
+            Log::channel('booking')->info('Ticket generated for passenger', [
+                'booking_id' => $booking->id,
+                'passenger_id' => $passenger->id,
+                'ticket_number' => $ticket->ticket_number,
+            ]);
         }
 
         $flight->decrement('available_seats', $validated['number_of_seats']);
         $flight->increment('booked_seats', $validated['number_of_seats']);
 
+        Log::channel('booking')->info('Flight seats updated', [
+            'flight_id' => $flight->id,
+            'flight_number' => $flight->flight_number,
+            'seats_booked' => $validated['number_of_seats'],
+            'available_seats' => $flight->available_seats,
+            'booked_seats' => $flight->booked_seats,
+        ]);
+
         $user = User::findOrFail($validated['user_id']);
 
-        return redirect()->route('admin.bookings.show', $booking)->with('success', 'Booking created successfully');
+        // ✅ Log success
+        Log::channel('booking')->info('Booking completed successfully', [
+            'booking_id' => $booking->id,
+            'booking_reference' => $booking->booking_reference,
+            'total_passengers' => $passengerCount,
+            'total_price' => $booking->total_price,
+            'status' => $booking->status,
+            'customer_id' => $validated['user_id'],
+            'flight_id' => $flight->id,
+        ]);
+
+        return redirect()->route('admin.bookings.show', $booking)
+            ->with('success', 'Booking created successfully!');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::channel('booking')->warning('Booking validation failed', [
+            'errors' => $e->errors(),
+            'data' => $request->all(),
+            'ip' => $request->ip(),
+        ]);
+        throw $e;
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        Log::channel('booking')->error('Model not found in booking creation', [
+            'error' => $e->getMessage(),
+            'model' => $e->getModel(),
+            'ip' => $request->ip(),
+        ]);
+
+        return back()
+            ->with('error', 'Flight or user not found.')
+            ->withInput();
+
+    } catch (\Exception $e) {
+        Log::channel('booking')->error('Booking creation failed', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'data' => $request->validated(),
+            'ip' => $request->ip(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+
+        return back()
+            ->with('error', 'Failed to create booking. Please try again.')
+            ->withInput();
     }
+}
 
     public function show(Booking $booking)
     {

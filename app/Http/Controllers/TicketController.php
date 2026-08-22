@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
@@ -47,6 +48,9 @@ class TicketController extends Controller
     public function destroy(Ticket $ticket)
     {
         $ticket->delete();
+        Log::channel('booking')->info('Ticket deleted successfully', [
+            'ticket_id' => $ticket->id,
+            ]);
         return redirect()->back()->with('success', 'Ticket deleted successfully!');
     }
     public function generatePDF(Ticket $ticket)
@@ -54,6 +58,11 @@ class TicketController extends Controller
         $ticket->load('passenger.booking.flight');
         
         $pdf = Pdf::loadView('admin.tickets.pdf', compact('ticket'));
+
+        Log::channel('booking')->info('Ticket pdf generated', [
+            'ticket_id' => $ticket->id,
+            'ticket_number' => $ticket->ticket_number,
+        ]);
         
         return $pdf->download('ticket-' . $ticket->ticket_number . '.pdf');
     }
