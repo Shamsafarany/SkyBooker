@@ -3,7 +3,7 @@
 <x-layout title="Edit Passenger" header="Edit Passenger">
     <div class="mb-6">
         <a href="{{ route('admin.bookings.show', $passenger->booking_id) }}" 
-           class="text-cyan-600 hover:text-cyan-800 transition group flex items-center gap-2 mt-2">
+            class="text-cyan-600 hover:text-cyan-800 transition group flex items-center gap-2 mt-2">
             <i class="fa-solid fa-arrow-left"></i>
             <span class="text-sm font-medium group-hover:underline">Back to Booking</span>
         </a>
@@ -17,7 +17,7 @@
             </div>
             @if($passenger->ticket)
                 <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200">
-                    <i class="fa-regular fa-ticket mr-1"></i>
+                    <i class="fa fa-ticket mr-1"></i>
                     Ticket: {{ $passenger->ticket->ticket_number }}
                 </span>
             @endif
@@ -140,7 +140,7 @@
             @if($passenger->ticket)
                 <div class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
                     <div class="flex items-center gap-2 text-sm text-gray-600">
-                        <i class="fa-regular fa-ticket text-cyan-600"></i>
+                        <i class="fa fa-ticket text-cyan-600"></i>
                         <span class="font-medium">Ticket Information:</span>
                         <span class="font-mono">{{ $passenger->ticket->ticket_number }}</span>
                         <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">

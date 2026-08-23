@@ -168,7 +168,7 @@
             <div class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
                 <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
                     <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                        <i class="fa-regular fa-bolt text-cyan-600"></i>
+                        <i class="fa fa-bolt text-cyan-600"></i>
                         Quick Actions
                     </h2>
                 </div>
@@ -178,7 +178,7 @@
                             @csrf
                             <button type="submit" 
                                     class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg hover:bg-emerald-700 transition text-sm font-medium">
-                                <i class="fa-regular fa-check mr-1"></i>
+                                <i class="fa fa-check mr-1"></i>
                                 Confirm Booking
                             </button>
                         </form>
@@ -190,7 +190,7 @@
                             <button type="submit" 
                                     class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg hover:bg-rose-700 transition text-sm font-medium"
                                     onclick="return confirm('Cancel this booking?')">
-                                <i class="fa-regular fa-xmark mr-1"></i>
+                                <i class="fa fa-xmark mr-1"></i>
                                 Cancel Booking
                             </button>
                         </form>
@@ -352,12 +352,13 @@
             </div>
         @else
             <div class="px-6 py-12 text-center text-gray-400">
-                <i class="fa-solid fa-users text-3xl mb-3 block"></i>
+                <i class="fa fa-users text-3xl mb-3 block"></i>
                 <p>No passengers found for this booking.</p>
-                <button class="mt-2 text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
-                    <i class="fa-regular fa-user-plus mr-1"></i>
+                <a href="{{ route('admin.passengers.create', ['booking_id' => $booking->id]) }}" 
+                class="mt-2 inline-block text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
+                    <i class="fa fa-user-plus mr-1"></i>
                     Add first passenger
-                </button>
+                </a>
             </div>
         @endif
     </div>
@@ -366,7 +367,7 @@
     <div class="mt-6 bg-white rounded-2xl shadow-xl border overflow-hidden">
         <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
             <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                <i class="fa-regular fa-clock text-cyan-600"></i>
+                <i class="fa fa-clock text-cyan-600"></i>
                 Activity Timeline
             </h2>
         </div>
@@ -425,7 +426,7 @@
                 <div class="flex gap-3">
                     <div class="flex flex-col items-center">
                         <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                            <i class="fa-regular fa-pen text-gray-500 text-sm"></i>
+                            <i class="fa fa-pen text-gray-500 text-sm"></i>
                         </div>
                     </div>
                     <div>

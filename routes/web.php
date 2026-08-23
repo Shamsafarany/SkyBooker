@@ -29,7 +29,9 @@ Route::middleware('auth')->group(function(){
         Route::resource('/airports', AirportController::class)->names('airports');
         Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
         Route::resource('/flights', FlightController::class)->names('flights');
-        Route::resource('/bookings', BookingController::class)->names('bookings');  
+        Route::get('/bookings/archive', [BookingController::class, 'archive'])->name('bookings.archive')->withTrashed(); 
+        Route::post('/bookings/{booking}/restore', [BookingController::class, 'restore'])->name('bookings.restore')->withTrashed(); 
+        Route::resource('/bookings', BookingController::class)->names('bookings')->withTrashed();
         Route::resource('/passengers', PassengerController::class)->names('passengers'); 
         Route::resource('/tickets', TicketController::class)->names('tickets');
         Route::get('/tickets/{ticket}/pdf', [TicketController::class, 'generatePDF'])->name('tickets.pdf');  

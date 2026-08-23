@@ -203,11 +203,12 @@
         @else
             <div class="px-6 py-12 text-center text-cyan-400">
                 <i class="fa-solid fa-users text-3xl mb-3 block"></i>
-                <p>No passengers booked on this flight yet.</p>
-                <button class="mt-2 text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
-                    <i class="fa-regular fa-plus mr-1"></i>
+                <p>No passengers found for this booking.</p>
+                <a href="{{ route('admin.passengers.create', ['booking_id' => $booking->id]) }}" 
+                class="mt-2 inline-block text-sm text-cyan-600 hover:text-cyan-800 font-medium transition">
+                    <i class="fa fa-user-plus mr-1"></i>
                     Add first passenger
-                </button>
+                </a>
             </div>
         @endif
     </div>

@@ -7,6 +7,17 @@
         </a>
     </div>
 
+    {{-- Error Messages --}}
+    @if($errors->any())
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <ul class="text-red-600">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('admin.bookings.store') }}" method="POST" id="booking-form">
         @csrf
         <div class="bg-white rounded-3xl shadow-xl border overflow-hidden">
@@ -55,6 +66,7 @@
                             ];
                         })->toArray()"
                         required
+                        id="flight_id"
                     />
 
                     {{-- Number of Seats --}}
@@ -91,23 +103,24 @@
                         icon="fa-calendar"
                         readonly
                     />
-                    <div class="md:col-span-2">
-                    <x-form.textarea 
-                        name="notes"
-                        label="Notes"
-                        placeholder="Any additional notes about this booking..."
-                        rows="3"
-                    />
-                </div>
 
-                <div class="md:col-span-2">
-                    <x-form.textarea 
-                        name="special_requests"
-                        label="Special Requests"
-                        placeholder="e.g. Wheelchair assistance, meal preferences, etc."
-                        rows="3"
-                    />
-                </div>
+                    <div class="md:col-span-2">
+                        <x-form.textarea 
+                            name="notes"
+                            label="Notes"
+                            placeholder="Any additional notes about this booking..."
+                            rows="3"
+                        />
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <x-form.textarea 
+                            name="special_requests"
+                            label="Special Requests"
+                            placeholder="e.g. Wheelchair assistance, meal preferences, etc."
+                            rows="3"
+                        />
+                    </div>
 
                     {{-- Status --}}
                     <x-form.select 
@@ -125,145 +138,21 @@
                         selected="pending"
                         required
                     />
-
-                    {{-- Add Passenger Button --}}
-                    <div class="md:col-span-2 mt-2">
-                        <button type="button" 
-                                id="toggle-passenger-form"
-                                class="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-medium transition group">
-                            <i class="fa-regular fa-plus text-lg group-hover:scale-110 transition-transform"></i>
-                            <span>Add Passengers to this Booking</span>
-                            <i class="fa-solid fa-chevron-down text-sm transition-transform duration-300"></i>
-                        </button>
-                        <p class="text-xs text-gray-400 mt-1">Click to expand the passenger form below</p>
-                    </div>
                 </div>
 
-                {{-- Passenger Sections (Hidden by default) --}}
-                <div id="passenger-sections-wrapper" class="hidden mt-6 pt-6 border-t border-gray-200">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i class="fa-solid fa-users text-cyan-600 text-lg"></i>
-                        <h3 class="text-lg font-semibold text-gray-900">Passenger Details</h3>
-                        <span class="text-sm text-gray-400" id="passenger-count-label">(1 passenger)</span>
-                    </div>
-
-                    <div id="passenger-sections" class="space-y-4">
-                        {{-- Passenger 1 --}}
-                        <div class="bg-gray-50 rounded-2xl border  overflow-hidden shadow-xl">
-                            <div class="px-6 py-3 bg-gradient from-cyan-50 to-cyan-100/50 border-b border-cyan-100 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-7 h-7 rounded-full bg-cyan-600 flex items-center justify-center text-white font-bold text-xs">
-                                        1
-                                    </div>
-                                    <h4 class="font-medium text-gray-800">Main Passenger</h4>
-                                    <span class="text-xs text-gray-400">(Customer)</span>
-                                </div>
-                                <i class="fa-solid fa-user-check text-cyan-900"></i>
-                            </div>
-                            <div class="p-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <x-form.input 
-                                        name="passengers[0][first_name]"
-                                        label="First Name"
-                                        placeholder="e.g. John"
-                                        :value="old('passengers.0.first_name', $selectedUser->first_name ?? '')"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][last_name]"
-                                        label="Last Name"
-                                        placeholder="e.g. Doe"
-                                        :value="old('passengers.0.last_name', $selectedUser->last_name ?? '')"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][email]"
-                                        label="Email"
-                                        type="email"
-                                        placeholder="john@example.com"
-                                        :value="old('passengers.0.email', $selectedUser->email ?? '')"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][phone]"
-                                        label="Phone"
-                                        placeholder="+1-555-123-4567"
-                                        :value="old('passengers.0.phone', $selectedUser->phone ?? '')"
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][date_of_birth]"
-                                        label="Date of Birth"
-                                        type="date"
-                                        :value="old('passengers.0.date_of_birth', $selectedUser->date_of_birth ?? '')"
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][nationality]"
-                                        label="Nationality"
-                                        placeholder="e.g. USA"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][passport_number]"
-                                        label="Passport Number"
-                                        placeholder="e.g. AB123456"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][id_number]"
-                                        label="ID Number"
-                                        placeholder="e.g. 1234-5678-9012"
-                                        required
-                                    />
-
-                                    <x-form.input 
-                                        name="passengers[0][seat_number]"
-                                        label="Seat Number"
-                                        placeholder="e.g. 12A"
-                                    />
-
-                                    <x-form.select 
-                                        name="passengers[0][meal_preference]"
-                                        label="Meal Preference"
-                                        :options="[
-                                            'standard' => 'Standard',
-                                            'full_meal' => 'Full Meal',
-                                            'sandwitch' => 'Sandwich',
-                                            'child_meal' => 'Child Meal',
-                                            'none' => 'No Meal',
-                                        ]"
-                                        selected="standard"
-                                    />
-
-                                    <x-form.select 
-                                        name="passengers[0][status]"
-                                        label="Status"
-                                        :options="[
-                                            'pending' => '⏳ Pending',
-                                            'confirmed' => '✅ Confirmed',
-                                            'checked_in' => '🛂 Checked In',
-                                            'boarded' => '🛫 Boarded',
-                                            'cancelled' => '❌ Cancelled',
-                                        ]"
-                                        selected="pending"
-                                    />
-                                </div>
-                            </div>
+                {{-- Note about passengers --}}
+                <div class="p-4 bg-cyan-50 rounded-xl border border-cyan-200 mt-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fa fa-circle-info text-cyan-600 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">
+                                Passengers can be added after booking creation
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                You'll be able to add passengers from the booking details page
+                            </p>
                         </div>
                     </div>
-
-                    <button type="button" 
-                            id="add-passenger-btn"
-                            class="mt-4 text-sm text-cyan-600 hover:text-cyan-800 font-medium transition flex items-center gap-2">
-                        <i class="fa-regular fa-plus"></i>
-                        Add Another Passenger
-                    </button>
                 </div>
 
                 {{-- Submit Buttons --}}
@@ -288,194 +177,35 @@
             </div>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flightSelect = document.getElementById('flight_id');
+            const seatsInput = document.getElementById('number_of_seats');
+            const totalPriceInput = document.getElementById('total_price');
+
+            // Get flight prices from the JSON
+            const flightPrices = @json($flights->pluck('price', 'id'));
+
+            function calculateTotalPrice() {
+                const flightId = flightSelect.value;
+                const seats = parseInt(seatsInput.value) || 1;
+                
+                if (flightId && flightPrices[flightId]) {
+                    const pricePerSeat = flightPrices[flightId];
+                    const total = pricePerSeat * seats;
+                    totalPriceInput.value = total.toFixed(2);
+                } else {
+                    totalPriceInput.value = '';
+                }
+            }
+
+            // Event Listeners
+            flightSelect.addEventListener('change', calculateTotalPrice);
+            seatsInput.addEventListener('input', calculateTotalPrice);
+
+            // Initial calculation
+            setTimeout(calculateTotalPrice, 100);
+        });
+    </script>
 </x-layout>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const flightSelect = document.getElementById('flight_id');
-        const seatsInput = document.getElementById('number_of_seats');
-        const totalPriceInput = document.getElementById('total_price');
-        const passengerContainer = document.getElementById('passenger-sections');
-        const passengerCountLabel = document.getElementById('passenger-count-label');
-        const toggleBtn = document.getElementById('toggle-passenger-form');
-        const passengerWrapper = document.getElementById('passenger-sections-wrapper');
-
-        // Toggle passenger form visibility
-        toggleBtn.addEventListener('click', function() {
-            passengerWrapper.classList.toggle('hidden');
-            const icon = this.querySelector('.fa-chevron-down');
-            if (passengerWrapper.classList.contains('hidden')) {
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                icon.style.transform = 'rotate(180deg)';
-            }
-        });
-
-        // Get flight prices from the JSON`
-        const flightPrices = @json($flights->pluck('price', 'id'));
-
-        function calculateTotalPrice() {
-            const flightId = flightSelect.value;
-            const seats = parseInt(seatsInput.value) || 1;
-            
-            if (flightId && flightPrices[flightId]) {
-                const pricePerSeat = flightPrices[flightId];
-                const total = pricePerSeat * seats;
-                totalPriceInput.value = total.toFixed(2);
-            } else {
-                totalPriceInput.value = '';
-            }
-        }
-
-        // Generate passenger sections based on number of seats
-        function generatePassengerSections() {
-            const numSeats = parseInt(seatsInput.value) || 1;
-            
-            // Keep the first passenger (main customer)
-            const firstPassenger = passengerContainer.querySelector('.bg-gray-50');
-            
-            // Remove all passenger sections except the first one
-            while (passengerContainer.children.length > 1) {
-                passengerContainer.removeChild(passengerContainer.lastChild);
-            }
-
-            // Update passenger count label
-            passengerCountLabel.textContent = `(${numSeats} passenger${numSeats > 1 ? 's' : ''})`;
-
-            // Add additional passenger sections
-            for (let i = 1; i < numSeats; i++) {
-                const passengerDiv = document.createElement('div');
-                passengerDiv.className = 'bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden';
-                passengerDiv.innerHTML = `
-                    <div class="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200/50 border-b border-gray-200 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-7 h-7 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold text-xs">
-                                ${i + 1}
-                            </div>
-                            <h4 class="font-medium text-gray-800">Passenger ${i + 1}</h4>
-                            <span class="text-xs text-gray-400">(Additional)</span>
-                        </div>
-                        <button type="button" 
-                                class="text-rose-600 hover:text-rose-800 text-sm font-medium remove-passenger"
-                                onclick="this.closest('.bg-gray-50').remove(); updatePassengerCount();">
-                            <i class="fa fa-trash mr-1"></i> Remove
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">First Name <span class="text-rose-500">*</span></label>
-                                <input type="text" name="passengers[${i}][first_name]" 
-                                       placeholder="e.g. John"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Last Name <span class="text-rose-500">*</span></label>
-                                <input type="text" name="passengers[${i}][last_name]" 
-                                       placeholder="e.g. Doe"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email <span class="text-rose-500">*</span></label>
-                                <input type="email" name="passengers[${i}][email]" 
-                                       placeholder="john@example.com"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
-                                <input type="text" name="passengers[${i}][phone]" 
-                                       placeholder="+1-555-123-4567"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Date of Birth</label>
-                                <input type="date" name="passengers[${i}][date_of_birth]" 
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nationality <span class="text-rose-500">*</span></label>
-                                <input type="text" name="passengers[${i}][nationality]" 
-                                       placeholder="e.g. USA"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Passport Number <span class="text-rose-500">*</span></label>
-                                <input type="text" name="passengers[${i}][passport_number]" 
-                                       placeholder="e.g. AB123456"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">ID Number <span class="text-rose-500">*</span></label>
-                                <input type="text" name="passengers[${i}][id_number]" 
-                                       placeholder="e.g. 1234-5678-9012"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200"
-                                       required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Seat Number</label>
-                                <input type="text" name="passengers[${i}][seat_number]" 
-                                       placeholder="e.g. 12A"
-                                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Meal Preference</label>
-                                <select name="passengers[${i}][meal_preference]" 
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200 appearance-none">
-                                    <option value="standard">Standard</option>
-                                    <option value="vegetarian">Full Meal</option>
-                                    <option value="vegan">Sandwich</option>
-                                    <option value="gluten_free">Child Meal</option>
-                                    <option value="gluten_free">No Meal</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
-                                <select name="passengers[${i}][status]" 
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition-all duration-200 appearance-none">
-                                    <option value="pending">⏳ Pending</option>
-                                    <option value="confirmed">✅ Confirmed</option>
-                                    <option value="checked_in">🛂 Checked In</option>
-                                    <option value="boarded">🛫 Boarded</option>
-                                    <option value="cancelled">❌ Cancelled</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                passengerContainer.appendChild(passengerDiv);
-            }
-        }
-
-        function updatePassengerCount() {
-            const count = passengerContainer.querySelectorAll('.bg-gray-50').length;
-            passengerCountLabel.textContent = `(${count} passenger${count > 1 ? 's' : ''})`;
-        }
-
-        // Event Listeners
-        flightSelect.addEventListener('change', calculateTotalPrice);
-        seatsInput.addEventListener('input', function() {
-            calculateTotalPrice();
-            generatePassengerSections();
-        });
-
-        // Add passenger button
-        document.getElementById('add-passenger-btn').addEventListener('click', function() {
-            const currentCount = passengerContainer.querySelectorAll('.bg-gray-50').length;
-            const newCount = currentCount + 1;
-            seatsInput.value = newCount;
-            generatePassengerSections();
-            calculateTotalPrice();
-        });
-
-        // Initial calculation and passenger generation
-        setTimeout(() => {
-            calculateTotalPrice();
-            generatePassengerSections();
-        }, 100);
-    });
-</script>

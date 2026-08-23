@@ -8,11 +8,6 @@
                 <i class="fa-solid fa-arrow-left mr-2"></i>
                 Back
             </a>
-            <a href="{{ route('admin.tickets.pdf', $ticket) }}" 
-            class="text-cyan-600 hover:text-cyan-800 text-sm inline-flex items-center gap-1">
-                <i class="fa-regular fa-file-pdf"></i>
-                Download PDF
-            </a>
         </div>
 
         {{-- Ticket Card --}}
@@ -114,12 +109,11 @@
             {{-- Ticket Footer --}}
             <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 flex justify-between items-center">
                 <span class="text-xs text-gray-400">Ticket #{{ $ticket->ticket_number }}</span>
-                <div class="flex gap-2">
-                    <button onclick="window.print()" class="text-cyan-600 hover:text-cyan-800 text-sm transition">
-                        <i class="fa-regular fa-print mr-1"></i> Print
-                    </button>
-                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="text-cyan-600 hover:text-cyan-800 text-sm transition">
-                        <i class="fa-regular fa-rotate-right mr-1"></i> Refresh
+                <div class="flex gap-4">
+                    <a href="{{ route('admin.tickets.pdf', $ticket) }}" 
+                    class="text-cyan-600 hover:text-cyan-800 text-sm inline-flex items-center gap-1">
+                        <i class="fa-regular fa-file-pdf"></i>
+                        Download PDF
                     </a>
                 </div>
             </div>

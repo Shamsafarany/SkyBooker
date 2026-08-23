@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes; 
 
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; 
     protected $fillable = [
         'passenger_id',
         'ticket_number',
@@ -21,6 +22,7 @@ class Ticket extends Model
 
     protected $casts = [
         'issued_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public static function generateTicketNumber(): string

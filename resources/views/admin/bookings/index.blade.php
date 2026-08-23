@@ -4,8 +4,8 @@
             <p class="text-gray-700">Manage all flight bookings</p>
         </div>
         <div class="flex gap-3">
-            <a href="#" class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition text-sm">
-                <i class="fa-regular fa-file-excel mr-1"></i> Export
+            <a href="{{ route('admin.bookings.archive') }}" class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition text-sm">
+                <i class="fa-regular fa-file-excel mr-1"></i> Archive
             </a>
             <a href="{{ route('admin.bookings.create') }}" class="bg-cyan-800 text-white px-4 py-2 rounded-lg hover:bg-cyan-600 transition text-sm">
                 <i class="fa-regular fa-plus mr-1"></i> Add Booking

@@ -26,7 +26,7 @@
     
     <x-nav />
     <main class="grow pt-28 pb-16">
-        <div class="max-w-7xl mx-auto px-6 mt-2">
+        <div class="max-w-7xl mx-auto px-6">
             <x-flash-messages />
         </div>
         <div class="max-w-7xl mx-auto px-6">

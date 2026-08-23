@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes; 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 class Booking extends Model
 {
+    use SoftDeletes, CascadeSoftDeletes; 
+    protected $cascadeDeletes = ['passengers', 'tickets'];
     protected $fillable = [
         'user_id',
         'flight_id',
@@ -27,6 +31,7 @@ class Booking extends Model
         'confirmed_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'total_price' => 'decimal:2',
+        'deleted_at' => 'datetime',
     ];
 
     //relationships
