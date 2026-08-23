@@ -22,15 +22,13 @@ class TicketResource extends JsonResource
             'issued_at' => $this->issued_at?->format('Y-m-d H:i:s'),
             'notes' => $this->notes,
 
-            // ✅ Get from passenger relationship (NOT from ticket)
             'first_name' => $passenger?->first_name,
             'last_name' => $passenger?->last_name,
             'full_name' => $passenger ? $passenger->first_name . ' ' . $passenger->last_name : null,
             'email' => $passenger?->email,
             'phone' => $passenger?->phone,
-            'status' => $this->status,  // ✅ This IS in tickets table
+            'status' => $this->status,  
 
-            // ✅ Nested passenger resource
             'passenger' => new PassengerResource($passenger),
 
             'links' => [

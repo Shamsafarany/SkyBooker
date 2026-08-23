@@ -357,7 +357,16 @@ class BookingController extends Controller
     }
 
     public function restore(Booking $booking, Request $request){
+        $booking = Booking::withTrashed()->findOrFail($booking->id);
         $booking->restore();
+        foreach ($booking->passengers()->withTrashed()->get() as $passenger) {
+            if ($passenger->trashed()) {
+                $passenger->restore();
+            }
+            if ($passenger->ticket && $passenger->ticket->trashed()) {
+                $passenger->ticket->restore();
+            }
+        }
         return redirect()->route('admin.bookings.index')->with('success', 'Booking restored successfully!');
     }
 }

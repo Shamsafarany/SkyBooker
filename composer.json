@@ -15,6 +15,7 @@
         "dyrynda/laravel-cascade-soft-deletes": "^4.6",
         "laravel/framework": "^13.8",
         "laravel/pail": "^1.2",
+        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
