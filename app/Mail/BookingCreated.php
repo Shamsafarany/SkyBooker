@@ -9,17 +9,19 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Booking;
 
 class BookingCreated extends Mailable
 {
     use Queueable, SerializesModels;
+    public $booking;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(Booking $booking)
     {
-        //
+        $this->booking = $booking;
     }
 
     /**
@@ -28,7 +30,7 @@ class BookingCreated extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Booking Created',
+            subject: 'Booking Confirmation - ' . $this->booking->booking_reference,
         );
     }
 

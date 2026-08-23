@@ -12,6 +12,8 @@ use Illuminate\Validation\Rule;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\booking\UpdateBookingRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingCreated;
 
 
 class BookingController extends Controller
@@ -94,6 +96,8 @@ class BookingController extends Controller
             'customer_id' => $validated['user_id'],
             'flight_id' => $flight->id,
         ]);
+
+        Mail::to($booking->user->email)->send(new BookingCreated($booking));
 
         return redirect()->route('admin.bookings.show', $booking)
             ->with('success', 'Booking created successfully! You can now add passengers.');
