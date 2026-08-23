@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function(){
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');    
         Route::resource('/airports', AirportController::class)->names('airports');
         Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
+        Route::get('/flights/{flight}/weather', [FlightController::class, 'weather']);
         Route::resource('/flights', FlightController::class)->names('flights');
         Route::get('/bookings/archive', [BookingController::class, 'archive'])->name('bookings.archive')->withTrashed(); 
         Route::post('/bookings/{booking}/restore', [BookingController::class, 'restore'])->name('bookings.restore')->withTrashed(); 

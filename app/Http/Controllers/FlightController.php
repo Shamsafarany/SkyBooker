@@ -12,6 +12,7 @@ use App\Models\Airplane;
 use App\Http\Requests\Flight\StoreFlightRequest;
 use App\Http\Requests\Flight\UpdateFlightRequest;
 use Illuminate\Support\Facades\Log;
+use App\Services\WeatherService;
 class FlightController extends Controller
 {
     
@@ -238,6 +239,13 @@ class FlightController extends Controller
                 ->with('error', 'Failed to delete flight. Please try again.');
         }
     }
+
+    public function weather(Flight $flight, WeatherService $weather)
+    {
+        $data = $weather->getWeatherByCity($flight->origin->city);
+        return response()->success($data, 'Weather for flight city');
+    }
+
     
 }
 
