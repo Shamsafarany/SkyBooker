@@ -72,6 +72,7 @@
         </div>
     </div>
 
+
     {{-- Flight Route Map --}}
     <div class="bg--to-br from-cyan-50 via-cyan-50/50 to-white rounded-2xl shadow-md p-8 mb-8 border bg-white">
         <div class="flex items-center justify-between max-w-3xl mx-auto">
@@ -207,7 +208,7 @@
             {{-- Additional Info --}}
             <div class="mt-4 bg-white rounded-2xl shadow-md p-6 border">
                 <h3 class="font-semibold text-cyan-800 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i class="fa-regular fa-chart-pie text-cyan-800"></i>
+                    <i class="fa fa-chart-pie text-cyan-800"></i>
                     Flight Summary
                 </h3>
                 <div class="space-y-2 text-sm">
@@ -226,7 +227,6 @@
                         </span>
                     </div>
                 </div>
-                
                 {{-- Progress Bar --}}
                 <div class="mt-3">
                     <div class="w-full bg-gray-100 rounded-full h-2">
@@ -238,8 +238,17 @@
                         {{ $flight->booked_seats }} of {{ $flight->total_seats }} seats booked
                     </p>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                
             </div>
         </div>
+            {{-- Origin Weather --}}
+                    <x-cards.weather
+                        city="{{ $flight->origin->city }}"
+                        :weather="$originWeather"
+                        class="border-l-4 border-l-cyan-700 shadow-xl mt-4"
+                    />
+                </div>
     </div>
 
     {{-- Passenger List --}}

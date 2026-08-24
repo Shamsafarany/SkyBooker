@@ -124,10 +124,15 @@ class FlightController extends Controller
             'airplane',
             'bookings.passengers.ticket'
         ])->findOrFail($id);
+        
+        
         $passengers = Passenger::whereHas('booking', function ($query) use ($id) {
         $query->where('flight_id', $id);
             })->with(['ticket'])->paginate(15);
-        return view('admin.flights.show', compact('flight', 'passengers'));
+
+        $weatherService = app(WeatherService::class);
+        $originWeather = $weatherService->getWeatherByCity($flight->origin->city);
+        return view('admin.flights.show', compact('flight', 'passengers', 'originWeather'));
     }
 
     public function edit(Flight $flight)
