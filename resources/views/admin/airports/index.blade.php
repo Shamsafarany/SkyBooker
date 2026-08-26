@@ -35,13 +35,13 @@
                 [
                     'label' => 'In Maintenance',
                     'value' => $stats['maintenance'],
-                    'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                    'icon' => 'fa fa-triangle-exclamation text-amber-400',
                     'color' => 'text-amber-600',
                 ],
                 [
                     'label' => 'Total Terminals',
                     'value' => $stats['total_terminals'],
-                    'icon' => 'fa-regular fa-door-open text-blue-400',
+                    'icon' => 'fa fa-door-open text-blue-400',
                     'color' => 'text-blue-600',
                 ],
             ]"

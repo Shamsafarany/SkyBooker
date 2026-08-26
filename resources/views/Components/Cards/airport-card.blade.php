@@ -55,7 +55,7 @@
         
         {{-- Location --}}
         <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">
-            <i class="fa-regular fa-location-dot mr-1"></i>
+            <i class="fa fa-location-dot mr-1"></i>
             {{ $city }}, {{ $country }}
         </p>
         
@@ -64,7 +64,7 @@
             {{-- Terminals --}}
             <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-500 flex items-center gap-1.5">
-                    <i class="fa-regular fa-door-open text-cyan-400"></i>
+                    <i class="fa fa-door-open text-cyan-400"></i>
                     Terminals
                 </span>
                 <span class="font-semibold text-gray-800">{{ $terminals }}</span>
@@ -77,7 +77,7 @@
                     Status
                 </span>
                 <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $statusColor }}">
-                    <i class="fa-regular {{ $statusIconClass }} mr-1"></i>
+                    <i class="fa {{ $statusIconClass }} mr-1"></i>
                     {{ ucfirst($status) }}
                 </span>
             </div>

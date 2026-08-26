@@ -13,6 +13,7 @@ class AirportObserver
         try {
             Cache::forget('api.airports.list');
             Cache::forget("api.airports.show.{$airport->id}");
+            Cache::forget('admin.airports.stats');
 
             LogService::system("AIRPORT CREATED: Cache cleared", [
                 'airport_id' => $airport->id,
@@ -32,6 +33,7 @@ class AirportObserver
         try {
             Cache::forget('api.airports.list');
             Cache::forget("api.airports.show.{$airport->id}");
+            Cache::forget('admin.airports.stats');
 
             LogService::system("AIRPORT UPDATED: Cache cleared", [
                 'airport_id' => $airport->id,
@@ -59,6 +61,7 @@ class AirportObserver
         try {
             Cache::forget('api.airports.list');
             Cache::forget("api.airports.show.{$airport->id}");
+            Cache::forget('admin.airports.stats');
 
             LogService::system("AIRPORT DELETED: Cache cleared", [
                 'airport_id' => $airport->id,
