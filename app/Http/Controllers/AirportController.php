@@ -7,7 +7,8 @@ use Illuminate\Validation\Rule;
 use App\Models\Airport;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
-
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 class AirportController extends Controller
 {
     public function index()
@@ -15,7 +16,8 @@ class AirportController extends Controller
         $airports = Airport::withCount(['departingFlights', 'arrivingFlights'])
             ->latest()->get();
 
-        $stats = [
+        $stats = Cache::remember('admin.airports.stats', 60, function () use ($airports) {
+        return [
             'total' => $airports->count(),
             'active' => $airports->where('status', 'active')->count(),
             'inactive' => $airports->where('status', 'inactive')->count(),
@@ -27,6 +29,8 @@ class AirportController extends Controller
             'total_flights' => $airports->sum('departing_flights_count') + $airports->sum('arriving_flights_count'),
             'by_country' => $airports->groupBy('country')->map->count()->sortDesc()->take(5),
         ];
+    });
+    Log::channel('booking')->info('Stats are cached.');
 
         return view('admin.airports.index', compact('airports', 'stats'));
     }
@@ -41,17 +45,13 @@ class AirportController extends Controller
         $validated = $request->validated();
 
         $airport = Airport::create($validated);
-        
+        Cache::forget('admin.airports.stats');
+        Log::channel('booking')->info('Stats are cleared.');    
         return redirect()
             ->route('admin.airports.index')
             ->with('success', 'Airport "' . $airport->name . '" created successfully!');
     }
-
-    public function show(string $id)
-    {
-        //
-    }
-
+    
     public function edit(Airport $airport)
     {
         return view('admin.airports.edit', compact('airport'));
@@ -61,12 +61,16 @@ class AirportController extends Controller
     {
         $validated = $request->validated();
         $airport->update($validated);
+        Cache::forget('admin.airports.stats');
+        Log::channel('booking')->info('Stats are cleared.');
         return redirect()->route('admin.airports.index')
     ->with('success', 'Airport updated successfully!');
     }
     public function destroy(Airport $airport)
     {
         $airport->delete();
+        Cache::forget('admin.airports.stats');
+        Log::channel('booking')->info('Stats are cleared.');
         return redirect()->route('admin.airports.index')->with('success', 'Airport deleted successfully!');
     }
 }

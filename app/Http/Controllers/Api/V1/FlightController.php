@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Api\V1\FlightResource;
 use App\Http\Requests\Flight\StoreFlightRequest;
 use App\Http\Requests\Flight\UpdateFlightRequest;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -49,12 +53,8 @@ class FlightController extends Controller
     )]
     public function index()
     {
-        $flights = Flight::with([
-        'airline',
-        'origin',
-        'destination',
-        'airplane'
-        ])->paginate(15);
+        $flights = Flight::with(['airline','origin','destination','airplane'])
+            ->paginate(15);
         return new FlightCollection($flights);
     }
 
@@ -175,6 +175,7 @@ class FlightController extends Controller
     )]
     public function store(StoreFlightRequest $request)
     {
+        Cache::forget('api.flights.list');
         return response()->json(
             new FlightResource(Flight::create($request->validated())),
             201
@@ -207,14 +208,22 @@ class FlightController extends Controller
     )]
     public function show(Flight $flight)
     {
-        $flight->load([
-        'airline',
-        'origin',
-        'destination',
-        'airplane'
-    ]);
-        return new FlightResource($flight);
+        $key = "api.flights.{$flight->id}";
+
+        $data = Cache::remember($key, 60, function () use ($flight) {
+            $flight->load([
+                'airline',
+                'origin',
+                'destination',
+                'airplane'
+            ]);
+            Log::info('Flight INDEX: Cache MISS - querying database');
+            return (new FlightResource($flight))->resolve();
+        });
+        Log::info('Flight INDEX: Cache HIT - getting cache');
+        return Response::success($data, 'Flight retrieved');
     }
+
 
     #[OA\Put(
         path: '/api/v1/flights/{flight}',
@@ -328,6 +337,7 @@ class FlightController extends Controller
     public function update(UpdateFlightRequest $request, Flight $flight)
     {
         $flight->update($request->validated());
+        Cache::forget('api.flights.list');
         return new FlightResource($flight);
     }
 
@@ -358,6 +368,7 @@ class FlightController extends Controller
     public function destroy(Flight $flight)
     {
         $flight->delete();
+        Cache::forget('api.flights.list');
         return response()->json(null, 204);
     }
 

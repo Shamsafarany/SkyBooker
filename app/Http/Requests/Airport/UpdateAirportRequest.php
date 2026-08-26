@@ -45,13 +45,34 @@ class UpdateAirportRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'name' => $this->sanitize($this->name),
-            'code' => $this->sanitize($this->code),
-            'city' => $this->sanitize($this->city),
-            'country' => $this->sanitize($this->country),
-        ]);
+        $data = [];
+        if ($this->has('name')) {
+            $data['name'] = $this->sanitize($this->name);
+        }
+
+        if ($this->has('code')) {
+            $data['code'] = $this->sanitize($this->code);
+        }
+
+        if ($this->has('city')) {
+            $data['city'] = $this->sanitize($this->city);
+        }
+
+        if ($this->has('country')) {
+            $data['country'] = $this->sanitize($this->country);
+        }
+
+        if ($this->has('terminals')) {
+            $data['terminals'] = $this->sanitize($this->terminals);
+        }
+
+        if ($this->has('status')) {
+            $data['status'] = $this->sanitize($this->status);
+        }
+
+        $this->merge($data);
     }
+    
     private function sanitize($value)
     {
         return is_string($value)

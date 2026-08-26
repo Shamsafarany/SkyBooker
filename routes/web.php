@@ -10,6 +10,9 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Mail\BookingCreated;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\Route;
 

@@ -13,6 +13,7 @@ use App\Http\Requests\Flight\StoreFlightRequest;
 use App\Http\Requests\Flight\UpdateFlightRequest;
 use Illuminate\Support\Facades\Log;
 use App\Services\WeatherService;
+use Illuminate\Support\Facades\Cache;
 class FlightController extends Controller
 {
     
@@ -36,14 +37,18 @@ class FlightController extends Controller
                 'airplane',
             ])->orderBy('departure_date');
         }])->has('flights')->get();
-        $stats = [
+        $stats = Cache::remember('admin.fligts.stats', 60, function() use ($flights, $airlines) {
+            return [
             'total' => $flights->count(),
             'total_airlines' => $airlines->count(),
             'open' => $flights->where('status', 'open')->count(),
             'closing' => $flights->where('status', 'closing')->count(),
             'completed' => $flights->where('status', 'completed')->count(),
             'revenue' => $flights->sum('price'),
-        ];
+            ];
+        });
+        Log::channel('booking')->info('Stats are cached.');
+        
         return view('admin.flights.index', compact('flights', 'airlines', 'stats'));
 
     }
@@ -74,7 +79,8 @@ class FlightController extends Controller
                 'status' => $validated['status'],
                 'ip' => $request->ip(),
             ]);
-
+            Cache::forget('admin.flights.stats'); 
+            Log::channel('booking')->info('Stats are cleared.');
             $flight = Flight::create($validated);
 
             Log::channel('booking')->info('Flight created successfully', [
@@ -156,6 +162,8 @@ class FlightController extends Controller
             ];
 
             $flight->update($request->validated());
+            Cache::forget('admin.flights.stats'); 
+            Log::channel('booking')->info('Stats are cleared.');
 
             if ($flight->wasChanged('status')) {
                 Log::channel('booking')->info('Flight status changed', [
@@ -224,6 +232,8 @@ class FlightController extends Controller
             }
 
             $flight->delete();
+            Cache::forget('admin.flights.stats');
+            Log::channel('booking')->info('Stats are cleared.'); 
 
             Log::channel('booking')->warning('Flight deleted successfully', [
                 'flight_id' => $flightId,

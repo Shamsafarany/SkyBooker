@@ -14,6 +14,7 @@ use App\Http\Requests\booking\UpdateBookingRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingCreated;
+use Illuminate\Support\Facades\Cache;
 
 
 class BookingController extends Controller
@@ -35,7 +36,8 @@ class BookingController extends Controller
     {
         $flights = $this->getBookings();
         $bookings = Booking::all();
-        $stats = [
+        $stats = Cache::remember('admin.bookings.stats', 60, function() use ($bookings){
+            return [
             'total' => $bookings->count(),
             'pending' => $bookings->where('status', 'pending')->count(),
             'confirmed' => $bookings->where('status', 'confirmed')->count(),
@@ -51,6 +53,9 @@ class BookingController extends Controller
             'average_seats' => $bookings->avg('number_of_seats') ? round($bookings->avg('number_of_seats'), 1) : 0,
             'average_price' => $bookings->avg('total_price') ? round($bookings->avg('total_price'), 2) : 0,
         ];
+        });
+        Log::channel('booking')->info('Stats are cached.');
+        
         return view('admin.bookings.index', compact('flights', 'stats'));
     }
 
@@ -84,6 +89,8 @@ class BookingController extends Controller
         }
 
         $booking = Booking::create($validated);
+        Cache::forget('admin.bookings.stats');
+        Log::channel('booking')->info('Stats are cleared.');
 
         $flight->decrement('available_seats', $validated['number_of_seats']);
         $flight->increment('booked_seats', $validated['number_of_seats']);
@@ -191,6 +198,8 @@ class BookingController extends Controller
         $flightChanged = $booking->flight_id != $request->flight_id;
         $oldFlight = $booking->flight;
         $newFlight = Flight::findOrFail($request->flight_id);
+        Cache::forget('admin.bookings.stats');
+        Log::channel('booking')->info('Stats are cleared.');
 
         if ($flightChanged) {
             // Return seats to old flight
@@ -341,6 +350,7 @@ class BookingController extends Controller
             return redirect()->route('admin.bookings.index') ->with('success', 'Booking deleted successfully!');
         }
         $booking->delete();
+        Cache::forget('admin.bookings.stats');
         Log::channel('booking')->warning('Booking soft deleted', [
             'booking_id' => $bookingId,
             'booking_reference' => $bookingReference,
@@ -363,6 +373,8 @@ class BookingController extends Controller
     public function restore(Booking $booking, Request $request){
         $booking = Booking::withTrashed()->findOrFail($booking->id);
         $booking->restore();
+        Cache::forget('admin.bookings.stats');
+        Log::channel('booking')->info('Stats are cleared.');
         foreach ($booking->passengers()->withTrashed()->get() as $passenger) {
             if ($passenger->trashed()) {
                 $passenger->restore();

@@ -10,13 +10,15 @@ use App\Models\Ticket;
 use App\Http\Requests\Passenger\StorePassengerRequest;
 use App\Http\Requests\Passenger\UpdatePassengerRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class PassengerController extends Controller
 {
     public function index()
     {
         $passengers = Passenger::all();
-        $stats = [
+        $stats = Cache::remember('admin.passengers.stats', 60, function() use ($passengers) {
+            return [
             'total' => $passengers->count(),
             'registered' => $passengers->filter(function ($passenger) {
                 return User::where('email', $passenger->email)->exists();
@@ -48,6 +50,9 @@ class PassengerController extends Controller
             'with_passport' => $passengers->whereNotNull('passport_number')->count(),
             'with_phone' => $passengers->whereNotNull('phone')->count(),
         ];
+        });
+        Log::channel('booking')->info('Stats are cached.');
+        
 
         return view('admin.passengers.index', compact('passengers', 'stats'));
     }
@@ -71,6 +76,8 @@ class PassengerController extends Controller
             $flight->decrement('available_seats');
             $flight->increment('booked_seats');
             $ticket = $this->createTicketForPassenger($passenger, $validated['seat_number'] ?? null);
+            Cache::forget('admin.passengers.stats');
+            Log::channel('booking')->info('Stats are cleared.');
 
             Log::channel('booking')->info('Passenger added successfully', [
             'passenger_id' => $passenger->id,
@@ -123,6 +130,8 @@ class PassengerController extends Controller
     {
         $validated = $request->validated();
         $passenger->update($validated);
+        Cache::forget('admin.passengers.stats');
+        Log::channel('booking')->info('Stats are cleared.');
         if ($passenger->ticket) {
             $passenger->ticket->update([
                 'first_name' => $validated['first_name'] ?? $passenger->first_name,
@@ -141,6 +150,8 @@ class PassengerController extends Controller
     {
         $booking = $passenger->booking;
         $flight = $booking->flight;
+        Cache::forget('admin.passengers.stats');
+        Log::channel('booking')->info('Stats are cleared.');
         if ($passenger->ticket) {
         $passenger->ticket->delete();
         }

@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Api\V1\AirplaneResource;
 use App\Http\Requests\Airplane\StoreAirplaneRequest;
 use App\Http\Requests\Airplane\UpdateAirplaneRequest;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -30,7 +33,13 @@ class AirplaneController extends Controller
     )]    
     public function index()
     {
-        return AirplaneResource::collection(Airplane::all());
+        $airplanes = Cache::remember('api.airplanes.list', 60, function () {
+        Log::info('AIRPLANE INDEX: Cache MISS - querying database');
+        $airplanes = Airplane::all();
+            return AirplaneResource::collection($airplanes)->resolve();
+        });
+        Log::info('AIRPLANE INDEX: Cache HIT - getting cache');
+        return Response::success($airplanes, 'Airplanes retrieved');
     }
 
     #[OA\Post(
@@ -92,6 +101,7 @@ class AirplaneController extends Controller
     )]
     public function store(StoreAirplaneRequest $request)
     {
+        Cache::forget('api.airplanes.list');
         return response()->json(
             new AirplaneResource(Airplane::create($request->validated())),
             201
@@ -124,7 +134,13 @@ class AirplaneController extends Controller
     )]
     public function show(Airplane $airplane)
     {
-        return new AirplaneResource($airplane);
+        $key = "api.airplanes.{$airplane->id}";
+        $data = Cache::remember($key, 60, function () use ($airplane) {
+            Log::info('AIRPLANE INDEX: Cache MISS - querying database');
+            return (new AirplaneResource($airplane))->resolve();
+        });
+        Log::info('AIRPLANE INDEX: Cache HIT - getting cache');
+        return Response::success($data, 'Airplane retrieved');
     }
 
     #[OA\Put(
@@ -192,6 +208,7 @@ class AirplaneController extends Controller
     public function update(UpdateAirplaneRequest $request, Airplane $airplane)
     {
         $airplane->update($request->validated());
+        Cache::forget('api.airplanes.list');
         return new AirplaneResource($airplane);
     }
 
@@ -222,6 +239,7 @@ class AirplaneController extends Controller
     public function destroy(Airplane $airplane)
     {
         $airplane->delete();
+        Cache::forget('api.airplanes.list');
         return response()->json(null, 204);
     }
 }
