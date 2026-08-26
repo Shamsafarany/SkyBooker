@@ -10,35 +10,66 @@ class AirportObserver
 {
     public function created(Airport $airport)
     {
-        Cache::forget('api.airports.list');
-        Cache::forget("api.airports.show.{$airport->id}");
+        try {
+            Cache::forget('api.airports.list');
+            Cache::forget("api.airports.show.{$airport->id}");
 
-        LogService::system("AIRPORT CREATED: Cache cleared", [
-            'airport_id' => $airport->id,
-            'code' => $airport->code,
-        ]);
+            LogService::system("AIRPORT CREATED: Cache cleared", [
+                'airport_id' => $airport->id,
+                'code' => $airport->code,
+            ]);
+
+        } catch (\Throwable $e) {
+            LogService::error('system', "AIRPORT OBSERVER ERROR (created)", [
+                'airport_id' => $airport->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function updated(Airport $airport)
     {
-        Cache::forget('api.airports.list');
-        Cache::forget("api.airports.show.{$airport->id}");
+        try {
+            Cache::forget('api.airports.list');
+            Cache::forget("api.airports.show.{$airport->id}");
 
-        LogService::system("AIRPORT UPDATED: Cache cleared", [
-            'airport_id' => $airport->id,
-            'code' => $airport->code,
-            'changes' => $airport->getChanges(),
-        ]);
+            LogService::system("AIRPORT UPDATED: Cache cleared", [
+                'airport_id' => $airport->id,
+                'code' => $airport->code,
+                'changes' => $airport->getChanges(),
+            ]);
+
+            if ($airport->status === 'closed') {
+                LogService::warning('system', "AIRPORT STATUS CHANGED TO CLOSED", [
+                    'airport_id' => $airport->id,
+                    'code' => $airport->code,
+                ]);
+            }
+
+        } catch (\Throwable $e) {
+            LogService::error('system', "AIRPORT OBSERVER ERROR (updated)", [
+                'airport_id' => $airport->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function deleted(Airport $airport)
     {
-        Cache::forget('api.airports.list');
-        Cache::forget("api.airports.show.{$airport->id}");
+        try {
+            Cache::forget('api.airports.list');
+            Cache::forget("api.airports.show.{$airport->id}");
 
-        LogService::system("AIRPORT DELETED: Cache cleared", [
-            'airport_id' => $airport->id,
-            'code' => $airport->code,
-        ]);
+            LogService::system("AIRPORT DELETED: Cache cleared", [
+                'airport_id' => $airport->id,
+                'code' => $airport->code,
+            ]);
+
+        } catch (\Throwable $e) {
+            LogService::error('system', "AIRPORT OBSERVER ERROR (deleted)", [
+                'airport_id' => $airport->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

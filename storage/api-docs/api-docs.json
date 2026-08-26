@@ -12,6 +12,186 @@
         }
     ],
     "paths": {
+        "/api/v1/airplanes": {
+            "get": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "List all Airplanes",
+                "operationId": "da662806c74403729657f2d89a9afeb4",
+                "responses": {
+                    "200": {
+                        "description": "List of Airplanes"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Create a new Airplane",
+                "operationId": "ce4255e5421ed3b339ae0d7661923d16",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "model",
+                                    "manufacturer",
+                                    "registration",
+                                    "capacity",
+                                    "year",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Boeing 737-800"
+                                    },
+                                    "manufacturer": {
+                                        "type": "string",
+                                        "example": "Boeing"
+                                    },
+                                    "registration": {
+                                        "type": "string",
+                                        "example": "N12345"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 189
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "example": 2020
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Airplane created successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/airplanes/{airplane}": {
+            "get": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Get Airplane by ID",
+                "operationId": "359492381246a944048bacbd8ca62594",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Airplane retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Update an Airplane",
+                "operationId": "558be016f3f669e6220fea5196a6fcb7",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "model": {
+                                        "type": "string"
+                                    },
+                                    "manufacturer": {
+                                        "type": "string"
+                                    },
+                                    "registration": {
+                                        "type": "string"
+                                    },
+                                    "capacity": {
+                                        "type": "integer"
+                                    },
+                                    "year": {
+                                        "type": "integer"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Airplane updated successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Airplanes"
+                ],
+                "summary": "Delete an Airplane",
+                "operationId": "5264ea4dabb59f28146bbfab2cb13f95",
+                "parameters": [
+                    {
+                        "name": "airplane",
+                        "in": "path",
+                        "description": "Airplane ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Airplane deleted successfully"
+                    },
+                    "404": {
+                        "description": "Airplane not found"
+                    }
+                }
+            }
+        },
         "/api/v1/airports": {
             "get": {
                 "tags": [
@@ -262,12 +442,1081 @@
                     }
                 }
             }
+        },
+        "/api/v1/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "95bd314a1cc0bdc0fcf2511169eec523",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "email",
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "date_of_birth": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "passenger"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login a user",
+                "operationId": "2be0afd504a0cb793167a2e526b1581a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout the authenticated user",
+                "operationId": "a6a240c98a5a59300720291196c8ebc8",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "securityScheme": "sanctum",
+                        "type": "apiKey",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ]
+            }
+        },
+        "/api/v1/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get authenticated user",
+                "operationId": "96885543179387c30f68b48294fb96fa",
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "securityScheme": "sanctum",
+                        "type": "apiKey",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ]
+            }
+        },
+        "/api/v1/bookings": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "List all bookings with pagination",
+                "operationId": "c3cc1649dc2ef3a3c5dd49d7ceb9cfb6",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings with pagination"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Create a new booking",
+                "operationId": "66baeaec2bbc1abf2fda29710fdeeb42",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "flight_id",
+                                    "number_of_seats",
+                                    "total_price",
+                                    "status",
+                                    "passengers"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "flight_id": {
+                                        "type": "integer"
+                                    },
+                                    "number_of_seats": {
+                                        "type": "integer"
+                                    },
+                                    "total_price": {
+                                        "type": "number"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "special_requests": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "passengers": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "first_name": {
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "date_of_birth": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "nationality": {
+                                                    "type": "string"
+                                                },
+                                                "passport_number": {
+                                                    "type": "string"
+                                                },
+                                                "id_number": {
+                                                    "type": "string"
+                                                },
+                                                "seat_number": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "meal_preference": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Booking created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/bookings/{booking}": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get booking by ID",
+                "operationId": "60860d963ebf368cdddb9fb0cd600688",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Booking retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Booking not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Update a booking",
+                "operationId": "cd10b92b49191b40bbdbcc34a1d05572",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "flight_id": {
+                                        "type": "integer"
+                                    },
+                                    "number_of_seats": {
+                                        "type": "integer"
+                                    },
+                                    "total_price": {
+                                        "type": "number"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "notes": {
+                                        "type": "string"
+                                    },
+                                    "special_requests": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Booking updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Delete a booking",
+                "operationId": "dea91226826c370deffe1e0439d15be4",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Booking deleted successfully"
+                    },
+                    "404": {
+                        "description": "Booking not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/bookings/{booking}/passengers": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get all passengers for a booking",
+                "operationId": "6acf56343a6ea4b2a907404f8a40f965",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of passengers for the booking"
+                    }
+                }
+            }
+        },
+        "/api/v1/bookings/{booking}/tickets": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get all tickets for a booking",
+                "operationId": "7638d0840d4b77244a01cb7c354c20ef",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tickets for the booking"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "List all Flights with pagination",
+                "operationId": "7775c68b7dd1fce1e0919e2ef055716f",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of Flights with pagination"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Create a new Flight",
+                "operationId": "44617b2f2ed35a9fb5b9ead560351f9e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "flight_number",
+                                    "airline_id",
+                                    "origin_airport_id",
+                                    "destination_airport_id",
+                                    "airplane_id",
+                                    "departure_date",
+                                    "departure_time",
+                                    "arrival_date",
+                                    "arrival_time",
+                                    "duration",
+                                    "price",
+                                    "total_seats",
+                                    "status"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Flight created successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights/{flight}": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Get Flight by ID",
+                "operationId": "b45601c7822009f64cc741adcaad7ba2",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flight retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Update a Flight",
+                "operationId": "8cd33d8793f1fc9f34f224dbe6475c3b",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flight updated successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Delete a Flight",
+                "operationId": "04db7c7ba6c94c301be9257c8fa71448",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Flight deleted successfully"
+                    },
+                    "404": {
+                        "description": "Flight not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights/{flight}/bookings": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Get all bookings for a flight",
+                "operationId": "01cdc49654ef8378b7391f9f36210b42",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings for the flight"
+                    }
+                }
+            }
+        },
+        "/api/v1/flights/{flight}/tickets": {
+            "get": {
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Get all tickets for a flight",
+                "operationId": "4725bb1b65d1191f656bb984101e642b",
+                "parameters": [
+                    {
+                        "name": "flight",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tickets for the flight"
+                    }
+                }
+            }
+        },
+        "/api/v1/passengers": {
+            "get": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "List all passengers",
+                "operationId": "580beb92e3e4bd94f4f5f08ecea9081b",
+                "responses": {
+                    "200": {
+                        "description": "List of passengers"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Create a new passenger",
+                "operationId": "b74f67e675a47049ebd2dfcff24a3aaa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "booking_id",
+                                    "first_name",
+                                    "last_name",
+                                    "email",
+                                    "nationality",
+                                    "passport_number",
+                                    "id_number"
+                                ],
+                                "properties": {
+                                    "booking_id": {
+                                        "type": "integer"
+                                    },
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "date_of_birth": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "nationality": {
+                                        "type": "string"
+                                    },
+                                    "passport_number": {
+                                        "type": "string"
+                                    },
+                                    "id_number": {
+                                        "type": "string"
+                                    },
+                                    "seat_number": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "meal_preference": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Passenger created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/passengers/{passenger}": {
+            "get": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Get passenger by ID",
+                "operationId": "1f1325303717d12768356391eaa962c7",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Passenger retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Passenger not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Update a passenger",
+                "operationId": "b78efa3414a4e8bbca3d4bfa13cac799",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "date_of_birth": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "nationality": {
+                                        "type": "string"
+                                    },
+                                    "passport_number": {
+                                        "type": "string"
+                                    },
+                                    "id_number": {
+                                        "type": "string"
+                                    },
+                                    "seat_number": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "meal_preference": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Passenger updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Delete a passenger",
+                "operationId": "805978aa7652fb4fe4823a36661e4935",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Passenger deleted successfully"
+                    },
+                    "404": {
+                        "description": "Passenger not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/passengers/{passenger}/ticket": {
+            "get": {
+                "tags": [
+                    "Passengers"
+                ],
+                "summary": "Get ticket for a passenger",
+                "operationId": "1512db9a453a36c24f7d4c3d9aa30c1b",
+                "parameters": [
+                    {
+                        "name": "passenger",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket for the passenger"
+                    },
+                    "404": {
+                        "description": "Passenger not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/tickets": {
+            "get": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "List all tickets",
+                "operationId": "c3e113c4902c15dd16eedf13c2a4e27a",
+                "responses": {
+                    "200": {
+                        "description": "List of tickets"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Create a new ticket",
+                "operationId": "77e271d984815d55fad20c30164ca50a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "passenger_id",
+                                    "first_name",
+                                    "last_name",
+                                    "email",
+                                    "class",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "passenger_id": {
+                                        "type": "integer"
+                                    },
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "seat_number": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "class": {
+                                        "type": "string"
+                                    },
+                                    "meal_preference": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ticket created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/tickets/{ticket}": {
+            "get": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Get ticket by ID",
+                "operationId": "ca65890e5a2c1a8f4652e8bce48ee6da",
+                "parameters": [
+                    {
+                        "name": "ticket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Update a ticket",
+                "operationId": "44bd8f234405fe6dc5819556c7500c78",
+                "parameters": [
+                    {
+                        "name": "ticket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "seat_number": {
+                                        "type": "string"
+                                    },
+                                    "meal_preference": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ticket updated successfully"
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Delete a ticket",
+                "operationId": "6b162c6658e6f841d3c25d58ed77c799",
+                "parameters": [
+                    {
+                        "name": "ticket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ticket deleted successfully"
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    }
+                }
+            }
         }
     },
     "tags": [
         {
+            "name": "Airplanes",
+            "description": "API Endpoints for managing Airplanes"
+        },
+        {
             "name": "Airports",
             "description": "API Endpoints for managing airports"
+        },
+        {
+            "name": "Auth",
+            "description": "Authentication API Endpoints"
+        },
+        {
+            "name": "Bookings",
+            "description": "API Endpoints for managing Bookings"
+        },
+        {
+            "name": "Flights",
+            "description": "API Endpoints for managing Flights"
+        },
+        {
+            "name": "Passengers",
+            "description": "API Endpoints for managing Passengers"
+        },
+        {
+            "name": "Tickets",
+            "description": "API Endpoints for managing tickets"
         }
     ]
 }
