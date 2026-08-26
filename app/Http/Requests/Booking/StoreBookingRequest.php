@@ -5,9 +5,11 @@ namespace App\Http\Requests\Booking;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 
 class StoreBookingRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -48,19 +50,14 @@ class StoreBookingRequest extends FormRequest
     }
     protected function prepareForValidation()
     {
-        $this->merge([
-            'booking_reference' => $this->sanitize($this->booking_reference),
-            'notes' => $this->sanitize($this->notes),
-            'special_requests' => $this->sanitize($this->special_requests),
-            'status' => $this->sanitize($this->status),
-            'number_of_seats' => (int) $this->number_of_seats,
-            'total_price' => (float) $this->total_price,
+        $this->sanitizeAll([
+            'user_id',
+            'flight_id',
+            'number_of_seats',
+            'total_price',
+            'status',
+            'notes',
+            'special_requests',
         ]);
-    }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 }

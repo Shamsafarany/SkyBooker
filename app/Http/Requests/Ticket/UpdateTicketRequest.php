@@ -5,9 +5,11 @@ namespace App\Http\Requests\Ticket;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 
 class UpdateTicketRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -44,19 +46,13 @@ class UpdateTicketRequest extends FormRequest
             'meal_preference.in' => 'Invalid meal preference.',
         ];
     }
-    protected function prepareForValidation(): void
+    protected function prepareForValidation()
     {
-        $this->merge([
-            'seat_number' => $this->sanitize($this->seat_number),
-            'meal_preference' => $this->sanitize($this->meal_preference),
-            'status' => $this->sanitize($this->status),
-            'notes' => $this->sanitize($this->notes),
+        $this->sanitizeOnly([
+            'seat_number',
+            'meal_preference',
+            'status',
+            'notes',
         ]);
-    }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 }

@@ -10,7 +10,7 @@ class PassengerCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection,
+            'data' => PassengerResource::collection($this->collection),
             'meta' => [
                 'total' => $this->total(),
                 'per_page' => $this->perPage(),

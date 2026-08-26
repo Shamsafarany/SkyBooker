@@ -8,6 +8,8 @@ use App\Models\Airport;
 use App\Models\Airplane;
 use App\Models\Flight;
 use App\Models\Booking;
+use App\Models\Passenger;
+use App\Models\Ticket;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
         Airplane::observe(\App\Observers\AirplaneObserver::class);
         Flight::observe(\App\Observers\FlightObserver::class);
         Booking::observe(\App\Observers\BookingObserver::class); 
+        Passenger::observe(\App\Observers\PassengerObserver::class); 
+        Ticket::observe(\App\Observers\TicketObserver::class); 
         
         //macro
         Response::macro('success', function ($data, $message = 'OK') {

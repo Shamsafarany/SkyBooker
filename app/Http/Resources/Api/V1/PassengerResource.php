@@ -10,11 +10,11 @@ class PassengerResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type'=> 'passenger',
+            'type' => 'passenger',
             'id' => $this->id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'full_name' => $this->first_name . ' ' . $this->last_name,
+            'full_name' => trim($this->first_name . ' ' . $this->last_name),
             'email' => $this->email,
             'phone' => $this->phone,
             'date_of_birth' => $this->date_of_birth,
@@ -25,19 +25,31 @@ class PassengerResource extends JsonResource
             'meal_preference' => $this->meal_preference,
             'status' => $this->status,
             
-            'booking' => new BookingResource($this->whenLoaded('booking')),
-            'ticket' => new TicketResource($this->whenLoaded('ticket')),
+            // Use closure to prevent MissingValue
+            'booking' => $this->whenLoaded('booking', function () {
+                return new BookingResource($this->booking);
+            }),
+            
+            // Check if ticket exists before creating resource
+            'ticket' => $this->whenLoaded('ticket', function () {
+                // Only create TicketResource if ticket is not null
+                if ($this->ticket && !($this->ticket instanceof \Illuminate\Http\Resources\MissingValue)) {
+                    return new TicketResource($this->ticket);
+                }
+                return null;
+            }),
             
             'links' => [
                 'self' => route('api.v1.passengers.show', $this->id),
                 'collection' => route('api.v1.passengers.index'),
-                'booking' => route('api.v1.bookings.show', $this->booking_id),
+                'booking' => $this->booking_id ? route('api.v1.bookings.show', $this->booking_id) : null,
             ],
             
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
+    
     public function withResponse($request, $response)
     {
         $response->header('Accept', 'application/json');

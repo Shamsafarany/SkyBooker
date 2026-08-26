@@ -3,46 +3,70 @@
 namespace App\Observers;
 
 use App\Models\Booking;
+use Illuminate\Support\Facades\Cache;
+use App\Services\LogService;
 
 class BookingObserver
 {
-    /**
-     * Handle the Booking "created" event.
-     */
-    public function created(Booking $booking): void
+    public function created(Booking $booking)
     {
-        //
+        try {
+            Cache::forget("api.bookings.show.{$booking->id}");
+
+            LogService::system("booking CREATED: Cache cleared", [
+                'booking_id' => $booking->id,
+                'code' => $booking->code,
+            ]);
+
+        } catch (\Throwable $e) {
+            LogService::error('system', "booking ObSERVER ERROR (created)", [
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Handle the Booking "updated" event.
-     */
-    public function updated(Booking $booking): void
+    public function updated(Booking $booking)
     {
-        //
+        try {
+            Cache::forget("api.bookings.show.{$booking->id}");
+
+            LogService::system("booking UPDATED: Cache cleared", [
+                'booking_id' => $booking->id,
+                'code' => $booking->code,
+                'changes' => $booking->getChanges(),
+            ]);
+
+            if ($booking->status === 'cancelled') {
+                LogService::warning('system', "booking STATUS CHANGED TO CANCELLED", [
+                    'booking_id' => $booking->id,
+                    'code' => $booking->code,
+                ]);
+            }
+
+        } catch (\Throwable $e) {
+            LogService::error('system', "booking ObSERVER ERROR (updated)", [
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Handle the Booking "deleted" event.
-     */
-    public function deleted(Booking $booking): void
+    public function deleted(Booking $booking)
     {
-        //
-    }
+        try {
+            Cache::forget("api.bookings.show.{$booking->id}");
 
-    /**
-     * Handle the Booking "restored" event.
-     */
-    public function restored(Booking $booking): void
-    {
-        //
-    }
+            LogService::system("booking DELETED: Cache cleared", [
+                'booking_id' => $booking->id,
+                'code' => $booking->code,
+            ]);
 
-    /**
-     * Handle the Booking "force deleted" event.
-     */
-    public function forceDeleted(Booking $booking): void
-    {
-        //
+        } catch (\Throwable $e) {
+            LogService::error('system', "booking ObSERVER ERROR (deleted)", [
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

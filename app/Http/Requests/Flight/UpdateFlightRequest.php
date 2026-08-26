@@ -5,9 +5,11 @@ namespace App\Http\Requests\Flight;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 
 class UpdateFlightRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -53,19 +55,17 @@ class UpdateFlightRequest extends FormRequest
     }
     protected function prepareForValidation()
     {
-        $this->merge([
-            'flight_number' => $this->sanitize($this->flight_number),
-            'duration' => $this->sanitize($this->duration),
-            'status' => $this->sanitize($this->status),
-            'price' => (float) $this->price,
-            'total_seats' => (int) $this->total_seats,
+        $this->sanitizeOnly([
+            'flight_number',
+            'duration',
+            'status',
+            'price',
+            'total_seats',
+            'booking_deadline',
+            'departure_date',
+            'departure_time',
+            'arrival_date',
+            'arrival_time',
         ]);
-    }
-    
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 }

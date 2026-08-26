@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\BookingController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\AuthController;
+use Illuminate\Support\Facades\Response;
 
 
 Route::prefix('v1')->name('api.v1.')->group(function() {
@@ -39,4 +40,8 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
                 ->name('passengers.ticket');
         });
     }); 
+    Route::fallback(function () {
+    return Response::error('Endpoint not found', 404);
+});
+
 });

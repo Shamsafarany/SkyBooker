@@ -5,9 +5,11 @@ namespace App\Http\Requests\Airport;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 
 class StoreAirportRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -45,18 +47,14 @@ class StoreAirportRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'name' => $this->sanitize($this->name),
-            'code' => $this->sanitize($this->code),
-            'city' => $this->sanitize($this->city),
-            'country' => $this->sanitize($this->country),
+        $this->sanitizeAll([
+            'name',
+            'code',
+            'city',
+            'country',
+            'terminals',
+            'status',
         ]);
-    }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 
 }

@@ -5,9 +5,13 @@ namespace App\Http\Requests\Airport;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
+
 
 class UpdateAirportRequest extends FormRequest
 {
+    use SanitizesInput;
+
     public function authorize(): bool
     {
         return true;
@@ -45,38 +49,13 @@ class UpdateAirportRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $data = [];
-        if ($this->has('name')) {
-            $data['name'] = $this->sanitize($this->name);
-        }
-
-        if ($this->has('code')) {
-            $data['code'] = $this->sanitize($this->code);
-        }
-
-        if ($this->has('city')) {
-            $data['city'] = $this->sanitize($this->city);
-        }
-
-        if ($this->has('country')) {
-            $data['country'] = $this->sanitize($this->country);
-        }
-
-        if ($this->has('terminals')) {
-            $data['terminals'] = $this->sanitize($this->terminals);
-        }
-
-        if ($this->has('status')) {
-            $data['status'] = $this->sanitize($this->status);
-        }
-
-        $this->merge($data);
-    }
-    
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
+        $this->sanitizeOnly([
+            'name',
+            'code',
+            'city',
+            'country',
+            'terminals',
+            'status',
+        ]);
     }
 }

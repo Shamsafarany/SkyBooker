@@ -5,8 +5,10 @@ namespace App\Http\Requests\Passenger;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 class StorePassengerRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -55,23 +57,20 @@ class StorePassengerRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'first_name' => $this->sanitize($this->first_name),
-            'last_name' => $this->sanitize($this->last_name),
-            'email' => $this->sanitize($this->email),
-            'phone' => $this->sanitize($this->phone),
-            'nationality' => $this->sanitize($this->nationality),
-            'passport_number' => $this->sanitize($this->passport_number),
-            'id_number' => $this->sanitize($this->id_number),
-            'seat_number' => $this->sanitize($this->seat_number),
-            'status' => $this->sanitize($this->status),
-            'meal_preference' => $this->sanitize($this->meal_preference),
+        $this->sanitizeAll([
+            'booking_id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'date_of_birth',
+            'nationality',
+            'passport_number',
+            'id_number',
+            'seat_number',
+            'meal_preference',
+            'status',
         ]);
     }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
-    }
+    
 }

@@ -39,8 +39,8 @@ class AirportObserver
                 'changes' => $airport->getChanges(),
             ]);
 
-            if ($airport->status === 'closed') {
-                LogService::warning('system', "AIRPORT STATUS CHANGED TO CLOSED", [
+            if ($airport->status === 'maintenance') {
+                LogService::warning('system', "AIRPORT STATUS CHANGED TO MAINTENANCE", [
                     'airport_id' => $airport->id,
                     'code' => $airport->code,
                 ]);

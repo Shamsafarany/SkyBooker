@@ -6,9 +6,11 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Ticket;
+use App\Traits\SanitizesInput;
 
 class StoreTicketRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -17,7 +19,11 @@ class StoreTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'passenger_id' => 'required|exists:passengers,id',
+            'passenger_id' => [
+                'required',
+                'exists:passengers,id',
+                Rule::unique('tickets', 'passenger_id')
+            ],
             'ticket_number' => 'nullable|string|max:255|unique:tickets,ticket_number',
             'seat_number' => 'nullable|string|max:10',
             'class' => ['required', Rule::in(['economy', 'premium_economy', 'business', 'first'])],
@@ -33,6 +39,7 @@ class StoreTicketRequest extends FormRequest
         return [
             'passenger_id.required' => 'Passenger ID is required.',
             'passenger_id.exists' => 'Selected passenger does not exist.',
+            'passenger_id.unique' => 'This passenger already has a ticket.',
             'class.required' => 'Ticket class is required.',
             'class.in' => 'Invalid class selected.',
             'status.required' => 'Status is required.',
@@ -41,22 +48,19 @@ class StoreTicketRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation(): void
+    protected function prepareForValidation()
     {
-        $this->merge([
-            'ticket_number' => Ticket::generateTicketNumber(),
-            'issued_at' => now(),
-            'seat_number' => $this->sanitize($this->seat_number),
-            'meal_preference' => $this->sanitize($this->meal_preference),
-            'status' => $this->sanitize($this->status),
-            'notes' => $this->sanitize($this->notes),
+        $this->sanitizeAll([
+            'passenger_id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'seat_number',
+            'class',
+            'meal_preference',
+            'status',
         ]);
-    }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 
 }

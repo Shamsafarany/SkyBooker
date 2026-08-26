@@ -5,9 +5,11 @@ namespace App\Http\Requests\Airplane;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Traits\SanitizesInput;
 
 class UpdateAirplaneRequest extends FormRequest
 {
+    use SanitizesInput;
     public function authorize(): bool
     {
         return true;
@@ -45,16 +47,13 @@ class UpdateAirplaneRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'model' => $this->sanitize($this->model),
-            'manufacturer' => $this->sanitize($this->manufacturer),
-            'registration' => $this->sanitize($this->registration),
+        $this->sanitizeOnly([
+            'model',
+            'manufacturer',
+            'registration',
+            'capacity',
+            'year',
+            'status',
         ]);
-    }
-    private function sanitize($value)
-    {
-        return is_string($value)
-            ? trim(strip_tags($value))
-            : $value;
     }
 }

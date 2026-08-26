@@ -12,8 +12,6 @@ class FlightObserver
     {
         try {
             Cache::forget("api.flights.{$flight->id}");
-            Cache::forget("api.flights.raw");
-
             LogService::system("FLIGHT CREATED: Cache cleared", [
                 'flight_id' => $flight->id,
                 'flight_number' => $flight->flight_number,
@@ -31,7 +29,6 @@ class FlightObserver
     {
         try {
             Cache::forget("api.flights.{$flight->id}");
-            Cache::forget("api.flights.raw");
 
             LogService::system("FLIGHT UPDATED: Cache cleared", [
                 'flight_id' => $flight->id,
@@ -57,7 +54,6 @@ class FlightObserver
     {
         try {
             Cache::forget("api.flights.{$flight->id}");
-            Cache::forget("api.flights.raw");
 
             LogService::system("FLIGHT DELETED: Cache cleared", [
                 'flight_id' => $flight->id,
