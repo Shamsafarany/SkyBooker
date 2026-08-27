@@ -39,8 +39,18 @@ class AirplaneService
 
     public function update(Airplane $airplane, array $data)
     {
+        if (isset($data['registration'])) {
+            Log::warning('Update registration number.');
+            return [
+                'success' => false,
+                'message' => 'Registration number cannot be changed.'
+            ];
+        }
         $airplane->update($data);
-        return $airplane;
+        return [
+            'success' => true,
+            'airplane' => $airplane
+        ];
     }
 
     public function delete(Airplane $airplane)

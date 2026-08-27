@@ -29,8 +29,7 @@ class UpdateTicketRequest extends FormRequest
             ],
             'seat_number' => 'nullable|string|max:10',
             'class' => ['sometimes', Rule::in(['economy', 'premium_economy', 'business', 'first'])],
-            'meal_preference' => ['nullable', Rule::in(['standard', 'full_meal', 'sandwitch', 'child_meal', 'none'])],
-            'status' => ['sometimes', Rule::in(['issued', 'used', 'cancelled', 'expired'])],
+            'meal_preference' => ['nullable', Rule::in(['standard', 'full_meal', 'sandwich', 'child_meal', 'none'])],
             'notes' => 'nullable|string|max:1000',
             'issued_at' => 'nullable|date',
         ];
@@ -42,7 +41,6 @@ class UpdateTicketRequest extends FormRequest
             'passenger_id.exists' => 'Selected passenger does not exist.',
             'ticket_number.unique' => 'This ticket number already exists.',
             'class.in' => 'Invalid class selected.',
-            'status.in' => 'Invalid status selected.',
             'meal_preference.in' => 'Invalid meal preference.',
         ];
     }
@@ -51,7 +49,6 @@ class UpdateTicketRequest extends FormRequest
         $this->sanitizeOnly([
             'seat_number',
             'meal_preference',
-            'status',
             'notes',
         ]);
     }

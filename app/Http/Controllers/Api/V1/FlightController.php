@@ -64,7 +64,10 @@ class FlightController extends Controller
     {
         try {
             $result = $this->flightService->update($flight, $request->validated());
-            return Response::success(new FlightResource($result), 'Flight updated');
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
+            return Response::success(new FlightResource($result['flight']), 'Flight updated');
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT UPDATE ERROR', ['error' => $e->getMessage()]);

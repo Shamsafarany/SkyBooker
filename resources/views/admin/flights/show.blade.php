@@ -30,7 +30,7 @@
                         <i class="fa-regular 
                             {{ $flight['status'] === 'scheduled' ? 'fa-calendar' : '' }}
                             {{ $flight['status'] === 'open' ? 'fa-circle-check' : '' }}
-                            {{ $flight['status'] === 'closing' ? 'fa-triangle-exclamation' : '' }}
+                            {{ $flight['status'] === 'closing' ? 'fa fa-triangle-exclamation' : '' }}
                             {{ $flight['status'] === 'completed' ? 'fa-flag-checkered' : '' }}
                             {{ $flight['status'] === 'cancelled' ? 'fa-circle-xmark' : '' }}
                             {{ $flight['status'] === 'delayed' ? 'fa-clock' : '' }}
@@ -289,7 +289,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->email}}</td>
-                                <td class="px-6 py-3 font-mono font-bold text-cyan-700">{{ $passenger->ticket->seat_number ?$passenger->ticket->seat_number : 'N/A' }}</td>
+                                <td class="px-6 py-3 font-mono font-bold text-cyan-700">{{ $passenger->ticket? $passenger->ticket->seat_number : 'N/A' }}</td>
                                 <td class="px-6 py-3">
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                         <i class="fa-regular fa-circle-check mr-1"></i>

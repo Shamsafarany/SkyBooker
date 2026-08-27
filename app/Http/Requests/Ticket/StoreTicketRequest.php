@@ -24,11 +24,10 @@ class StoreTicketRequest extends FormRequest
                 'exists:passengers,id',
                 Rule::unique('tickets', 'passenger_id')
             ],
-            'ticket_number' => 'nullable|string|max:255|unique:tickets,ticket_number',
+            'ticket_number' => 'required|string|max:255|unique:tickets,ticket_number',
             'seat_number' => 'nullable|string|max:10',
             'class' => ['required', Rule::in(['economy', 'premium_economy', 'business', 'first'])],
             'meal_preference' => ['nullable', Rule::in(['standard', 'full_meal', 'sandwitch', 'child_meal', 'none'])],
-            'status' => ['required', Rule::in(['issued', 'used', 'cancelled', 'expired'])],
             'notes' => 'nullable|string|max:1000',
             'issued_at' => 'nullable|date',
         ];
@@ -37,13 +36,12 @@ class StoreTicketRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'ticket_number.required' => 'Ticket number is required.',
             'passenger_id.required' => 'Passenger ID is required.',
             'passenger_id.exists' => 'Selected passenger does not exist.',
             'passenger_id.unique' => 'This passenger already has a ticket.',
             'class.required' => 'Ticket class is required.',
             'class.in' => 'Invalid class selected.',
-            'status.required' => 'Status is required.',
-            'status.in' => 'Invalid status selected.',
             'meal_preference.in' => 'Invalid meal preference.',
         ];
     }
@@ -59,7 +57,6 @@ class StoreTicketRequest extends FormRequest
             'seat_number',
             'class',
             'meal_preference',
-            'status',
         ]);
     }
 

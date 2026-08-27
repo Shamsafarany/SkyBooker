@@ -103,8 +103,20 @@ class FlightService
 
     public function update(Flight $flight, array $data)
     {
+        if (isset($data['flight_number'])) {
+            Log::warning('Changing flight number.');
+            return [
+                'success' => false,
+                'message' => 'Flight number cannot be changed.'
+            ];
+        }
         $flight->update($data);
-        return $flight;
+        $flight->load(['airline', 'origin', 'destination']);
+
+        return [
+            'success' => true,
+            'flight' => $flight
+        ];
     }
 
     public function delete(Flight $flight)

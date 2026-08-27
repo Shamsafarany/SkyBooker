@@ -2,46 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Ticket;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
+use App\Services\Admin\TicketService;
 
 class TicketController extends Controller
 {
+    public function __construct(private TicketService $ticketService) {}
     public function show(string $id)
     {
-        $ticket = Ticket::with([
-            'passenger',
-            'passenger.booking',
-            'passenger.booking.flight',
-            'passenger.booking.flight.airline',
-            'passenger.booking.flight.origin',
-            'passenger.booking.flight.destination',
-        ])->findOrFail($id);
+        $result = $this->ticketService->getAdminShow($id);
 
-        return view('admin.tickets.show', compact('ticket'));
+        return view('admin.tickets.show', [
+            'ticket' => $result['ticket']
+        ]);
     }
 
     public function destroy(Ticket $ticket)
     {
-        $ticket->delete();
-        Log::channel('booking')->info('Ticket deleted successfully', [
-            'ticket_id' => $ticket->id,
-            ]);
-        return redirect()->back()->with('success', 'Ticket deleted successfully!');
+        $result = $this->ticketService->delete($ticket);
+        if (!$result['success']) {
+            return back()->with('error', 'Failed to delete ticket.');
+        }
+        return back()->with('success', 'Ticket deleted successfully!');
     }
     public function generatePDF(Ticket $ticket)
     {
-        $ticket->load('passenger.booking.flight');
-        
-        $pdf = Pdf::loadView('admin.tickets.pdf', compact('ticket'));
+        $pdf = $this->ticketService->generatePdf($ticket);
 
-        Log::channel('booking')->info('Ticket pdf generated', [
-            'ticket_id' => $ticket->id,
-            'ticket_number' => $ticket->ticket_number,
-        ]);
-        
         return $pdf->download('ticket-' . $ticket->ticket_number . '.pdf');
     }
 }

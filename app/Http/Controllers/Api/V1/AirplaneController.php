@@ -63,9 +63,12 @@ class AirplaneController extends Controller
     public function update(UpdateAirplaneRequest $request, Airplane $airplane)
     {
         try {
-            $airplane= $this->airplaneService->update($airplane,$request->validated());
+            $result= $this->airplaneService->update($airplane,$request->validated());
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
             return Response::success(
-                new AirplaneResource($airplane),
+                new AirplaneResource($result['airplane']),
                 'Airplane updated'
             );
 

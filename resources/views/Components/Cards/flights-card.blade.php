@@ -40,7 +40,7 @@
         ],
         'closing' => [
             'color' => 'bg-amber-100/80 text-amber-700',
-            'icon' => 'fa-triangle-exclamation',
+            'icon' => 'fa fa-triangle-exclamation text-amber-400',
             'label' => 'Closing',
         ],
         'completed' => [
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <span class="px-3 py-1 rounded-full text-xs font-semibold tracking-wide {{ $statusColor }} shadow-sm whitespace-nowrap">
-                <i class="fa-regular {{ $statusIcon }} mr-1"></i>
+                <i class="fa {{ $statusIcon }} mr-1"></i>
                 {{ $statusLabel }}
             </span>
         </div>

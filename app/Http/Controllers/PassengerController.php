@@ -189,7 +189,6 @@ class PassengerController extends Controller
                 'seat_number' => $seatNumber,
                 'class' => 'economy',
                 'meal_preference' => $passenger->meal_preference ?? 'standard',
-                'status' => 'issued',
                 'issued_at' => now(),
             ]);
 

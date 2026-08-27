@@ -22,31 +22,31 @@
                 [
                     'label' => 'Total Flights',
                     'value' => $stats['total'],
-                    'icon' => 'fa-regular fa-calendar-check text-cyan-400',
+                    'icon' => 'fa fa-calendar-check text-cyan-400',
                     'color' => 'text-cyan-700',
                 ],
                 [
                     'label' => 'Total Airlines',
                     'value' => $stats['total_airlines'],
-                    'icon' => 'fa-regular fa-circle-check text-cyan-400',
+                    'icon' => 'fa fa-circle-check text-cyan-400',
                     'color' => 'text-cyan-600',
                 ],
                 [
                     'label' => 'Open for Booking',
                     'value' => $stats['open'],
-                    'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                    'icon' => 'fa fa-circle-check text-emerald-400',
                     'color' => 'text-emerald-600',
                 ],
                 [
                     'label' => 'Almost Full',
                     'value' => $stats['closing'],
-                    'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                    'icon' => 'fa-triangle-exclamation text-amber-400',
                     'color' => 'text-amber-600',
                 ],
                 [
                     'label' => 'Total Revenue',
                     'value' => '$' . number_format($stats['revenue'], 0),
-                    'icon' => 'fa-regular fa-dollar-sign text-cyan-400',
+                    'icon' => 'fa fa-dollar-sign text-cyan-400',
                     'color' => 'text-cyan-600',
                 ],
             ]"
@@ -105,7 +105,7 @@
                         </div>
                     @else
                         <div class="text-center py-8 text-gray-400">
-                            <i class="fa-regular fa-calendar-check text-2xl mb-2 block"></i>
+                            <i class="fa fa-calendar-check text-2xl mb-2 block"></i>
                             <p>No flights for this airline yet.</p>
                         </div>
                     @endif
