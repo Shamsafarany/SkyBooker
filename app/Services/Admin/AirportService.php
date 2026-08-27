@@ -3,8 +3,10 @@
 namespace App\Services\Admin;
 
 use App\Models\Airport;
+use App\Models\Flight;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\Api\V1\AirportResource;
 
 class AirportService
 {
@@ -56,32 +58,45 @@ class AirportService
     public function getApiList()
     {
         return Cache::remember('api.airports.list', 60, function () {
-            Log::info('API AIRPORT LIST: Cache MISS');
+            Log::info('AIRPORT INDEX: Cache MISS - querying database');
 
-            $airports = Airport::withCount(['departingFlights', 'arrivingFlights'])->get();
+            $airports = Airport::withCount([
+                'departingFlights',
+                'arrivingFlights'
+            ])->get();
 
-            return $airports;
+            return AirportResource::collection($airports)->resolve();
         });
     }
     public function getApiShow(Airport $airport)
     {
-        $key = "api.airports.show.{$airport->id}";
+        $key = "api.airports.show.{$airport->code}";
 
         return Cache::remember($key, 60, function () use ($airport) {
-            Log::info("API AIRPORT SHOW: Cache MISS for ID {$airport->id}");
+            Log::info("AIRPORT SHOW: Cache MISS - querying database for CODE {$airport->code}");
 
-            return Airport::withCount(['departingFlights', 'arrivingFlights'])
-                ->findOrFail($airport->id);
+            $airport = Airport::withCount(['departingFlights', 'arrivingFlights'])
+                ->where('code', $airport->code)
+                ->firstOrFail();
+
+            // Convert to array BEFORE caching
+            return (new AirportResource($airport))->resolve();
         });
     }
+
     public function getFlightsForAirport(string $code)
     {
         $airport = Airport::where('code', $code)->firstOrFail();
 
-        return [
-            'airport' => $airport,
-            'flights' => $airport->flights()->paginate(15)
-        ];
+    $flights = Flight::where('origin_airport_id', $airport->id)
+        ->orWhere('destination_airport_id', $airport->id)
+        ->with(['airline', 'origin', 'destination', 'airplane'])
+        ->paginate(15);
+
+    return [
+        'airport' => $airport,
+        'flights' => $flights
+    ];
     }
 
 }

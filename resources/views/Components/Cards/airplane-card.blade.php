@@ -35,7 +35,7 @@
 <div class="group relative block bg-gray-50/80 hover:bg-gray-50/80 backdrop-blur-sm transition-all duration-300 p-6 rounded-2xl shadow-md hover:shadow-2xl border border-gray-200/60 hover:scale-[1.02] active:scale-[0.98]">
     
     {{-- Subtle gradient overlay --}}
-    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-200/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+    <div class="absolute inset-0 rounded-2xl bg-gradient from-cyan-200/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
     
     <div class="relative z-10">
         {{-- Header: Icon + Badge --}}
@@ -64,7 +64,7 @@
             {{-- Capacity --}}
             <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-500 flex items-center gap-1.5">
-                    <i class="fa-regular fa-users text-cyan-400"></i>
+                    <i class="fa fa-users text-cyan-400"></i>
                     Capacity
                 </span>
                 <span class="font-semibold text-gray-800">{{ $capacity }} seats</span>
@@ -86,7 +86,7 @@
                     Status
                 </span>
                 <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $statusColor }}">
-                    <i class="fa-regular {{ $statusIconClass }} mr-1"></i>
+                    <i class="fa {{ $statusIconClass }} mr-1"></i>
                     {{ ucfirst($status) }}
                 </span>
             </div>
@@ -115,7 +115,6 @@
                         @method('DELETE')
                         <button type="submit" 
                                 class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-700
-                                hover: text-rose-400 
                                 transition-all duration-200"
                                 onclick="return confirm('Are you sure you want to delete this?')">
                             Delete

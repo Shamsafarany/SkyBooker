@@ -14,17 +14,16 @@ use App\Http\Resources\Api\V1\FlightResource;
 use App\Http\Resources\Api\V1\FlightCollection;
 use App\Http\Resources\Api\V1\BookingCollection;
 use App\Http\Resources\Api\V1\TicketCollection;
+use App\Services\Admin\FlightService;
 
 class FlightController extends Controller
 {
+    public function __construct(private FlightService $flightService) {}
     public function index()
     {
         try {
-            $flights = Flight::with(['airline','origin','destination','airplane'])
-                ->paginate(15);
-            Log::info('FLIGHT INDEX: Cache MISS - querying database');    
-
-            return Response::success(new FlightCollection($flights), 'Flights retrieved');
+            $flights = $this->flightService->getApiList(); 
+            return Response::success($flights, 'Flights retrieved');
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT INDEX ERROR', ['error' => $e->getMessage()]);
@@ -35,7 +34,11 @@ class FlightController extends Controller
     public function store(StoreFlightRequest $request)
     {
         try {
-            $flight = Flight::create($request->validated());
+            $result = $this->flightService->create($request->validated());
+            if (!$result['success']) {
+                return Response::error($result['message'], 422);
+            }
+            $flight = $result['flight'];
 
             return Response::success(new FlightResource($flight), 'Flight created', 201);
 
@@ -48,20 +51,9 @@ class FlightController extends Controller
     public function show(Flight $flight)
     {
         try {
-            $key = "api.flights.show.{$flight->id}";
-
-            $data = Cache::remember($key, 60, function () use ($flight) {
-                Log::info('FLIGHT SHOW: Cache MISS - querying database');
-
-                $flight->load(['airline','origin','destination','airplane']);
-
-                return (new FlightResource($flight))->resolve();
-            });
-
-            Log::info('FLIGHT SHOW: Cache HIT - getting cache');
-
+            $data = $this->flightService->getApiShow($flight);
+            Log::info("FLIGHT SHOW: Cache HIT for ID {$flight->id}");
             return Response::success($data, 'Flight retrieved');
-
         } catch (\Throwable $e) {
             Log::error('FLIGHT SHOW ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to retrieve flight', 500);
@@ -71,9 +63,8 @@ class FlightController extends Controller
     public function update(UpdateFlightRequest $request, Flight $flight)
     {
         try {
-            $flight->update($request->validated());
-
-            return Response::success(new FlightResource($flight), 'Flight updated');
+            $result = $this->flightService->update($flight, $request->validated());
+            return Response::success(new FlightResource($result), 'Flight updated');
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT UPDATE ERROR', ['error' => $e->getMessage()]);
@@ -84,7 +75,10 @@ class FlightController extends Controller
     public function destroy(Flight $flight)
     {
         try {
-            $flight->delete();
+            $result = $this->flightService->delete($flight);
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
 
             return Response::success(null, 'Flight deleted', 204);
 
@@ -97,9 +91,9 @@ class FlightController extends Controller
     public function bookings(Flight $flight)
     {
         try {
-            $bookings = $flight->bookings()->paginate(15);
+            $result= $this->flightService->getApiBookings($flight);
 
-            return Response::success(new BookingCollection($bookings), 'Flight bookings retrieved');
+            return Response::success(new BookingCollection($result['bookings']), 'Flight bookings retrieved');
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT BOOKINGS ERROR', ['error' => $e->getMessage()]);
@@ -110,13 +104,8 @@ class FlightController extends Controller
     public function tickets(Flight $flight)
     {
         try {
-            $tickets = Ticket::whereHas('passenger.booking', function ($query) use ($flight) {
-                $query->where('flight_id', $flight->id);
-            })
-            ->with(['passenger'])
-            ->paginate(15);
-
-            return Response::success(new TicketCollection($tickets), 'Flight tickets retrieved');
+            $result = $this->flightService->getApiTickets($flight);
+            return Response::success(new TicketCollection($result['tickets']), 'Flight tickets retrieved');
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT TICKETS ERROR', ['error' => $e->getMessage()]);

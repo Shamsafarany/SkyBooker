@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Airport;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use App\Services\Admin\AirportService;
 class AirportController extends Controller
 {

@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\AirportResource;
 use App\Models\Airport;
-use App\Models\Flight;
 use Illuminate\Http\Request;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
 use App\Http\Resources\Api\V1\FlightCollection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use App\Services\Admin\AirportService;
@@ -25,10 +23,8 @@ class AirportController extends Controller
 
             Log::info('API AIRPORT LIST: Cache HIT');
 
-            return Response::success(
-                AirportResource::collection($airports)->resolve(),
-                'Airports retrieved'
-            );
+            return Response::success($airports, 'Airports retrieved');
+
         } catch (\Throwable $e) {
             Log::error('AIRPORT INDEX ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to retrieve airports', 500);
@@ -56,10 +52,8 @@ class AirportController extends Controller
 
             Log::info("API AIRPORT SHOW: Cache HIT for ID {$airport->id}");
 
-            return Response::success(
-                (new AirportResource($airportData))->resolve(),
-                'Airport retrieved'
-            );
+            return Response::success($airportData, 'Airport retrieved');
+
         } catch (\Throwable $e) {
             Log::error('AIRPORT SHOW ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to retrieve airport', 500);

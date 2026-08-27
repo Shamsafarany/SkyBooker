@@ -18,7 +18,6 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
         Route::post('/login', [AuthController::class, 'login']);
         Route::apiResource('airports', AirportController::class);
         Route::apiResource('airplanes', AirplaneController::class);
-        Route::apiResource('airlines', AirlineController::class);
         Route::apiResource('flights', FlightController::class);
         Route::get('/airports/{airport}/flights', [AirportController::class, 'flights'])
                 ->name('airports.flights');
@@ -41,7 +40,7 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
         });
     }); 
     Route::fallback(function () {
-    return Response::error('Endpoint not found', 404);
-});
+        return Response::error('Endpoint not found', 404);
+    });
 
 });

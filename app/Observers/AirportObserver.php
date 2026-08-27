@@ -12,7 +12,7 @@ class AirportObserver
     {
         try {
             Cache::forget('api.airports.list');
-            Cache::forget("api.airports.show.{$airport->id}");
+            Cache::forget("api.airports.show.{$airport->code}");
             Cache::forget('admin.airports.stats');
 
             LogService::system("AIRPORT CREATED: Cache cleared", [

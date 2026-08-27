@@ -31,14 +31,20 @@ trait SanitizesInput
         $data = [];
 
         foreach ($fields as $field) {
-            $value = $this->$field;
+            if (!$this->input($field)) {
+                continue;
+            }
+
+            $value = $this->input($field);
 
             if (is_numeric($value)) {
                 $data[$field] = $value + 0;
                 continue;
             }
 
-            $data[$field] = $this->sanitize($value);
+            $data[$field] = is_string($value)
+                ? trim(strip_tags($value))
+                : $value;
         }
 
         $this->merge($data);

@@ -13,6 +13,7 @@ class AirplaneObserver
         try {
             Cache::forget('api.airplanes.list');
             Cache::forget("api.airplanes.show.{$airplane->id}");
+            Cache::forget('admin.airplanes.stats');
 
             LogService::system("AIRPLANE CREATED: Cache cleared", [
                 'airplane_id' => $airplane->id,
@@ -33,6 +34,7 @@ class AirplaneObserver
         try {
             Cache::forget('api.airplanes.list');
             Cache::forget("api.airplanes.show.{$airplane->id}");
+            Cache::forget('admin.airplanes.stats');
 
             LogService::system("AIRPLANE UPDATED: Cache cleared", [
                 'airplane_id' => $airplane->id,
@@ -59,6 +61,7 @@ class AirplaneObserver
         try {
             Cache::forget('api.airplanes.list');
             Cache::forget("api.airplanes.show.{$airplane->id}");
+            Cache::forget('admin.airplanes.stats');
 
             LogService::system("AIRPLANE DELETED: Cache cleared", [
                 'airplane_id' => $airplane->id,

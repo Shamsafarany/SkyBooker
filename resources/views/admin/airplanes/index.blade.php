@@ -22,31 +22,31 @@
                 [
                     'label' => 'Total Aircraft',
                     'value' => $stats['total'],
-                    'icon' => 'fa-regular fa-plane text-cyan-400',
+                    'icon' => 'fa fa-plane text-cyan-400',
                     'color' => 'text-cyan-700',
                 ],
                 [
                     'label' => 'Active',
                     'value' => $stats['active'],
-                    'icon' => 'fa-regular fa-circle-check text-emerald-400',
+                    'icon' => 'fa fa-circle-check text-emerald-400',
                     'color' => 'text-emerald-600',
                 ],
                 [
                     'label' => 'In Maintenance',
                     'value' => $stats['maintenance'],
-                    'icon' => 'fa-regular fa-triangle-exclamation text-amber-400',
+                    'icon' => 'fa fa-triangle-exclamation text-amber-400',
                     'color' => 'text-amber-600',
                 ],
                 [
                     'label' => 'Total Capacity',
                     'value' => $stats['total_capacity'] . ' seats',
-                    'icon' => 'fa-regular fa-users text-blue-400',
+                    'icon' => 'fa fa-users text-blue-400',
                     'color' => 'text-blue-600',
                 ],
                 [
                     'label' => 'Total Flights',
                     'value' => $stats['total_flights'],
-                    'icon' => 'fa-regular fa-calendar-check text-cyan-400',
+                    'icon' => 'fa fa-calendar-check text-cyan-400',
                     'color' => 'text-cyan-600',
                 ],
             ]"

@@ -10,22 +10,16 @@ use Illuminate\Support\Facades\Response;
 use App\Http\Requests\Airplane\StoreAirplaneRequest;
 use App\Http\Requests\Airplane\UpdateAirplaneRequest;
 use App\Http\Resources\Api\V1\AirplaneResource;
+use App\Services\Admin\AirplaneService;
 
 class AirplaneController extends Controller
 {
+    public function __construct(private AirplaneService $airplaneService) {}
     public function index()
     {
         try {
-            $airplanes = Cache::remember('api.airplanes.list', 60, function () {
-                Log::info('AIRPLANE INDEX: Cache MISS - querying database');
-
-                return AirplaneResource::collection(
-                    Airplane::all()
-                )->resolve();
-            });
-
+            $airplanes = $this->airplaneService->getApiList();
             Log::info('AIRPLANE INDEX: Cache HIT - getting cache');
-
             return Response::success($airplanes, 'Airplanes retrieved');
 
         } catch (\Throwable $e) {
@@ -37,7 +31,7 @@ class AirplaneController extends Controller
     public function store(StoreAirplaneRequest $request)
     {
         try {
-            $airplane = Airplane::create($request->validated());
+            $airplane = $this->airplaneService->create($request->validated());
 
             return Response::success(
                 new AirplaneResource($airplane),
@@ -54,12 +48,7 @@ class AirplaneController extends Controller
     public function show(Airplane $airplane)
     {
         try {
-            $key = "api.airplanes.{$airplane->id}";
-
-            $data = Cache::remember($key, 60, function () use ($airplane) {
-                Log::info('AIRPLANE SHOW: Cache MISS - querying database');
-                return (new AirplaneResource($airplane))->resolve();
-            });
+            $data = $this->airplaneService->getApiShow($airplane);
 
             Log::info('AIRPLANE SHOW: Cache HIT - getting cache');
 
@@ -74,7 +63,7 @@ class AirplaneController extends Controller
     public function update(UpdateAirplaneRequest $request, Airplane $airplane)
     {
         try {
-            $airplane->update($request->validated());
+            $airplane= $this->airplaneService->update($airplane,$request->validated());
             return Response::success(
                 new AirplaneResource($airplane),
                 'Airplane updated'
@@ -89,7 +78,7 @@ class AirplaneController extends Controller
     public function destroy(Airplane $airplane)
     {
         try {
-            $airplane->delete();
+            $this->airplaneService->delete($airplane);
             return Response::success(null, 'Airplane deleted', 204);
 
         } catch (\Throwable $e) {

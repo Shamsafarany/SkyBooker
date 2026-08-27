@@ -45,7 +45,6 @@ class FlightResource extends JsonResource
                 'collection' => route('api.v1.flights.index'),
                 
                 // Related resources
-                'airline' => route('api.v1.airlines.show', $this->airline_id),
                 'origin_airport' => route('api.v1.airports.show', $this->origin_airport_id),
                 'destination_airport' => route('api.v1.airports.show', $this->destination_airport_id),
                 'airplane' => route('api.v1.airplanes.show', $this->airplane_id),
