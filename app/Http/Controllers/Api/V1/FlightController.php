@@ -38,9 +38,7 @@ class FlightController extends Controller
             if (!$result['success']) {
                 return Response::error($result['message'], 422);
             }
-            $flight = $result['flight'];
-
-            return Response::success(new FlightResource($flight), 'Flight created', 201);
+            return Response::success(new FlightResource($result['flight']), 'Flight created', 201);
 
         } catch (\Throwable $e) {
             Log::error('FLIGHT STORE ERROR', ['error' => $e->getMessage()]);

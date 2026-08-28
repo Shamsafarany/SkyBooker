@@ -12,6 +12,7 @@ class BookingObserver
     {
         try {
             Cache::forget("api.bookings.show.{$booking->id}");
+            Cache::forget('admin.bookings.stats');
 
             LogService::booking("BOOKING CREATED: Cache cleared", [
                 'booking_id' => $booking->id,
@@ -30,6 +31,7 @@ class BookingObserver
     {
         try {
             Cache::forget("api.bookings.show.{$booking->id}");
+            Cache::forget('admin.bookings.stats');
 
             LogService::booking("BOOKING UPDATED: Cache cleared", [
                 'booking_id' => $booking->id,
@@ -56,6 +58,7 @@ class BookingObserver
     {
         try {
             Cache::forget("api.bookings.show.{$booking->id}");
+            Cache::forget('admin.bookings.stats');
 
             LogService::booking("BOOKING DELETED: Cache cleared", [
                 'booking_id' => $booking->id,

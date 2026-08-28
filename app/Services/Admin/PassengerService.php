@@ -11,6 +11,7 @@ use App\Http\Resources\Api\V1\PassengerResource;
 
 class PassengerService
 {
+    public function __construct(private TicketService $ticketService) {}
     public function getAllWithStats()
     {
         $passengers = Passenger::with(['booking', 'ticket'])->get();
@@ -65,7 +66,7 @@ class PassengerService
             $flight->increment('booked_seats');
 
             // Create ticket
-            $ticket = $this->createTicket($passenger, $data['seat_number'] ?? null);
+            $ticket = $this->ticketService->createTicketForPassenger($passenger,$data['seat_number'] ?? null);
 
             Cache::forget('admin.passengers.stats');
             Log::channel('booking')->info('Stats cleared.');
@@ -105,14 +106,7 @@ class PassengerService
         Log::channel('booking')->info('Stats cleared.');
 
         if ($passenger->ticket) {
-            $passenger->ticket->update([
-                'first_name' => $passenger->first_name,
-                'last_name' => $passenger->last_name,
-                'email' => $passenger->email,
-                'phone' => $passenger->phone,
-                'seat_number' => $data['seat_number'] ?? $passenger->ticket->seat_number,
-                'meal_preference' => $data['meal_preference'] ?? $passenger->ticket->meal_preference,
-            ]);
+            $ticket = $this->ticketService->updateForPassenger($passenger, $data);
         }
 
         Log::channel('booking')->info('Passenger updated', [
@@ -133,9 +127,7 @@ class PassengerService
         Cache::forget('admin.passengers.stats');
         Log::channel('booking')->info('Stats cleared.');
 
-        if ($passenger->ticket) {
-            $passenger->ticket->delete();
-        }
+        $this->ticketService->deleteForPassenger($passenger);
 
         $booking->decrement('number_of_seats', 1);
         $passenger->delete();
@@ -165,38 +157,7 @@ class PassengerService
         ];
     }
 
-    protected function createTicket(Passenger $passenger, $seatNumber)
-    {
-        try {
-            $ticket = Ticket::create([
-                'passenger_id' => $passenger->id,
-                'ticket_number' => Ticket::generateTicketNumber(),
-                'first_name' => $passenger->first_name,
-                'last_name' => $passenger->last_name,
-                'email' => $passenger->email,
-                'phone' => $passenger->phone,
-                'seat_number' => $seatNumber,
-                'class' => 'economy',
-                'meal_preference' => $passenger->meal_preference ?? 'standard',
-                'issued_at' => now(),
-            ]);
-
-            Log::channel('booking')->info('Ticket created', [
-                'ticket_id' => $ticket->id,
-                'passenger_id' => $passenger->id,
-            ]);
-
-            return $ticket;
-
-        } catch (\Throwable $e) {
-            Log::channel('booking')->error('Ticket creation failed', [
-                'passenger_id' => $passenger->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            throw $e;
-        }
-    }
+    
 
     public function getApiList(){
         $passengers = Passenger::with(['booking', 'ticket'])
@@ -289,4 +250,51 @@ class PassengerService
             ];
         }
     }
+
+    public function restoreForBooking(Passenger $passenger)
+    {
+        try {
+            if ($passenger->trashed()) {
+                $passenger->restore();
+
+                Log::channel('booking')->info('Passenger restored', [
+                    'passenger_id' => $passenger->id,
+                    'booking_id' => $passenger->booking_id,
+                ]);
+            }
+
+            return ['success' => true];
+
+        } catch (\Throwable $e) {
+            Log::channel('booking')->error('Passenger restore failed', [
+                'error' => $e->getMessage(),
+                'passenger_id' => $passenger->id,
+            ]);
+
+            return ['success' => false];
+        }
+    }
+
+    public function deleteForBooking(Passenger $passenger)
+    {
+        try {
+            $passenger->delete();
+
+            Log::channel('booking')->warning('Passenger deleted', [
+                'passenger_id' => $passenger->id,
+                'booking_id' => $passenger->booking_id,
+            ]);
+
+            return ['success' => true];
+
+        } catch (\Throwable $e) {
+            Log::channel('booking')->error('Passenger delete failed', [
+                'error' => $e->getMessage(),
+                'passenger_id' => $passenger->id,
+            ]);
+
+            return ['success' => false];
+        }
+    }
+
 }

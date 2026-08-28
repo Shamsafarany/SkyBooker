@@ -168,4 +168,147 @@ class TicketService
 
         return Pdf::loadView('admin.tickets.pdf', compact('ticket'));
     }
+
+    public function createTicketForPassenger(Passenger $passenger, $seatNumber)
+    {
+        try {
+            $ticket = Ticket::create([
+                'passenger_id' => $passenger->id,
+                'ticket_number' => Ticket::generateTicketNumber(),
+                'first_name' => $passenger->first_name,
+                'last_name' => $passenger->last_name,
+                'email' => $passenger->email,
+                'phone' => $passenger->phone,
+                'seat_number' => $seatNumber,
+                'class' => 'economy',
+                'meal_preference' => $passenger->meal_preference ?? 'standard',
+                'issued_at' => now(),
+            ]);
+
+            Log::channel('booking')->info('Ticket created', [
+                'ticket_id' => $ticket->id,
+                'passenger_id' => $passenger->id,
+            ]);
+
+            return $ticket;
+
+        } catch (\Throwable $e) {
+            Log::channel('booking')->error('Ticket creation failed', [
+                'passenger_id' => $passenger->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Ticket creation failed.'
+            ];
+        }
+    }
+    public function deleteForPassenger(Passenger $passenger)
+    {
+        try {
+            if ($passenger->ticket) {
+                $passenger->ticket->delete();
+
+                Log::channel('booking')->warning('Ticket deleted', [
+                    'ticket_id' => $passenger->ticket->id,
+                    'passenger_id' => $passenger->id,
+                ]);
+            }
+
+            return ['success' => true];
+
+        } catch (\Throwable $e) {
+            Log::channel('booking')->error('Ticket delete failed', [
+                'error' => $e->getMessage(),
+                'passenger_id' => $passenger->id,
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Ticket creation failed.'
+            ];
+        }
+    }
+
+    public function updateForPassenger(Passenger $passenger, array $data = []): ?Ticket
+    {
+        try {
+            $ticket = $passenger->ticket;
+
+            if (!$ticket) {
+                Log::warning('No ticket found for passenger', [
+                    'passenger_id' => $passenger->id
+                ]);
+                return null;
+            }
+
+            $updateData = [
+                'first_name' => $passenger->first_name,
+                'last_name'  => $passenger->last_name,
+                'email'      => $passenger->email,
+                'phone'      => $passenger->phone,
+            ];
+
+            // Optional fields
+            if (isset($data['seat_number'])) {
+                $updateData['seat_number'] = $data['seat_number'];
+            }
+
+            if (isset($data['meal_preference'])) {
+                $updateData['meal_preference'] = $data['meal_preference'];
+            }
+
+            if (isset($data['class'])) {
+                $updateData['class'] = $data['class'];
+            }
+
+            if (isset($data['special_requests'])) {
+                $updateData['special_requests'] = $data['special_requests'];
+            }
+
+            $ticket->update($updateData);
+
+            Log::info('Ticket updated for passenger', [
+                'ticket_id'    => $ticket->id,
+                'passenger_id' => $passenger->id,
+                'updated_data' => $updateData
+            ]);
+
+            return $ticket;
+
+        } catch (\Throwable $e) {
+            Log::error('Ticket update failed', [
+                'error'        => $e->getMessage(),
+                'passenger_id' => $passenger->id,
+            ]);
+
+            return null;
+        }
+    }
+
+
+    public function restoreForPassenger(Passenger $passenger)
+    {
+        try {
+            if ($passenger->ticket && $passenger->ticket->trashed()) {
+                $passenger->ticket->restore();
+
+                Log::channel('booking')->info('Ticket restored', [
+                    'ticket_id' => $passenger->ticket->id,
+                    'passenger_id' => $passenger->id,
+                ]);
+            }
+
+            return ['success' => true];
+
+        } catch (\Throwable $e) {
+            Log::channel('booking')->error('Ticket restore failed', [
+                'error' => $e->getMessage(),
+                'passenger_id' => $passenger->id,
+            ]);
+
+            return ['success' => false];
+        }
+    }
+
 }

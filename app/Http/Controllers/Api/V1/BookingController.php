@@ -14,16 +14,16 @@ use App\Http\Resources\Api\V1\BookingResource;
 use App\Http\Resources\Api\V1\BookingCollection;
 use App\Http\Resources\Api\V1\PassengerCollection;
 use App\Http\Resources\Api\V1\TicketCollection;
+use App\Services\Admin\BookingService;
 
 class BookingController extends Controller
 {
+    public function __construct(private BookingService $bookingService) {}
     public function index()
     {
         try {
-            $bookings = Booking::with(['user', 'flight', 'passengers'])
-                ->paginate(15);
-            Log::info('BOOKING INDEX: Cache MISS - querying database');  
-            return Response::success(new BookingCollection($bookings), 'Bookings retrieved');
+            $result = $this->bookingService->getApiList(); 
+            return Response::success($result, 'Bookings retrieved');
 
         } catch (\Throwable $e) {
             Log::error('BOOKING INDEX ERROR', ['error' => $e->getMessage()]);
@@ -33,11 +33,13 @@ class BookingController extends Controller
 
     public function store(StoreBookingRequest $request)
     {
-        try {
-            $booking = Booking::create($request->validated());
-            $booking->load(['user', 'flight', 'passengers.ticket']);
 
-            return Response::success(new BookingResource($booking), 'Booking created', 201);
+        try {
+            $result = $this->bookingService->create($request->validated());
+            if (!$result['success']) {
+                return Response::error($result['message'], 422);
+            }
+            return Response::success(new BookingResource($result['booking']), 'Booking created', 201);
 
         } catch (\Throwable $e) {
             Log::error('BOOKING STORE ERROR', ['error' => $e->getMessage()]);
@@ -47,34 +49,27 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        try {
-            $key = "api.bookings.show.{$booking->id}";
+        $result = $this->bookingService->getApiShow($booking);
 
-            $data = Cache::remember($key, 60, function () use ($booking) {
-                Log::info('BOOKING SHOW: Cache MISS - querying database');
-
-                $booking->load(['user', 'flight', 'passengers.ticket']);
-
-                return (new BookingResource($booking))->resolve();
-            });
-
-            Log::info('BOOKING SHOW: Cache HIT - getting cache');
-
-            return Response::success($data, 'Booking retrieved');
-
-        } catch (\Throwable $e) {
-            Log::error('BOOKING SHOW ERROR', ['error' => $e->getMessage()]);
-            return Response::error('Failed to retrieve booking', 500);
+        if (!$result['success']) {
+            return Response::error($result['message'], 500);
         }
+
+        return Response::success(
+            $result['booking'],
+            'Booking retrieved'
+        );
     }
+
 
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
         try {
-            $booking->update($request->validated());
-            $booking->load(['user', 'flight']);
-
-            return Response::success(new BookingResource($booking), 'Booking updated');
+            $result = $this->bookingService->update($booking, $request->validated());
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
+            return Response::success(new BookingResource($result['flight']), 'Booking updated');
 
         } catch (\Throwable $e) {
             Log::error('BOOKING UPDATE ERROR', ['error' => $e->getMessage()]);
@@ -85,7 +80,10 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         try {
-            $booking->delete();
+            $result = $this->bookingService->delete($booking);
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
 
             return Response::success(null, 'Booking deleted', 204);
 
@@ -98,11 +96,16 @@ class BookingController extends Controller
     public function passengers(Booking $booking)
     {
         try {
-            $passengers = $booking->passengers()
-                ->with(['ticket'])
-                ->paginate(15);
+            $result = $this->bookingService->getApiPassengers($booking);
 
-            return Response::success(new PassengerCollection($passengers), 'Booking passengers retrieved');
+            if (!$result['success']) {
+                return Response::error($result['message'], 500);
+            }
+
+            return Response::success(
+                new PassengerCollection($result['passengers']),
+                'Booking passengers retrieved'
+            );
 
         } catch (\Throwable $e) {
             Log::error('BOOKING PASSENGERS ERROR', ['error' => $e->getMessage()]);
@@ -113,17 +116,22 @@ class BookingController extends Controller
     public function tickets(Booking $booking)
     {
         try {
-            $tickets = Ticket::whereHas('passenger', function ($query) use ($booking) {
-                $query->where('booking_id', $booking->id);
-            })
-            ->with(['passenger'])
-            ->paginate(15);
+            $result = $this->bookingService->getApiTickets($booking);
 
-            return Response::success(new TicketCollection($tickets), 'Booking tickets retrieved');
+            if (!$result['success']) {
+                return Response::error($result['message'], 500);
+            }
+
+            return Response::success(
+                new TicketCollection($result['tickets']),
+                'Booking tickets retrieved'
+            );
 
         } catch (\Throwable $e) {
             Log::error('BOOKING TICKETS ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to retrieve booking tickets', 500);
         }
     }
+
+    
 }
