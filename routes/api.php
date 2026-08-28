@@ -37,6 +37,9 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
                 ->name('flights.tickets');
             Route::get('/passengers/{passenger}/ticket', [PassengerController::class, 'ticket'])
                 ->name('passengers.ticket');
+            Route::get('/passengers/{passenger}/booking', [PassengerController::class, 'booking'])
+            ->name('passengers.booking');
+
         });
     }); 
     Route::fallback(function () {
