@@ -10,9 +10,7 @@ use App\Models\Airport;
 use App\Models\Airplane;
 use App\Http\Requests\Flight\StoreFlightRequest;
 use App\Http\Requests\Flight\UpdateFlightRequest;
-use Illuminate\Support\Facades\Log;
 use App\Services\WeatherService;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Admin\FlightService;
 class FlightController extends Controller
 {

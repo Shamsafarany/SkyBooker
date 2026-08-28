@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller; 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use App\Services\LogService;
 
 use Illuminate\Http\Request;
 
@@ -18,18 +18,10 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
             $request->session()->regenerate();
-            Log::channel('auth')->info('User logged in successfully', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-            ]);
+            LogService::auth('LOGIN SUCCESS', ['user_id' => $user->id]);
             return redirect()->intended('admin/dashboard');
         }
-        Log::channel('auth')->warning('Failed login attempt', [
-            'email' => $request->email,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'attempted_at' => now(),
-        ]);
+        LogService::auth('LOGIN FAILED', ['email' => $request->email]);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match.',
@@ -43,11 +35,7 @@ class LoginController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            Log::channel('auth')->info('User logged out', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'ip' => $request->ip(),
-            ]);
+            LogService::auth('LOGOUT SUCCESS', ['user_id' => $user->id]);
         }
         Auth::logout();
         $request->session()->invalidate();

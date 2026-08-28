@@ -7,8 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Log;
+use App\Services\LogService;
+
 
 class RegisterController extends Controller
 {
@@ -36,14 +36,7 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => 'admin',
         ]);
-        Log::channel('auth')->info('User registered successfully', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'ip' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+        LogService::auth('REGISTRATION SUCCESS', ['user_id' => $user->id]);
         Auth::login($user);
 
         return redirect()->route('admin.dashboard')

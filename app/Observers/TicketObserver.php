@@ -13,7 +13,7 @@ class TicketObserver
         try {
             Cache::forget("api.tickets.show.{$ticket->id}");
 
-            LogService::system("TICKET CREATED", [
+            LogService::booking("TICKET CREATED", [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
                 'passenger_id' => $ticket->passenger_id,
@@ -21,7 +21,7 @@ class TicketObserver
             ]);
 
         } catch (\Throwable $e) {
-            LogService::error('system', "TICKET OBSERVER ERROR (created)", [
+            LogService::error('booking', "TICKET OBSERVER ERROR (created)", [
                 'ticket_id' => $ticket->id,
                 'error' => $e->getMessage(),
             ]);
@@ -35,13 +35,13 @@ class TicketObserver
 
             $changes = $ticket->getChanges();
 
-            LogService::system("TICKET UPDATED", [
+            LogService::booking("TICKET UPDATED", [
                 'ticket_id' => $ticket->id,
                 'changes' => $changes,
             ]);
 
             if (array_key_exists('status', $changes)) {
-                LogService::warning('system', "TICKET STATUS CHANGED", [
+                LogService::warning('booking', "TICKET STATUS CHANGED", [
                     'ticket_id' => $ticket->id,
                     'old_status' => $ticket->getOriginal('status'),
                     'new_status' => $changes['status'],
@@ -49,7 +49,7 @@ class TicketObserver
             }
 
         } catch (\Throwable $e) {
-            LogService::error('system', "TICKET OBSERVER ERROR (updated)", [
+            LogService::error('booking', "TICKET OBSERVER ERROR (updated)", [
                 'ticket_id' => $ticket->id,
                 'error' => $e->getMessage(),
             ]);
@@ -61,13 +61,13 @@ class TicketObserver
         try {
             Cache::forget("api.tickets.show.{$ticket->id}");
 
-            LogService::system("TICKET DELETED", [
+            LogService::booking("TICKET DELETED", [
                 'ticket_id' => $ticket->id,
                 'passenger_id' => $ticket->passenger_id,
             ]);
 
         } catch (\Throwable $e) {
-            LogService::error('system', "TICKET OBSERVER ERROR (deleted)", [
+            LogService::error('booking', "TICKET OBSERVER ERROR (deleted)", [
                 'ticket_id' => $ticket->id,
                 'error' => $e->getMessage(),
             ]);

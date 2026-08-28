@@ -13,7 +13,7 @@ class PassengerObserver
         try {
             Cache::forget("api.passengers.show.{$passenger->id}");
 
-            LogService::system("PASSENGER CREATED", [
+            LogService::booking("PASSENGER CREATED", [
                 'passenger_id' => $passenger->id,
                 'booking_id' => $passenger->booking_id,
                 'full_name' => $passenger->first_name . ' ' . $passenger->last_name,
@@ -21,7 +21,7 @@ class PassengerObserver
             ]);
 
         } catch (\Throwable $e) {
-            LogService::error('system', "PASSENGER OBSERVER ERROR (created)", [
+            LogService::error('booking', "PASSENGER OBSERVER ERROR (created)", [
                 'passenger_id' => $passenger->id,
                 'error' => $e->getMessage(),
             ]);
@@ -35,13 +35,13 @@ class PassengerObserver
 
             $changes = $passenger->getChanges();
 
-            LogService::system("PASSENGER UPDATED", [
+            LogService::booking("PASSENGER UPDATED", [
                 'passenger_id' => $passenger->id,
                 'changes' => $changes,
             ]);
 
             if (array_key_exists('status', $changes)) {
-                LogService::warning('system', "PASSENGER STATUS CHANGED", [
+                LogService::warning('booking', "PASSENGER STATUS CHANGED", [
                     'passenger_id' => $passenger->id,
                     'old_status' => $passenger->getOriginal('status'),
                     'new_status' => $changes['status'],
@@ -61,13 +61,13 @@ class PassengerObserver
         try {
             Cache::forget("api.passengers.show.{$passenger->id}");
 
-            LogService::system("PASSENGER DELETED", [
+            LogService::booking("PASSENGER DELETED", [
                 'passenger_id' => $passenger->id,
                 'booking_id' => $passenger->booking_id,
             ]);
 
         } catch (\Throwable $e) {
-            LogService::error('system', "PASSENGER OBSERVER ERROR (deleted)", [
+            LogService::error('booking', "PASSENGER OBSERVER ERROR (deleted)", [
                 'passenger_id' => $passenger->id,
                 'error' => $e->getMessage(),
             ]);

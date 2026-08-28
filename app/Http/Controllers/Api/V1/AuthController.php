@@ -10,69 +10,103 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\Api\V1\UserResource;
-
+use App\Services\LogService;
+use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $user = User::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'email' => $validated['email'],
-            'username' => $validated['username'],
-            'phone' => $validated['phone'] ?? null,
-            'date_of_birth' => $validated['date_of_birth'] ?? null,
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? 'passenger',
-        ]);
+            $user = User::create([
+                'first_name'    => $validated['first_name'],
+                'last_name'     => $validated['last_name'],
+                'email'         => $validated['email'],
+                'username'      => $validated['username'],
+                'phone'         => $validated['phone'] ?? null,
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'password'      => Hash::make($validated['password']),
+                'role'          => $validated['role'] ?? 'passenger',
+            ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-            'token_type' => 'Bearer',
-        ], 201);
+            LogService::auth('REGISTER SUCCESS', ['user_id' => $user->id]);
+
+            return Response::success([
+                'user'       => new UserResource($user),
+                'token'      => $token,
+                'token_type' => 'Bearer',
+            ], 'User registered', 201);
+
+        } catch (\Throwable $e) {
+            LogService::auth('REGISTER ERROR', ['error' => $e->getMessage()]);
+            return Response::error('Registration failed', 500);
+        }
     }
 
     public function login(LoginRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $credentials = [
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-        ];
+            $credentials = [
+                'email'    => $validated['email'],
+                'password' => $validated['password'],
+            ];
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            if (!Auth::attempt($credentials)) {
+                LogService::auth('LOGIN FAILED', ['email' => $validated['email']]);
+                return Response::error('Invalid credentials', 401);
+            }
+
+            $user  = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            LogService::auth('LOGIN SUCCESS', ['user_id' => $user->id]);
+
+            return Response::success([
+                'user'       => new UserResource($user),
+                'token'      => $token,
+                'token_type' => 'Bearer',
+            ], 'Login successful');
+
+        } catch (\Throwable $e) {
+            LogService::auth('LOGIN ERROR', ['error' => $e->getMessage()]);
+            return Response::error('Login failed', 500);
         }
-
-        $user = Auth::user();
-        
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-            'token_type' => 'Bearer',
-        ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            $user = $request->user();
 
-        return response()->json(['message' => 'Logged out']);
+            $user->currentAccessToken()->delete();
+
+            LogService::auth('LOGOUT SUCCESS', ['user_id' => $user->id]);
+
+            return Response::success(null, 'Logged out');
+
+        } catch (\Throwable $e) {
+            LogService::auth('LOGOUT ERROR', ['error' => $e->getMessage()]);
+            return Response::error('Logout failed', 500);
+        }
     }
 
     public function user(Request $request)
     {
-        return response()->json([
-            'user' => new UserResource($request->user())
-        ]);
+        try {
+            return Response::success(
+                new UserResource($request->user()),
+                'Authenticated user retrieved'
+            );
+
+        } catch (\Throwable $e) {
+            LogService::auth('USER FETCH ERROR', ['error' => $e->getMessage()]);
+            return Response::error('Failed to retrieve user', 500);
+        }
     }
 }
