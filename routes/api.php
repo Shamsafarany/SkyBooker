@@ -19,14 +19,15 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
         Route::apiResource('airports', AirportController::class);
         Route::apiResource('airplanes', AirplaneController::class);
         Route::apiResource('flights', FlightController::class);
-        Route::get('/airports/{airport}/flights', [AirportController::class, 'flights'])
-                ->name('airports.flights');
+        Route::get('/airports/{airport}/flights', [AirportController::class, 'flights'])->name('airports.flights');
+
         Route::middleware('auth:sanctum')->group(function() {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::get('/user', [AuthController::class, 'user']);
             Route::apiResource('bookings', BookingController::class);
             Route::apiResource('passengers', PassengerController::class);
             Route::apiResource('tickets', TicketController::class);
+            Route::get('/bookings/archive', [BookingController::class, 'archive'])->name('bookings.archive');
             
             Route::get('flights/{flight}/bookings', [FlightController::class, 'bookings'])->name('flights.bookings');
             Route::get('/bookings/{booking}/passengers', [BookingController::class, 'passengers'])
@@ -39,7 +40,7 @@ Route::prefix('v1')->name('api.v1.')->group(function() {
                 ->name('passengers.ticket');
             Route::get('/passengers/{passenger}/booking', [PassengerController::class, 'booking'])
             ->name('passengers.booking');
-
+            Route::put('/bookings/{booking}/restore', [BookingController::class, 'restore'])->name('bookings.restore');
         });
     }); 
     Route::fallback(function () {

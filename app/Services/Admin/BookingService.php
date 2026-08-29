@@ -59,6 +59,26 @@ class BookingService
         try {
             $flight = Flight::findOrFail($validated['flight_id']);
 
+            $existingBooking = Booking::where('user_id', $validated['user_id'])
+                    ->where('flight_id', $validated['flight_id'])
+                    ->whereNotIn('status', ['cancelled', 'completed']) 
+                    ->first();
+
+                if ($existingBooking) {
+                    Log::channel('booking')->warning('Duplicate booking attempt', [
+                        'user_id' => $validated['user_id'],
+                        'flight_id' => $validated['flight_id'],
+                        'existing_booking_id' => $existingBooking->id,
+                        'existing_booking_status' => $existingBooking->status
+                    ]);
+
+                    return [
+                        'success' => false,
+                        'message' => 'You already have a booking on this flight. Each user can only book once per flight.',
+                        'existing_booking' => $existingBooking
+                    ];
+                }
+
             if ($flight->available_seats < $validated['number_of_seats']) {
                 return [
                     'success' => false,
@@ -92,14 +112,13 @@ class BookingService
 
         } catch (\Throwable $e) {
             Log::channel('booking')->error('Booking creation failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'message' => $e->getMessage(),
                 'data' => $validated,
             ]);
 
             return [
                 'success' => false,
-                'error' => 'Failed to create booking. Please try again.'
+                'message' => 'Failed to create booking. Please try again.'
             ];
         }
     }
@@ -107,55 +126,23 @@ class BookingService
     public function update(Booking $booking, array $validated)
     {
         try {
-            $oldFlight = $booking->flight;
-            $newFlight = Flight::findOrFail($validated['flight_id']);
-
+            
             Cache::forget('admin.bookings.stats');
             Log::channel('booking')->info('Stats cleared.');
 
-            $flightChanged = $booking->flight_id != $validated['flight_id'];
-
-            if ($flightChanged) {
-                $oldFlight->increment('available_seats', $booking->number_of_seats);
-                $oldFlight->decrement('booked_seats', $booking->number_of_seats);
-
-                if ($newFlight->available_seats < $validated['number_of_seats']) {
-                    return [
-                        'success' => false,
-                        'error' => 'Not enough seats on new flight! Only ' . $newFlight->available_seats . ' seats available.'
-                    ];
+            if ($this->hasFlightChange($booking, $validated)) {
+            $result = $this->processFlightChange($booking, $validated);
+                if (!$result['success']) {
+                    return $result;
                 }
-
-                $newFlight->decrement('available_seats', $validated['number_of_seats']);
-                $newFlight->increment('booked_seats', $validated['number_of_seats']);
+                $newFlight = $result['flight'];
             }
 
-            // Seat count change
-            if ($booking->number_of_seats != $validated['number_of_seats']) {
-                $difference = $validated['number_of_seats'] - $booking->number_of_seats;
-
-                if ($difference > 0) {
-                    if ($newFlight->available_seats < $difference) {
-                        return [
-                            'success' => false,
-                            'error' => 'Not enough additional seats! Only ' . $newFlight->available_seats . ' more seats available.'
-                        ];
-                    }
-
-                    $newFlight->decrement('available_seats', $difference);
-                    $newFlight->increment('booked_seats', $difference);
-
-                } else {
-                    $returnSeats = abs($difference);
-                    $newFlight->increment('available_seats', $returnSeats);
-                    $newFlight->decrement('booked_seats', $returnSeats);
-
-                    if ($booking->passengers()->count() > $validated['number_of_seats']) {
-                        return [
-                            'success' => false,
-                            'error' => 'Cannot reduce seats below passenger count.'
-                        ];
-                    }
+            if ($this->hasSeatChange($booking, $validated)) {
+                $targetFlight = $this->getTargetFlight($booking, $validated, $newFlight ?? null);
+                $result = $this->processSeatChange($booking, $validated, $targetFlight);
+                if (!$result['success']) {
+                    return $result;
                 }
             }
 
@@ -173,14 +160,13 @@ class BookingService
 
         } catch (\Throwable $e) {
             Log::channel('booking')->error('Booking update failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'message' => $e->getMessage(),
                 'booking_id' => $booking->id,
             ]);
 
             return [
                 'success' => false,
-                'error' => 'Failed to update booking.'
+                'message' => 'Failed to update booking.'
             ];
         }
     }
@@ -214,12 +200,12 @@ class BookingService
         } catch (\Throwable $e) {
             Log::channel('booking')->error('Booking delete failed', [
                 'booking_id' => $booking->id,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ]);
 
             return [
                 'success' => false,
-                'error' => 'Failed to delete booking.'
+                'message' => 'Failed to delete booking.'
             ];
         }
     }
@@ -238,7 +224,8 @@ class BookingService
             $this->ticketService->restoreForPassenger($passenger);
         }
 
-        return ['success' => true];
+        return ['success' => true,
+                'booking' => $booking];
     }
 
     public function getApiList(){
@@ -345,4 +332,129 @@ class BookingService
         }
     }
 
+    private function hasFlightChange(Booking $booking, array $validated): bool
+{
+    return isset($validated['flight_id']) && $booking->flight_id != $validated['flight_id'];
+}
+
+private function hasSeatChange(Booking $booking, array $validated): bool
+{
+    return isset($validated['number_of_seats']) && $booking->number_of_seats != $validated['number_of_seats'];
+}
+
+private function getTargetFlight(Booking $booking, array $validated, $newFlight = null): Flight
+{
+    return isset($validated['flight_id']) ? $newFlight : $booking->flight;
+}
+
+private function isCancelled(Booking $booking, array $validated): bool
+{
+    return isset($validated['status']) && $validated['status'] === 'cancelled' && $booking->status === 'cancelled';
+}
+
+private function processFlightChange(Booking $booking, array $validated): array
+{
+    $oldFlight = $booking->flight;
+    $newFlight = Flight::findOrFail($validated['flight_id']);
+
+    // Return seats to old flight
+    $oldFlight->increment('available_seats', $booking->number_of_seats);
+    $oldFlight->decrement('booked_seats', $booking->number_of_seats);
+
+    // Use provided seat count or existing
+    $seatsToBook = $validated['number_of_seats'] ?? $booking->number_of_seats;
+
+    // Check new flight availability
+    if ($newFlight->available_seats < $seatsToBook) {
+        // Rollback
+        $oldFlight->decrement('available_seats', $booking->number_of_seats);
+        $oldFlight->increment('booked_seats', $booking->number_of_seats);
+
+        return [
+            'success' => false,
+            'message' => 'Not enough seats on new flight! Only ' . $newFlight->available_seats . ' seats available.'
+        ];
+    }
+
+    $newFlight->decrement('available_seats', $seatsToBook);
+    $newFlight->increment('booked_seats', $seatsToBook);
+
+    return [
+        'success' => true,
+        'flight' => $newFlight
+    ];
+}
+
+private function processSeatChange(Booking $booking, array $validated, Flight $targetFlight): array
+{
+    $difference = $validated['number_of_seats'] - $booking->number_of_seats;
+
+    if ($difference > 0) {
+        // More seats - check availability
+        if ($targetFlight->available_seats < $difference) {
+            return [
+                'success' => false,
+                'message' => 'Not enough additional seats! Only ' . $targetFlight->available_seats . ' more seats available.'
+            ];
+        }
+
+        $targetFlight->decrement('available_seats', $difference);
+        $targetFlight->increment('booked_seats', $difference);
+
+    } else {
+        // Less seats - return them
+        $returnSeats = abs($difference);
+        $targetFlight->increment('available_seats', $returnSeats);
+        $targetFlight->decrement('booked_seats', $returnSeats);
+
+        // Check if passengers exceed new seat count
+        $passengerCount = $booking->passengers()->count();
+        if ($passengerCount > $validated['number_of_seats']) {
+            // Rollback
+            $targetFlight->decrement('available_seats', $returnSeats);
+            $targetFlight->increment('booked_seats', $returnSeats);
+
+            return [
+                'success' => false,
+                'message' => 'Cannot reduce seats below passenger count (' . $passengerCount . ' passengers).'
+            ];
+        }
+    }
+
+    return ['success' => true];
+}
+    public function getArchivedBookings(): array
+        {
+            try {
+                $bookings = Booking::onlyTrashed()
+                    ->with(['user', 'flight', 'passengers'])
+                    ->latest('deleted_at')->get();
+
+                $stats = [
+                    'total_trashed' => Booking::onlyTrashed()->count(),
+                    'today_trashed' => Booking::onlyTrashed()
+                        ->whereDate('deleted_at', today())
+                        ->count(),
+                    'this_week_trashed' => Booking::onlyTrashed()
+                        ->whereDate('deleted_at', '>=', now()->startOfWeek())
+                        ->count(),
+                ];
+
+                return [
+                    'success' => true,
+                    'bookings' => $bookings,
+                    'stats' => $stats
+                ];
+
+            } catch (\Throwable $e) {
+                Log::channel('booking')->error('Failed to get trashed bookings', [
+                    'message' => $e->getMessage()
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Failed to get trashed bookings.'
+                ];
+            }
+        }
 }

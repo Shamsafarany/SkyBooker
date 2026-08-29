@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\Ticket;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use App\Http\Requests\Booking\StoreBookingRequest;
@@ -15,6 +13,7 @@ use App\Http\Resources\Api\V1\BookingCollection;
 use App\Http\Resources\Api\V1\PassengerCollection;
 use App\Http\Resources\Api\V1\TicketCollection;
 use App\Services\Admin\BookingService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class BookingController extends Controller
 {
@@ -49,16 +48,20 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $result = $this->bookingService->getApiShow($booking);
+        try{
+            $result = $this->bookingService->getApiShow($booking);
 
-        if (!$result['success']) {
-            return Response::error($result['message'], 500);
+            if (!$result['success']) {
+                return Response::error($result['message'], 500);
+            }
+
+            return Response::success(
+                $result['booking'],
+                'Booking retrieved'
+            );
+        } catch (ModelNotFoundException $e) {
+            return Response::error('Booking not found.', 404);
         }
-
-        return Response::success(
-            $result['booking'],
-            'Booking retrieved'
-        );
     }
 
 
@@ -69,7 +72,7 @@ class BookingController extends Controller
             if (!$result['success']) {
                 return Response::error($result['message'], 400);
             }
-            return Response::success(new BookingResource($result['flight']), 'Booking updated');
+            return Response::success(new BookingResource($result['booking']), 'Booking updated');
 
         } catch (\Throwable $e) {
             Log::error('BOOKING UPDATE ERROR', ['error' => $e->getMessage()]);
@@ -133,5 +136,53 @@ class BookingController extends Controller
         }
     }
 
+    public function restore($id)
+    {
+        try {
+            $booking = Booking::withTrashed()->findOrFail($id);
+            
+            $result = $this->bookingService->restore($booking);
+
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
+
+            return Response::success(
+                new BookingResource($result['booking']->load(['user', 'flight', 'passengers']))
+            );
+
+        } catch (ModelNotFoundException $e) {
+            return Response::error('Booking not found.', 404);
+        } catch (\Throwable $e) {
+            Log::error('Booking restore error:', [
+                'booking_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            return Response::error('Failed to restore booking.', 500);
+        }
+    }
+
+    public function archive()
+    {
+        try {
+            $result = $this->bookingService->getArchivedBookings();
+
+            if (!$result['success']) {
+                return Response::error($result['message'], 400);
+            }
+
+            return Response::success(
+                BookingResource::collection($result['bookings']),
+                'Trashed bookings retrieved successfully'
+            );
+
+        } catch (\Throwable $e) {
+            Log::error('Get trashed bookings error:', [
+                'error' => $e->getMessage()
+            ]);
+
+            return Response::error('Failed to get trashed bookings.', 500);
+        }
+    }
     
 }

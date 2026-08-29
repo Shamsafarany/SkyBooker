@@ -19,7 +19,14 @@ class StoreBookingRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'flight_id' => 'required|exists:flights,id',
-            'booking_reference' => 'nullable|string|max:255',
+            'booking_reference' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('bookings', 'booking_reference')
+                    ->whereNull('deleted_at') // If using soft deletes
+                    ->ignore($this->route('booking')), // For updates
+            ],
             'number_of_seats' => 'required|integer|min:1',
             'booking_date' => 'required|date',
             'total_price' => 'required|numeric|min:1',
@@ -32,11 +39,12 @@ class StoreBookingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            // Booking
             'user_id.required' => 'Customer is required.',
             'user_id.exists' => 'Selected customer does not exist.',
             'flight_id.required' => 'Flight is required.',
             'flight_id.exists' => 'Selected flight does not exist.',
+            'booking_reference.required' => 'Booking Reference is required.',
+            'booking_reference.unique' => 'This booking reference is already taken.',
             'number_of_seats.required' => 'Number of seats is required.',
             'number_of_seats.min' => 'At least 1 seat required.',
             'booking_date.required' => 'Booking date is required.',
