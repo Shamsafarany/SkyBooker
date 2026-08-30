@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware('guest')->group(function(){
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

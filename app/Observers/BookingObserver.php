@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Events\BookingCreated;
+use App\Events\BookingCancelled;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Cache;
 use App\Services\LogService;
@@ -18,6 +20,7 @@ class BookingObserver
                 'booking_id' => $booking->id,
                 'code' => $booking->code,
             ]);
+            event(new BookingCreated($booking));
 
         } catch (\Throwable $e) {
             LogService::error('booking', "BOOKING ObSERVER ERROR (created)", [
@@ -64,6 +67,7 @@ class BookingObserver
                 'booking_id' => $booking->id,
                 'code' => $booking->code,
             ]);
+            event(new BookingCancelled($booking));
 
         } catch (\Throwable $e) {
             LogService::error('booking', "BOOKING ObSERVER ERROR (deleted)", [

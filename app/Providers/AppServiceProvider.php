@@ -10,6 +10,15 @@ use App\Models\Flight;
 use App\Models\Booking;
 use App\Models\Passenger;
 use App\Models\Ticket;
+use App\Models\User;
+use Illuminate\Support\Facades\Event;
+use App\Events\BookingCreated;
+use App\Events\BookingCancelled;
+use App\Events\UserRegistered;
+use App\Listeners\SendBookingConfirmationEmail;
+use App\Listeners\SendBookingCancellation;
+use App\Listeners\GenerateBookingPdfListener;
+use App\Listeners\SendWelcomeEmailListener;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         Booking::observe(\App\Observers\BookingObserver::class); 
         Passenger::observe(\App\Observers\PassengerObserver::class); 
         Ticket::observe(\App\Observers\TicketObserver::class); 
+        User::observe(\App\Observers\UserObserver::class);
         
         //macro
         Response::macro('success', function ($data, $message = 'OK') {
@@ -50,5 +60,25 @@ class AppServiceProvider extends ServiceProvider
                 'message' => $message
             ], $code);
         });
+
+        Event::listen(
+            BookingCreated::class,
+            [SendBookingConfirmationEmail::class, 'handle']
+        );
+        
+        Event::listen(
+            BookingCreated::class,
+            [GenerateBookingPdfListener::class, 'handle']
+        );
+        
+        Event::listen(
+            BookingCancelled::class,
+            [SendBookingCancellation::class, 'handle']
+        );
+
+        Event::listen(
+            UserRegistered::class,
+            [SendWelcomeEmailListener::class, 'handle']
+        );
     }
 }

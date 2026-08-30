@@ -6,35 +6,35 @@
 
 @php
     $messages = [
-        'success' => [
-            'icon' => 'fa-regular fa-circle-check',
-            'color' => 'text-emerald-500',
-            'bg' => 'bg-emerald-50',
-            'border' => 'border-emerald-200',
-            'text' => 'text-emerald-700',
-        ],
-        'error' => [
-            'icon' => 'fa fa-circle-exclamation',
-            'color' => 'text-red-500',
-            'bg' => 'bg-red-50',
-            'border' => 'border-red-200',
-            'text' => 'text-red-700',
-        ],
-        'warning' => [
-            'icon' => 'fa-regular fa-triangle-exclamation',
-            'color' => 'text-amber-500',
-            'bg' => 'bg-amber-50',
-            'border' => 'border-amber-200',
-            'text' => 'text-amber-700',
-        ],
-        'info' => [
-            'icon' => 'fa-regular fa-circle-info',
-            'color' => 'text-blue-500',
-            'bg' => 'bg-blue-50',
-            'border' => 'border-blue-200',
-            'text' => 'text-blue-700',
-        ],
-    ];
+    'success' => [
+        'icon' => 'fa-regular fa-circle-check',
+        'color' => 'text-white',
+        'bg' => 'bg-emerald-700',   
+        'border' => 'border-emerald-800',
+        'text' => 'text-white',
+    ],
+    'error' => [
+        'icon' => 'fa fa-circle-exclamation',
+        'color' => 'text-white',
+        'bg' => 'bg-red-700',    
+        'border' => 'border-red-800',
+        'text' => 'text-white',
+    ],
+    'warning' => [
+        'icon' => 'fa-regular fa-triangle-exclamation',
+        'color' => 'text-white',
+        'bg' => 'bg-amber-700',  
+        'border' => 'border-amber-800',
+        'text' => 'text-white',
+    ],
+    'info' => [
+        'icon' => 'fa-regular fa-circle-info',
+        'color' => 'text-white',
+        'bg' => 'bg-blue-700',           
+        'border' => 'border-blue-800',
+        'text' => 'text-white',
+    ],
+];
 @endphp
 
 <div id="flash-messages" class="space-y-3">

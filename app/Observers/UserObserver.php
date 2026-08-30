@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use App\Services\LogService;
+use App\Events\UserRegistered;
 
 
 
@@ -14,6 +15,7 @@ class UserObserver
     {
         try {
             LogService::auth('USER CREATED', ['user_id' => $user->id]);
+            event(new UserRegistered($user));
         } catch (\Throwable $e) {
             LogService::error('auth', "AUTH OBSERVER ERROR (created)", [
                 'user_id' => $user->id,

@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Flight;
 use App\Models\User;
 use App\Models\Booking;
-use App\Models\Passenger;
-use App\Models\Ticket;
-use Illuminate\Validation\Rule;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\booking\UpdateBookingRequest;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingCreated;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Admin\BookingService;
 
 
@@ -48,7 +42,7 @@ class BookingController extends Controller
         $result = $this->bookingService->create($request->validated());
 
         if (!$result['success']) {
-            return back()->with('error', $result['error'])->withInput();
+            return back()->with('error', $result['message'])->withInput();
         }
 
         return redirect()->route('admin.bookings.show', $result['booking'])

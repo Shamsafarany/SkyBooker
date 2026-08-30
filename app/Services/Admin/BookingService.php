@@ -6,9 +6,9 @@ use App\Models\Booking;
 use App\Models\Flight;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Cache;
-use App\Mail\BookingCreated;
+
 use App\Http\Resources\Api\V1\BookingResource;
 
 class BookingService
@@ -103,8 +103,6 @@ class BookingService
                 'flight_id' => $flight->id,
             ]);
 
-            Mail::to($booking->user->email)->send(new BookingCreated($booking));
-
             return [
                 'success' => true,
                 'booking' => $booking
@@ -147,7 +145,6 @@ class BookingService
             }
 
             $booking->update($validated);
-
             Log::channel('booking')->info('Booking updated', [
                 'booking_id' => $booking->id,
                 'changes' => $booking->getChanges(),
@@ -457,4 +454,34 @@ private function processSeatChange(Booking $booking, array $validated, Flight $t
                 ];
             }
         }
+
+
+    public function getLatestBookings(int $limit = 5)
+{
+    Log::channel('booking')->info('Fetching latest bookings from database');
+
+    return Booking::with(['user', 'flight', 'flight.origin', 'flight.destination'])
+        ->latest()
+        ->limit($limit)
+        ->get()
+        ->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'booking_reference' => $booking->booking_reference,
+                'user_name' => $booking->user->getFullNameAttribute() ?? 'N/A',
+                'user_email' => $booking->user->email ?? 'N/A',
+                'flight_number' => $booking->flight->flight_number ?? 'N/A',
+                'origin' => $booking->flight->origin->code ?? 'N/A',
+                'destination' => $booking->flight->destination->code ?? 'N/A',
+                'total_price' => (float) $booking->total_price,
+                'passenger_count' => (int) $booking->passengers->count(),
+                'status' => $booking->status,
+                'status_raw' => $booking->status,
+                'booked_at' => $booking->created_at,
+                'booked_ago' => $booking->created_at->diffForHumans(),
+            ];
+        });
+}
+
+
 }
