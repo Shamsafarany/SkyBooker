@@ -40,7 +40,7 @@ class GenerateDailyReport extends Command
         $content .= "        DAILY REPORT - {$today}\n";
         $content .= "========================================\n\n";
 
-        $content .= "📊 OVERVIEW\n";
+        $content .= "OVERVIEW\n";
         $content .= "----------------------------------------\n";
         $content .= "Total Bookings:     {$stats['total_bookings']}\n";
         $content .= "Today's Bookings:   {$stats['today_bookings']}\n";
@@ -48,12 +48,12 @@ class GenerateDailyReport extends Command
         $content .= "Total Passengers:   {$stats['total_passengers']}\n";
         $content .= "Total Flights:      {$stats['total_flights']}\n\n";
 
-        $content .= "💰 REVENUE\n";
+        $content .= "REVENUE\n";
         $content .= "----------------------------------------\n";
         $content .= "Today's Revenue:    \$" . number_format($stats['revenue_today'], 2) . "\n";
         $content .= "Total Revenue:      \$" . number_format($stats['revenue_total'], 2) . "\n\n";
 
-        $content .= "📋 BOOKING STATUS\n";
+        $content .= "BOOKING STATUS\n";
         $content .= "----------------------------------------\n";
         $content .= "Pending:    {$stats['status_breakdown']['pending']}\n";
         $content .= "Confirmed:  {$stats['status_breakdown']['confirmed']}\n";
@@ -72,11 +72,11 @@ class GenerateDailyReport extends Command
         $filename = "reports/daily-report-{$today}.txt";
         Storage::put($filename, $content);
         if (Storage::exists($filename)) {
-            $this->info("✅ Daily report saved to: storage/app/{$filename}");
-            $this->line("📊 Today's bookings: {$stats['today_bookings']}");
-            $this->line("💰 Today's revenue: \$" . number_format($stats['revenue_today'], 2));
+            $this->info("Daily report saved to: storage/app/{$filename}");
+            $this->line("Today's bookings: {$stats['today_bookings']}");
+            $this->line("Today's revenue: \$" . number_format($stats['revenue_today'], 2));
         } else {
-            $this->error("❌ Failed to save report.");
+            $this->error("Failed to save report.");
         }
 
         return Command::SUCCESS;

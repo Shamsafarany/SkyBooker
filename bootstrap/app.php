@@ -3,9 +3,14 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 use App\Http\Middleware\CorsMiddleware;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Support\Facades\Response;
+
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,8 +27,24 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureFrontendRequestsAreStateful::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
-        );
-    })->create();
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->renderable(function (ModelNotFoundException $e, $request) {
+            if ($request->is('api/*')) {
+                return Response::error('Record not found', 404);
+            }
+        });
+
+        $exceptions->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return Response::error('Endpoint not found', 404);
+            }
+        });
+
+        $exceptions->renderable(function (MethodNotAllowedHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return Response::error('Method not allowed', 405);
+            }
+        });
+})->create();
+
+
