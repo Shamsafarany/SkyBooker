@@ -7,6 +7,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Log;
 
 class SendBookingEmail implements ShouldQueue
 {
@@ -28,6 +29,12 @@ class SendBookingEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->email)->send($this->mailable);
+        try{
+            Mail::to($this->email)->send($this->mailable);
+        }  catch (\Exception $e) {
+            Log::error('SMTP ERROR: ' . $e->getMessage());
+            throw $e;
+        }
+        
     }
 }

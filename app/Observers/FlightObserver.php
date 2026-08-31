@@ -2,9 +2,11 @@
 
 namespace App\Observers;
 
+use App\Events\FlightUpdated;
 use App\Models\Flight;
 use Illuminate\Support\Facades\Cache;
 use App\Services\LogService;
+
 
 class FlightObserver
 {
@@ -68,6 +70,7 @@ class FlightObserver
                     'new_price' => $flight->price,
                 ]);
             }
+            event(new FlightUpdated($flight));
 
         } catch (\Throwable $e) {
             LogService::error('system', "FLIGHT OBSERVER ERROR (updated)", [

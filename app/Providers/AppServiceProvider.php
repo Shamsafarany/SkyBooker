@@ -14,10 +14,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use App\Events\BookingCreated;
 use App\Events\BookingCancelled;
+use App\Events\FlightUpdated;
 use App\Events\UserRegistered;
 use App\Listeners\SendBookingConfirmationEmail;
 use App\Listeners\SendBookingCancellation;
 use App\Listeners\GenerateBookingPdfListener;
+use App\Listeners\NotifyPassengersOfFlightUpdate;
 use App\Listeners\SendWelcomeEmailListener;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,6 +81,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             UserRegistered::class,
             [SendWelcomeEmailListener::class, 'handle']
+        );
+
+        Event::listen(
+            FlightUpdated::class,
+            [NotifyPassengersOfFlightUpdate::class, 'handle']
         );
     }
 }
