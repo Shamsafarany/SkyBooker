@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Filters\BookingFilter;
 use App\Models\Booking;
 use App\Models\Flight;
 use App\Models\Ticket;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
 use App\Http\Resources\Api\V1\BookingResource;
+use Illuminate\Http\Request;
 
 class BookingService
 {
@@ -225,15 +227,36 @@ class BookingService
                 'booking' => $booking];
     }
 
-    public function getApiList(){
+    public function getApiList(Request $request){
         try {
-            $bookings = Booking::with(['user', 'flight', 'passengers.ticket'])
-                ->paginate(15);
+            $query = Booking::query()
+            ->with(['user', 'flight', 'passengers.ticket']);
 
-            return [
-                'success' => true,
-                'bookings' => $bookings
-            ];
+        $query = (new BookingFilter())->apply($query, $request);
+
+        if ($request->filled('sort')) {
+            $direction = $request->input('direction', 'asc');
+            $query->orderBy($request->sort, $direction);
+        }
+
+        $perPage = $request->input('paginate')
+        ?? $request->input('per_page')
+        ?? $request->input('limit')
+        ?? $request->input('perPage');
+
+        if (!is_numeric($perPage) || $perPage <= 0) {
+            $perPage = 15;
+        }
+
+        $bookings = $query->paginate((int) $perPage);
+        
+        $bookings = $query->paginate(15);
+
+        return [
+            'success' => true,
+            'bookings' => $bookings
+        ];
+
 
         } catch (\Throwable $e) {
             Log::error('BOOKING API LIST ERROR', ['error' => $e->getMessage()]);

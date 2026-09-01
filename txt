@@ -1,0 +1,62 @@
+// POST /auth/login
+// POST /auth/logout
+
+
+// GET /users
+// GET /users/{id}
+// GET /users/me
+// PUT /users/me
+// DELETE /users/me
+// POST /users/ --> register
+
+// GET /projects
+// GET /projects/{id}
+// POST /projects
+// PUT /projects/{id}
+// DELETE /projects/{id}
+
+// GET /projects/{id}/members
+// GET /projects/{id}/memebers/{id}
+// POST /projects/{id}/members
+// DELETE /projects/{id}/memebers/{id}
+// GET /projects/{id}/tasks
+// POST /projects/{id}/tasks
+// GET /projects/{id}/tasks/{id}
+
+// GET /members
+
+// GET /tasks
+// GET /tasks/{id}
+// POST /tasks
+// PUT /tasks/{id}
+// DELETE /tasks/{id}
+// GET /tasks/{id}/assignments
+// GET /tasks/{id}/assignments/{id}
+// GET /tasks/{id}/comments
+// GET /tasks/{id}/comments/{id}
+// POST /tasks/{id}/comments
+// GET /comments
+// GET /comments/{id}
+// POST /comments
+// PUT /comments/{id}
+// DELETE /comments/{id}
+
+
+//responses
+//list: {
+//     data:[{}, {}],
+//     meta: {
+//         total:
+//         page:
+//         perPage:
+//         totalPages:
+//     }
+//     links: {
+//         self:
+//         next:
+//         last:
+//     }
+// }
+
+
+

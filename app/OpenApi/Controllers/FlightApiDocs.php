@@ -13,10 +13,14 @@ class FlightApiDocs
     #[OA\Get(
         path: '/api/v1/flights',
         tags: ['Flights'],
-        summary: 'List all Flights with pagination',
+        summary: 'List all Flights',
         parameters: [
-            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer')),
-            new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer'))
+        new OA\QueryParameter(name: 'flight_number', description: 'Filter by flight number', required: false),
+        new OA\QueryParameter(name: 'status', description: 'Filter by flight status', required: false),
+        new OA\QueryParameter(name: 'origin', description: 'Filter by origin airport name or code', required: false),
+        new OA\QueryParameter(name: 'destination', description: 'Filter by destination airport name or code', required: false),
+        new OA\QueryParameter(name: 'sort', description: 'Sort field', required: false),
+        new OA\QueryParameter(name: 'direction', description: 'Sort direction (asc/desc)', required: false),
         ],
         responses: [
             new OA\Response(response: 200, description: 'List of Flights with pagination')

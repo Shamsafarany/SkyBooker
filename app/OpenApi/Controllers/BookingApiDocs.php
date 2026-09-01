@@ -15,9 +15,18 @@ class BookingApiDocs
         tags: ['Bookings'],
         summary: 'List all bookings with pagination',
         parameters: [
-            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer')),
-            new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer'))
-        ],
+        new OA\QueryParameter(name: 'reference', description: 'Filter by booking reference', required: false),
+        new OA\QueryParameter(name: 'status', description: 'Filter by booking status', required: false),
+        new OA\QueryParameter(name: 'flight_id', description: 'Filter by flight ID', required: false),
+        new OA\QueryParameter(name: 'user_id', description: 'Filter by user ID', required: false),
+        new OA\QueryParameter(name: 'sort', description: 'Sort field', required: false),
+        new OA\QueryParameter(name: 'direction', description: 'Sort direction (asc/desc)', required: false),
+        new OA\QueryParameter(name: 'paginate', description: 'Items per page', required: false),
+        new OA\QueryParameter(name: 'page', description: 'Page number', required: false),
+        new OA\QueryParameter(name: 'per_page', description: 'Items per page (alias)', required: false),
+        new OA\QueryParameter(name: 'limit', description: 'Items per page (alias)', required: false),
+        new OA\QueryParameter(name: 'perPage', description: 'Items per page (alias)', required: false),
+    ],
         responses: [
             new OA\Response(response: 200, description: 'List of bookings with pagination')
         ]

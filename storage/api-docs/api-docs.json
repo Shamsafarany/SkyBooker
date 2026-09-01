@@ -19,6 +19,38 @@
                 ],
                 "summary": "List all Airplanes",
                 "operationId": "da662806c74403729657f2d89a9afeb4",
+                "parameters": [
+                    {
+                        "name": "model",
+                        "in": "query",
+                        "description": "Filter by airplane model",
+                        "required": false
+                    },
+                    {
+                        "name": "manufacturer",
+                        "in": "query",
+                        "description": "Filter by manufacturer",
+                        "required": false
+                    },
+                    {
+                        "name": "capacity",
+                        "in": "query",
+                        "description": "Filter by capacity",
+                        "required": false
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort field",
+                        "required": false
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "Sort direction (asc/desc)",
+                        "required": false
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of Airplanes"
@@ -199,6 +231,44 @@
                 ],
                 "summary": "List all airports",
                 "operationId": "9ddf9f315fec155948490be9412e77c1",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by airport name",
+                        "required": false
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Filter by airport code",
+                        "required": false
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "Filter by city",
+                        "required": false
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Filter by country",
+                        "required": false
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort field",
+                        "required": false
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "Sort direction (asc/desc)",
+                        "required": false
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of airports"
@@ -598,18 +668,70 @@
                 "operationId": "c3cc1649dc2ef3a3c5dd49d7ceb9cfb6",
                 "parameters": [
                     {
+                        "name": "reference",
+                        "in": "query",
+                        "description": "Filter by booking reference",
+                        "required": false
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by booking status",
+                        "required": false
+                    },
+                    {
+                        "name": "flight_id",
+                        "in": "query",
+                        "description": "Filter by flight ID",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "Filter by user ID",
+                        "required": false
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort field",
+                        "required": false
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "Sort direction (asc/desc)",
+                        "required": false
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false
+                    },
+                    {
                         "name": "page",
                         "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "description": "Page number",
+                        "required": false
                     },
                     {
                         "name": "per_page",
                         "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "description": "Items per page (alias)",
+                        "required": false
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Items per page (alias)",
+                        "required": false
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Items per page (alias)",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -883,22 +1005,44 @@
                 "tags": [
                     "Flights"
                 ],
-                "summary": "List all Flights with pagination",
+                "summary": "List all Flights",
                 "operationId": "7775c68b7dd1fce1e0919e2ef055716f",
                 "parameters": [
                     {
-                        "name": "page",
+                        "name": "flight_number",
                         "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "description": "Filter by flight number",
+                        "required": false
                     },
                     {
-                        "name": "per_page",
+                        "name": "status",
                         "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "description": "Filter by flight status",
+                        "required": false
+                    },
+                    {
+                        "name": "origin",
+                        "in": "query",
+                        "description": "Filter by origin airport name or code",
+                        "required": false
+                    },
+                    {
+                        "name": "destination",
+                        "in": "query",
+                        "description": "Filter by destination airport name or code",
+                        "required": false
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort field",
+                        "required": false
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "Sort direction (asc/desc)",
+                        "required": false
                     }
                 ],
                 "responses": {

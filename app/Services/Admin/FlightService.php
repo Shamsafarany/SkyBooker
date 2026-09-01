@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Filters\FlightFilter;
 use App\Models\Flight;
 use App\Models\Airline;
 use App\Models\Airplane;
@@ -12,19 +13,23 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\FlightResource;
 use App\Services\WeatherService;
 use App\Http\Resources\Api\V1\FlightCollection;
+use Illuminate\Http\Request;
 
 class FlightService
 {
-    public function getApiList()
+    public function getApiList(Request $request)
     {
-        Log::info('FLIGHT INDEX: Cache MISS - querying database');
+        $query = Flight::query()
+            ->with(['origin', 'destination'])
+            ->withCount(['bookings']);
+        $query = (new FlightFilter())->apply($query, $request);
 
-        $flights = Flight::with([
-            'airline',
-            'origin',
-            'destination',
-            'airplane',
-        ])->orderBy('departure_date')->paginate(15);
+        if ($request->filled('sort')) {
+            $direction = $request->input('direction', 'asc');
+            $query->orderBy($request->sort, $direction);
+        }
+
+        $flights = $query->get();
 
         return FlightResource::collection($flights);
     }

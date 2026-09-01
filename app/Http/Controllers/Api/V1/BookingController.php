@@ -14,14 +14,15 @@ use App\Http\Resources\Api\V1\PassengerCollection;
 use App\Http\Resources\Api\V1\TicketCollection;
 use App\Services\Admin\BookingService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
     public function __construct(private BookingService $bookingService) {}
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $result = $this->bookingService->getApiList(); 
+            $result = $this->bookingService->getApiList($request); 
             return Response::success($result, 'Bookings retrieved');
 
         } catch (\Throwable $e) {

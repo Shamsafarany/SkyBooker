@@ -2,11 +2,13 @@
 
 namespace App\Services\Admin;
 
+use App\Filters\AirportFilter;
 use App\Models\Airport;
 use App\Models\Flight;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\AirportResource;
+use Illuminate\Http\Request;
 
 class AirportService
 {
@@ -55,18 +57,20 @@ class AirportService
         $airport->delete();
     }
 
-    public function getApiList()
+    public function getApiList(Request $request)
     {
-        return Cache::remember('api.airports.list', 60, function () {
-            Log::info('AIRPORT INDEX: Cache MISS - querying database');
+        
+        $query = Airport::query()->withCount(['departingFlights', 'arrivingFlights']);
+        $query = (new AirportFilter())->apply($query, $request);
 
-            $airports = Airport::withCount([
-                'departingFlights',
-                'arrivingFlights'
-            ])->get();
+        if ($request->filled('sort')) {
+        $direction = $request->input('direction', 'asc');
+        $query->orderBy($request->sort, $direction);
+        }
+        
+        $airports = $query->get();
+        return AirportResource::collection($airports);
 
-            return AirportResource::collection($airports)->resolve();
-        });
     }
     public function getApiShow(Airport $airport)
     {

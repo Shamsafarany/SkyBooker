@@ -45,13 +45,6 @@ class BookingCollection extends ResourceCollection
             'status' => 'success',
             'message' => 'Flights retrieved successfully',
             'timestamp' => now()->toDateTimeString(),
-            'links' => [
-                'first' => $this->url(1),
-                'last' => $this->url($this->lastPage()),
-                'prev' => $this->previousPageUrl(),
-                'next' => $this->nextPageUrl(),
-                'self' => $this->url($this->currentPage()),
-            ],
         ];
     }
     public function withResponse($request, $response)

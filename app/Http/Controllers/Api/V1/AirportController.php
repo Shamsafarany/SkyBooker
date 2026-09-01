@@ -16,10 +16,10 @@ use App\Services\Admin\AirportService;
 class AirportController extends Controller
 {
     public function __construct(private AirportService $airportService) {}
-    public function index()
+    public function index(Request $request)
     {
         try{
-            $airports = $this->airportService->getApiList();
+            $airports = $this->airportService->getApiList($request);
 
             Log::info('API AIRPORT LIST: Cache HIT');
 

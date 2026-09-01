@@ -2,22 +2,31 @@
 
 namespace App\Services\Admin;
 
+use App\Filters\AirplaneFilter;
 use App\Models\Airplane;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\AirplaneResource;
+use Illuminate\Http\Request;
 
 class AirplaneService
 {
 
-    public function getApiList()
+    public function getApiList(Request $request)
     {
-        return Cache::remember('api.airplanes.list', 60, function () {
-            Log::info('AIRPLANE INDEX: Cache MISS - querying database');
+        $query = Airplane::query()
+            ->withCount(['flights']);
 
-            $airplanes = Airplane::withCount('flights')->get();
-            return AirplaneResource::collection($airplanes)->resolve();
-        });
+        $query = (new AirplaneFilter())->apply($query, $request);
+
+        if ($request->filled('sort')) {
+            $direction = $request->input('direction', 'asc');
+            $query->orderBy($request->sort, $direction);
+        }
+
+        $airplanes = $query->get();
+
+        return AirplaneResource::collection($airplanes);
     }
 
     public function getApiShow(Airplane $airplane)

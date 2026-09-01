@@ -15,14 +15,15 @@ use App\Http\Resources\Api\V1\FlightCollection;
 use App\Http\Resources\Api\V1\BookingCollection;
 use App\Http\Resources\Api\V1\TicketCollection;
 use App\Services\Admin\FlightService;
+use Illuminate\Http\Request;
 
 class FlightController extends Controller
 {
     public function __construct(private FlightService $flightService) {}
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $flights = $this->flightService->getApiList(); 
+            $flights = $this->flightService->getApiList($request); 
             return Response::success($flights, 'Flights retrieved');
 
         } catch (\Throwable $e) {

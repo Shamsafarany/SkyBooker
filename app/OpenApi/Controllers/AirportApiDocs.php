@@ -14,6 +14,14 @@ class AirportApiDocs
         path: '/api/v1/airports',
         tags: ['Airports'],
         summary: 'List all airports',
+        parameters: [
+        new OA\QueryParameter(name: 'name', description: 'Filter by airport name', required: false),
+        new OA\QueryParameter(name: 'code', description: 'Filter by airport code', required: false),
+        new OA\QueryParameter(name: 'city', description: 'Filter by city', required: false),
+        new OA\QueryParameter(name: 'country', description: 'Filter by country', required: false),
+        new OA\QueryParameter(name: 'sort', description: 'Sort field', required: false),
+        new OA\QueryParameter(name: 'direction', description: 'Sort direction (asc/desc)', required: false)
+        ],
         responses: [
             new OA\Response(
                 response: 200,

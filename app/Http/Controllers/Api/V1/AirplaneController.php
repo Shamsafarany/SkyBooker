@@ -11,14 +11,15 @@ use App\Http\Requests\Airplane\StoreAirplaneRequest;
 use App\Http\Requests\Airplane\UpdateAirplaneRequest;
 use App\Http\Resources\Api\V1\AirplaneResource;
 use App\Services\Admin\AirplaneService;
+use Illuminate\Http\Request;
 
 class AirplaneController extends Controller
 {
     public function __construct(private AirplaneService $airplaneService) {}
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $airplanes = $this->airplaneService->getApiList();
+            $airplanes = $this->airplaneService->getApiList($request);
             Log::info('AIRPLANE INDEX: Cache HIT - getting cache');
             return Response::success($airplanes, 'Airplanes retrieved');
 

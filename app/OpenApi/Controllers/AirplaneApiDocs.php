@@ -14,6 +14,13 @@ class AirplaneApiDocs
         path: '/api/v1/airplanes',
         tags: ['Airplanes'],
         summary: 'List all Airplanes',
+        parameters: [
+        new OA\QueryParameter(name: 'model', description: 'Filter by airplane model', required: false),
+        new OA\QueryParameter(name: 'manufacturer', description: 'Filter by manufacturer', required: false),
+        new OA\QueryParameter(name: 'capacity', description: 'Filter by capacity', required: false),
+        new OA\QueryParameter(name: 'sort', description: 'Sort field', required: false),
+        new OA\QueryParameter(name: 'direction', description: 'Sort direction (asc/desc)', required: false),
+        ],
         responses: [
             new OA\Response(response: 200, description: 'List of Airplanes')
         ]
