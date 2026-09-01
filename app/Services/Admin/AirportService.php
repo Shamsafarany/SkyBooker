@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Filters\AirportFilter;
+use App\Http\Resources\Api\V1\AirportCollection;
 use App\Models\Airport;
 use App\Models\Flight;
 use Illuminate\Support\Facades\Cache;
@@ -69,7 +70,7 @@ class AirportService
         }
         
         $airports = $query->get();
-        return AirportResource::collection($airports);
+        return new AirportCollection($airports);
 
     }
     public function getApiShow(Airport $airport)

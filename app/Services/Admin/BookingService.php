@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Filters\BookingFilter;
+use App\Http\Resources\Api\V1\BookingCollection;
 use App\Models\Booking;
 use App\Models\Flight;
 use App\Models\Ticket;
@@ -252,12 +253,8 @@ class BookingService
         
         $bookings = $query->paginate(15);
 
-        return [
-            'success' => true,
-            'bookings' => $bookings
-        ];
 
-
+        return new BookingCollection($bookings);
         } catch (\Throwable $e) {
             Log::error('BOOKING API LIST ERROR', ['error' => $e->getMessage()]);
             return [

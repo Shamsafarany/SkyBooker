@@ -29,9 +29,10 @@ class FlightService
             $query->orderBy($request->sort, $direction);
         }
 
-        $flights = $query->get();
+        $flights = $query->paginate(15);
 
-        return FlightResource::collection($flights);
+        return new FlightCollection($flights);
+
     }
 
 

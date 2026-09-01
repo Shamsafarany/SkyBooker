@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Filters\AirplaneFilter;
+use App\Http\Resources\Api\V1\AirplaneCollection;
 use App\Models\Airplane;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +27,8 @@ class AirplaneService
 
         $airplanes = $query->get();
 
-        return AirplaneResource::collection($airplanes);
+        return new AirplaneCollection($airplanes);
+        
     }
 
     public function getApiShow(Airplane $airplane)
