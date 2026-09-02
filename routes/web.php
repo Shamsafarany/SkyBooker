@@ -34,9 +34,23 @@ Route::middleware('guest')->group(function(){
 });
 
 Route::middleware('auth')->group(function(){
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect('/')->with('success', 'Email verified successfully!');
+    })->middleware(['signed'])->name('verification.verify');
+
+    Route::post('/email/resend', function (Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->middleware('throttle:6,1')->name('verification.send');
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::prefix('admin')->name('admin.')->group(function() {
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');    
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['verified'])->name('dashboard');    
         Route::resource('/airports', AirportController::class)->names('airports');
         Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
         Route::get('/flights/{flight}/weather', [FlightController::class, 'weather']);

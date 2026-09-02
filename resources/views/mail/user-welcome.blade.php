@@ -61,6 +61,7 @@
         <p>Hi <strong>{{ $user->getFUllNameAttribute() }}</strong>,</p>
 
         <p>Thank you for registering with SkyBooker! We're excited to have you on board.</p>
+        <p>Please verify your email by clicking the button below.</p>
 
         <h3>What you can do next:</h3>
         <ul>
@@ -69,9 +70,11 @@
             <li>👤 Complete your profile</li>
         </ul>
 
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ route('admin.dashboard') }}" class="btn">
-                Go to Dashboard
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="{{ $verificationUrl }}" 
+            class="btn" 
+            style="background: #10B981; margin-top: 10px;">
+                Verify Email
             </a>
         </div>
 

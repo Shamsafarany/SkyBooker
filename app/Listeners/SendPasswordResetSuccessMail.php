@@ -27,7 +27,8 @@ class SendPasswordResetSuccessMail
             'user_id' => $event->user->id,
             'email' => $event->user->email,
         ]);
-
-        SendPasswordResetSuccessEmailJob::dispatch($event->user);
+        dispatch(new SendPasswordResetSuccessEmailJob(
+            $event->user
+        ));
     }
 }

@@ -23,7 +23,7 @@ class SendWelcomeEmailListener
      */
     public function handle(UserRegistered $event): void
     {
-        dispatch(new SendWelcomeEmail($event->user->email, new WelcomeEmail($event->user)));
-    
+        SendWelcomeEmail::dispatch($event->user);
     }
+
 }

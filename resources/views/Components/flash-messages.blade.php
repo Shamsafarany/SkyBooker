@@ -56,7 +56,7 @@
                 
                 @if($dismissible)
                     <button onclick="dismissFlash('{{ $id }}')" 
-                            class="text-gray-400 hover:text-gray-600 transition">
+                            class="text-white hover:text-gray-300 transition">
                         <i class="fa fa-xmark text-lg"></i>
                     </button>
                 @endif

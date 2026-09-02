@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Mail\WelcomeEmail;
+use App\Services\LogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\URL;
 use SebastianBergmann\Type\TrueType;
 
 class SendWelcomeEmail implements ShouldQueue
@@ -20,14 +22,13 @@ class SendWelcomeEmail implements ShouldQueue
 
     public $tries = 3;
     public Mailable $mailable;
-    public string $email;
+    public User $user;
     /**
      * Create a new job instance.
      */
-    public function __construct(string $email, Mailable $mailable)
+    public function __construct(User $user)
     {
-        $this->email = $email;
-        $this->mailable = $mailable;
+        $this->user= $user;
     }
 
     /**
@@ -35,11 +36,26 @@ class SendWelcomeEmail implements ShouldQueue
      */
     public function handle(): void
     {
-    try{
-        Mail::to($this->email)->send($this->mailable);
-    }catch (\Exception $e) {
-            Log::error('Registration Mail failed ' . $e->getMessage());
-    }  
+        $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+            [
+                'id' => $this->user->id,
+                'hash' => sha1($this->user->email),
+            ]
+        );
+        try {
+            $mailable = new WelcomeEmail($this->user, $verificationUrl);
+
+            Mail::to($this->user->email)->send($mailable);
+
+            Log::info('Welcome email sent successfully', [
+                'email' => $this->user->email
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Registration Mail failed: ' . $e->getMessage());
+        } 
     
     }
 }

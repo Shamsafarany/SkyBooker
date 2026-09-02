@@ -37,26 +37,6 @@
                     {{-- Hidden Token --}}
                     <input type="hidden" name="token" value="{{ $token }}">
 
-                    {{-- Email --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Email Address
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fa-regular fa-envelope text-gray-400"></i>
-                            </div>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                value="{{ old('email') }}"
-                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition outline-none"
-                                placeholder="you@example.com"
-                                required
-                            >
-                        </div>
-                    </div>
-
                     {{-- New Password --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
