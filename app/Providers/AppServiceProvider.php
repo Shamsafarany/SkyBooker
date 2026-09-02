@@ -15,11 +15,15 @@ use Illuminate\Support\Facades\Event;
 use App\Events\BookingCreated;
 use App\Events\BookingCancelled;
 use App\Events\FlightUpdated;
+use App\Events\PasswordResetCompleted;
+use App\Events\PasswordResetRequested;
 use App\Events\UserRegistered;
 use App\Listeners\SendBookingConfirmationEmail;
 use App\Listeners\SendBookingCancellation;
 use App\Listeners\GenerateBookingPdfListener;
 use App\Listeners\NotifyPassengersOfFlightUpdate;
+use App\Listeners\SendPasswordResetLink;
+use App\Listeners\SendPasswordResetSuccessMail;
 use App\Listeners\SendWelcomeEmailListener;
 
 class AppServiceProvider extends ServiceProvider
@@ -86,6 +90,14 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             FlightUpdated::class,
             [NotifyPassengersOfFlightUpdate::class, 'handle']
+        );
+        Event::listen(
+            PasswordResetRequested::class,
+            [SendPasswordResetLink::class, 'handle']
+        );
+        Event::listen(
+            PasswordResetCompleted::class,
+            [SendPasswordResetSuccessMail::class, 'handle']
         );
     }
 }

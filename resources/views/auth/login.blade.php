@@ -87,7 +87,7 @@
                             <input type="checkbox" name="remember" class="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500">
                             Remember me
                         </label>
-                        <a href="#" class="text-sm text-cyan-600 hover:text-cyan-800 font-medium">
+                        <a href="{{ route('forgotPassword') }}" class="text-sm text-cyan-600 hover:text-cyan-800 font-medium">
                             Forgot password?
                         </a>
                     </div>

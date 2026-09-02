@@ -12,7 +12,12 @@ class FlightFilter
         'origin',
         'destination',
         'sort',
-        'direction'
+        'direction',
+        'paginate',
+        'page',
+        'per_page',
+        'limit',
+        'perPage'
     ];
     protected array $sortable = [
         'flight_number',

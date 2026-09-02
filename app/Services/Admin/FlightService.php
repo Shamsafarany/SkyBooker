@@ -28,11 +28,17 @@ class FlightService
             $direction = $request->input('direction', 'asc');
             $query->orderBy($request->sort, $direction);
         }
+        $perPage = $request->input('paginate')
+        ?? $request->input('per_page')
+        ?? $request->input('limit')
+        ?? $request->input('perPage');
 
-        $flights = $query->paginate(15);
+        if (!is_numeric($perPage) || $perPage <= 0) {
+            $perPage = 15;
+        }
 
+        $flights = $query->paginate((int) $perPage);
         return new FlightCollection($flights);
-
     }
 
 

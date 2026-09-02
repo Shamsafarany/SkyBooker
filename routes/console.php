@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('report:daily')->everyMinute();
+Schedule::command('auth:clear-resets')->daily();

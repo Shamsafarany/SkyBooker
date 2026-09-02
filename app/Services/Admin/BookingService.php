@@ -251,9 +251,6 @@ class BookingService
 
         $bookings = $query->paginate((int) $perPage);
         
-        $bookings = $query->paginate(15);
-
-
         return new BookingCollection($bookings);
         } catch (\Throwable $e) {
             Log::error('BOOKING API LIST ERROR', ['error' => $e->getMessage()]);

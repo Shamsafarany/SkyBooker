@@ -44,7 +44,7 @@ class AirportFilter
             $query->where('country', 'LIKE', '%' . $request->country . '%');
         }
 
-       if ($request->filled('sort')) {
+        if ($request->filled('sort')) {
             if (!in_array($request->sort, $this->sortable)) {
                 abort(400, "Sorting by '{$request->sort}' is not allowed.");
             }

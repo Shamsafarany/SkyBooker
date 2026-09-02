@@ -21,6 +21,14 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::middleware('guest')->group(function(){
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', LoginController::class)->name('login');
+    Route::get('/forgot-password', function(){
+        return view('auth.forgot-password');
+    })->name('forgotPassword');
+    Route::post('/forgot-password', [LoginController::class, 'sendResetLink'])->name('sendResetEmail');
+    Route::get('/reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->name('showResetPasswordForm');
+    Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('resetPassword');
     Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', RegisterController::class)->name('register'); 
 });
