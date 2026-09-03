@@ -27,8 +27,6 @@ class TicketController extends Controller
     }
     public function generatePDF(Ticket $ticket)
     {
-        $pdf = $this->ticketService->generatePdf($ticket);
-
-        return $pdf->download('ticket-' . $ticket->ticket_number . '.pdf');
+        return $this->ticketService->generatePdf($ticket);
     }
 }

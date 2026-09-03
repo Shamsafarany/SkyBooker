@@ -33,8 +33,12 @@ class LoginController extends Controller
         
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
+
+            //regenerate session
             $request->session()->regenerate();
+
             LogService::auth('LOGIN SUCCESS', ['user_id' => $user->id]);
+            
             return redirect()->intended('admin/dashboard');
         }
         LogService::auth('LOGIN FAILED', ['email' => $request->email]);
@@ -87,53 +91,48 @@ class LoginController extends Controller
     }
 
     public function resetPassword(Request $request)
-{
-    $request->validate([
-        'token' => 'required',
-        'password' => 'required|min:8|confirmed',
-    ]);
-
-    // Hash token
-    $hashed = hash('sha256', $request->token);
-
-    // Find token record
-    $record = DB::table('password_reset_tokens')
-        ->where('token', $hashed)
-        ->first();
-
-    if (!$record) {
-        return back()->withErrors([
-            'token' => 'Invalid or expired reset token.',
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed',
         ]);
-    }
 
-    // Fetch user using the email stored in the token record
-    $user = User::where('email', $record->email)->first();
+        $hashed = hash('sha256', $request->token);
 
-    if (!$user) {
-        return back()->withErrors([
-            'email' => 'User not found for this reset request.',
+        $record = DB::table('password_reset_tokens')
+            ->where('token', $hashed)
+            ->first();
+
+        if (!$record) {
+            return back()->withErrors([
+                'token' => 'Invalid or expired reset token.',
+            ]);
+        }
+
+        $user = User::where('email', $record->email)->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'User not found for this reset request.',
+            ]);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password)
         ]);
+
+        DB::table('password_reset_tokens')
+            ->where('email', $record->email)
+            ->delete();
+
+        LogService::warning('auth', 'PASSWORD UPDATED', [
+            'email' => $record->email
+        ]);
+
+        event(new PasswordResetCompleted($user));
+
+        return redirect('/login')->with('success', 'Password reset successfully!');
     }
-
-    // Update password
-    $user->update([
-        'password' => Hash::make($request->password)
-    ]);
-
-    // Delete token
-    DB::table('password_reset_tokens')
-        ->where('email', $record->email)
-        ->delete();
-
-    LogService::warning('auth', 'PASSWORD UPDATED', [
-        'email' => $record->email
-    ]);
-
-    event(new PasswordResetCompleted($user));
-
-    return redirect('/login')->with('success', 'Password reset successfully!');
-}
 
 
 

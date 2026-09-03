@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Contracts\PDFInterface;
 use App\Models\Ticket;
 use App\Models\Passenger;
 use Illuminate\Support\Facades\Log;
@@ -9,8 +10,10 @@ use Illuminate\Support\Facades\Cache;
 use \App\Http\Resources\Api\V1\TicketResource;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+
 class TicketService
 {
+    public function __construct(private PDFInterface $pdfService) {}
     public function getApiList()
     {
         Log::info("TICKET INDEX: Fetching tickets");
@@ -166,7 +169,11 @@ class TicketService
             'ticket_number' => $ticket->ticket_number,
         ]);
 
-        return Pdf::loadView('admin.tickets.pdf', compact('ticket'));
+        return $this->pdfService->download(
+            'admin.tickets.pdf',
+            ['ticket' => $ticket],
+            'ticket-' . $ticket->ticket_number . '.pdf'
+        );
     }
 
     public function createTicketForPassenger(Passenger $passenger, $seatNumber)

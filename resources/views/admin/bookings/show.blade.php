@@ -314,7 +314,7 @@
                                 </td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->email ?? 'N/A' }}</td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->phone ?? 'N/A' }}</td>
-                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger->ticket->seat_number ?$passenger->ticket->seat_number : 'N/A' }}</td>
+                                <td class="px-6 py-3 font-mono font-bold text-purple-700">{{ $passenger->ticket?->seat_number ?? 'N/A' }}</td>
                                 <td class="px-6 py-3 text-gray-600">{{ $passenger->nationality ?? 'N/A' }}</td>
                                 <td class="px-6 py-3">
                                         {{ $passenger->booking->status }}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\FlightUpdated;
 use Illuminate\Http\Request;
 use App\Models\Flight;
 use App\Models\Passenger;
@@ -72,6 +73,7 @@ class FlightController extends Controller
     public function update(UpdateFlightRequest $request, Flight $flight)
     {
         $this->flightService->update($flight, $request->validated());
+        event(new FlightUpdated($flight));
         return redirect()->route('admin.flights.show', $flight)
             ->with('success', 'Flight updated successfully!');
     }

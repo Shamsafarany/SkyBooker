@@ -2,29 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\PDFInterface;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Response;
-use App\Models\Airport;
-use App\Models\Airplane;
-use App\Models\Flight;
-use App\Models\Booking;
-use App\Models\Passenger;
-use App\Models\Ticket;
-use App\Models\User;
-use Illuminate\Support\Facades\Event;
-use App\Events\BookingCreated;
-use App\Events\BookingCancelled;
-use App\Events\FlightUpdated;
-use App\Events\PasswordResetCompleted;
-use App\Events\PasswordResetRequested;
-use App\Events\UserRegistered;
-use App\Listeners\SendBookingConfirmationEmail;
-use App\Listeners\SendBookingCancellation;
-use App\Listeners\GenerateBookingPdfListener;
-use App\Listeners\NotifyPassengersOfFlightUpdate;
-use App\Listeners\SendPasswordResetLink;
-use App\Listeners\SendPasswordResetSuccessMail;
-use App\Listeners\SendWelcomeEmailListener;
+
+
+
+use App\Services\PdfService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(PDFInterface::class, PdfService::class);
     }
 
     /**
@@ -42,62 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         
-        //observers
-        Airport::observe(\App\Observers\AirportObserver::class);
-        Airplane::observe(\App\Observers\AirplaneObserver::class);
-        Flight::observe(\App\Observers\FlightObserver::class);
-        Booking::observe(\App\Observers\BookingObserver::class); 
-        Passenger::observe(\App\Observers\PassengerObserver::class); 
-        Ticket::observe(\App\Observers\TicketObserver::class); 
-        User::observe(\App\Observers\UserObserver::class);
-        
-        //macro
-        Response::macro('success', function ($data, $message = 'OK') {
-            return response()->json([
-                'status' => 'success',
-                'message' => $message,
-                'data' => $data
-            ]);
-        });
-
-        Response::macro('error', function ($message, $code = 400) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $message
-            ], $code);
-        });
-
-        Event::listen(
-            BookingCreated::class,
-            [SendBookingConfirmationEmail::class, 'handle']
-        );
-        
-        Event::listen(
-            BookingCreated::class,
-            [GenerateBookingPdfListener::class, 'handle']
-        );
-        
-        Event::listen(
-            BookingCancelled::class,
-            [SendBookingCancellation::class, 'handle']
-        );
-
-        Event::listen(
-            UserRegistered::class,
-            [SendWelcomeEmailListener::class, 'handle']
-        );
-
-        Event::listen(
-            FlightUpdated::class,
-            [NotifyPassengersOfFlightUpdate::class, 'handle']
-        );
-        Event::listen(
-            PasswordResetRequested::class,
-            [SendPasswordResetLink::class, 'handle']
-        );
-        Event::listen(
-            PasswordResetCompleted::class,
-            [SendPasswordResetSuccessMail::class, 'handle']
-        );
     }
 }

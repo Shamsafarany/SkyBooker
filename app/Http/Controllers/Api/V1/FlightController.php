@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\FlightUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Flight;
 use App\Models\Ticket;
@@ -66,6 +67,7 @@ class FlightController extends Controller
             if (!$result['success']) {
                 return Response::error($result['message'], 400);
             }
+            event(new FlightUpdated($flight));
             return Response::success(new FlightResource($result['flight']), 'Flight updated');
 
         } catch (\Throwable $e) {

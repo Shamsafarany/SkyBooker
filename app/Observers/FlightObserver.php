@@ -70,7 +70,7 @@ class FlightObserver
                     'new_price' => $flight->price,
                 ]);
             }
-            event(new FlightUpdated($flight));
+            
 
         } catch (\Throwable $e) {
             LogService::error('system', "FLIGHT OBSERVER ERROR (updated)", [
