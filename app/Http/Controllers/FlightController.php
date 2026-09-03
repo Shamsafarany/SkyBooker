@@ -11,11 +11,14 @@ use App\Models\Airport;
 use App\Models\Airplane;
 use App\Http\Requests\Flight\StoreFlightRequest;
 use App\Http\Requests\Flight\UpdateFlightRequest;
+use App\Http\Requests\SearchRequest;
 use App\Services\WeatherService;
 use App\Services\Admin\FlightService;
+use App\Services\Admin\SearchService;
+
 class FlightController extends Controller
 {
-    public function __construct(private FlightService $flightService) {}
+    public function __construct(private FlightService $flightService, private SearchService $searchService) {}
     public function index(Request $request){
         
         $data = $this->flightService->getAllWithStats();    
@@ -92,6 +95,17 @@ class FlightController extends Controller
     {
         $data = $weather->getWeatherByCity($flight->origin->city);
         return response()->success($data, 'Weather for flight city');
+    }
+
+    public function search(SearchRequest $request){
+        $results = $this->searchService->searchFlights($request->validated());
+        $data = $this->flightService->getAllWithStats();
+            return view('admin.flights.index', [
+            'flights' => $data['flights'],
+            'stats'    => $data['stats'],
+            'airlines' => $data['airlines'],
+            'results'  => $results,
+        ]);
     }
 
     

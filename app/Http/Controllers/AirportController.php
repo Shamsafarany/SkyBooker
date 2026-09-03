@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Airport;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
+use App\Http\Requests\SearchRequest;
 use App\Services\Admin\AirportService;
+use App\Services\Admin\SearchService;
+
 class AirportController extends Controller
 {
-    public function __construct(private AirportService $airportService) {}
+    public function __construct(private AirportService $airportService, private SearchService $searchService) {}
     public function index()
     {
         $data = $this->airportService->getAllWithStats();
@@ -44,5 +47,15 @@ class AirportController extends Controller
     {
         $this->airportService->delete($airport);
         return redirect()->route('admin.airports.index')->with('success', 'Airport deleted successfully!');
+    }
+
+    public function search(SearchRequest $request){
+        $results = $this->searchService->searchAirports($request->validated());
+        $data = $this->airportService->getAllWithStats();
+        return view('admin.airports.index', [
+        'airports' => $data['airports'],
+        'stats'    => $data['stats'],
+        'results'  => $results,
+    ]);
     }
 }

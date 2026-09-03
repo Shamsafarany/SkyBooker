@@ -7,15 +7,16 @@ use App\Models\User;
 use App\Models\Booking;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\booking\UpdateBookingRequest;
+use App\Http\Requests\SearchRequest;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingCreated;
 use App\Services\Admin\BookingService;
-
+use App\Services\Admin\SearchService;
 
 class BookingController extends Controller
 {
     public function __construct(
-        private BookingService $bookingService,
+        private BookingService $bookingService, private SearchService $searchService
     ) {}
     
     public function index()
@@ -120,5 +121,16 @@ class BookingController extends Controller
 
         return redirect()->route('admin.bookings.index')
             ->with('success', 'Booking restored successfully!');
+    }
+
+    public function search(SearchRequest $request){
+        $results = $this->searchService->searchBookings($request->validated());
+        $flights = $this->bookingService->getBookings();
+        $stats = $this->bookingService->getBookingsWithStats();
+            return view('admin.bookings.index',compact([
+            'flights',
+            'stats',
+            'results'
+        ]));
     }
 }

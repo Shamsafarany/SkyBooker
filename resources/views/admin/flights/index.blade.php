@@ -15,6 +15,16 @@
             </div>
         </div>
         <hr class="p-1 mt-4">
+
+        <div class="flex justify-center my-6">
+            <x-search-bar 
+                route="{{ route('admin.flights.search') }}" 
+                placeholder="Search flights by flight number, airlines, airports..."
+                button-text="Search Flights"
+                show-reset="true"
+            />
+        </div>
+        
         
         <x-stats 
             title="Flights Overview"
@@ -52,6 +62,36 @@
             ]"
             :columns="5"
         />
+
+        
+
+        @if(isset($results))
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                <i class="fa-solid fa-magnifying-glass mr-2 text-cyan-600"></i>
+                Search Results ({{ $results->count() }} found)
+            </h2>
+            <section class="bg-white rounded-3xl shadow-lg p-12 border border-gray-100">
+                    <div class=" grid md:grid-cols-4 gap-8">
+                    @forelse($results as $flight)
+                        <x-cards.flights-card 
+                            :flight="$flight"
+                            :url="route('admin.flights.show', $flight->id)"
+                            :editUrl="route('admin.flights.edit', $flight)"
+                            :deleteUrl="route('admin.flights.destroy', $flight)"
+                        />
+                    @empty
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <i class="fa fa-calendar-check text-2xl mb-2 block"></i>
+                            <p>No flights found.</p>
+                        </div>
+                    @endforelse
+                    </div>
+                </section>
+        @endif
+
+
+
+
     </div>
 
     {{-- Grouped by Airline with Collapsible Sections --}}

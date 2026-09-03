@@ -13,6 +13,15 @@
         </div>
     </div>
     <hr class="p-1 mt-4">
+
+    <div class="flex justify-center my-6">
+        <x-search-bar 
+            route="{{ route('admin.bookings.search') }}" 
+            placeholder="Search bookings..."
+            button-text="Search Bookings"
+            show-reset="true"
+        />
+    </div>
     <x-stats 
         title="Booking Overview"
         :stats="[
@@ -44,6 +53,150 @@
         :columns="4"
         class="mb-8"
     />
+
+   
+
+    @if(isset($results) && $results->count() > 0)
+    <div class="mt-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            <i class="fa-solid fa-magnifying-glass mr-2 text-cyan-600"></i>
+            Search Results ({{ $results->count() }} found)
+        </h2>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Booking Ref</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Seats</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Booking Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($results as $booking)
+                            <tr class="hover:bg-cyan-50/30 transition-colors duration-150">
+                                {{-- Booking Reference --}}
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm font-semibold text-cyan-600">
+                                        {{ $booking->booking_reference }}
+                                    </span>
+                                </td>
+
+                                {{-- Customer --}}
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <p class="font-medium text-gray-900">
+                                            {{ $booking->user->full_name ?? 'N/A' }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $booking->user->email ?? 'N/A' }}
+                                        </p>
+                                    </div>
+                                </td>
+
+                                {{-- Seats --}}
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-700">
+                                        {{ $booking->number_of_seats }}
+                                    </span>
+                                </td>
+
+                                {{-- Price --}}
+                                <td class="px-6 py-4">
+                                    <span class="font-semibold text-gray-900">
+                                        ${{ number_format($booking->total_price, 2) }}
+                                    </span>
+                                </td>
+
+                                {{-- Booking Date --}}
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    {{ $booking->created_at ? $booking->created_at->format('M d, Y') : 'N/A' }}
+                                </td>
+
+                                {{-- Status --}}
+                                <td class="px-6 py-4">
+                                    @php
+                                        $statusColors = [
+                                            'confirmed' => 'bg-green-100 text-green-700',
+                                            'pending' => 'bg-yellow-100 text-yellow-700',
+                                            'cancelled' => 'bg-red-100 text-red-700',
+                                            'completed' => 'bg-blue-100 text-blue-700',
+                                        ];
+                                        $statusIcons = [
+                                            'confirmed' => 'fa-circle-check',
+                                            'pending' => 'fa-clock',
+                                            'cancelled' => 'fa-circle-xmark',
+                                            'completed' => 'fa-flag-checkered',
+                                        ];
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $statusColors[$booking->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                        <i class="fa-regular {{ $statusIcons[$booking->status] ?? 'fa-circle' }}"></i>
+                                        {{ ucfirst($booking->status ?? 'Unknown') }}
+                                    </span>
+                                </td>
+
+                                {{-- Actions --}}
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <a href="{{ route('admin.bookings.show', $booking->id) }}" 
+                                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200"
+                                           title="View Booking">
+                                            <i class="fa-regular fa-eye"></i>
+                                            View
+                                        </a>
+                                        
+                                        <a href="{{ route('admin.bookings.edit', $booking->id) }}" 
+                                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all duration-200"
+                                           title="Edit Booking">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </a>
+                                        
+                                        <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200"
+                                                    title="Delete Booking"
+                                                    onclick="return confirm('Are you sure you want to delete this booking?')">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            @if(method_exists($results, 'links'))
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                    {{ $results->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
+
+@elseif(isset($results) && $results->count() === 0)
+    {{-- No Results --}}
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fa-regular fa-circle-xmark text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-1">No bookings found</h3>
+        </div>
+    </div>
+
+@endif
     <hr class="p-1 mb-3">
     {{-- Bookings Grouped by Flight (Collapsible) --}}
     <div class="space-y-4">
@@ -80,9 +233,9 @@
                             {{ $flight->booked_seats }}/{{ $flight->total_seats }} seats
                         </span>
                         <a href="{{ route('admin.flights.show', $flight->id) }}" 
-                           class="text-cyan-600 hover:text-cyan-800 text-sm" 
-                           title="View Flight Details"
-                           onclick="event.stopPropagation();">
+                            class="text-cyan-600 hover:text-cyan-800 text-sm" 
+                            title="View Flight Details"
+                            onclick="event.stopPropagation();">
                             <i class="fa-regular fa-eye"></i>
                         </a>
                         <i class="fa-solid fa-chevron-down text-gray-400 ml-2 transition-transform duration-200"></i>
@@ -150,23 +303,25 @@
                                                     </a>
                                                     
                                                     {{-- Edit --}}
+                                                    
                                                     <a href="{{ route('admin.bookings.edit', $booking->id) }}" 
-                                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all duration-200"
-                                                       title="Edit Booking">
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all duration-200"
+                                                    title="Edit Booking">
+                                                        <i class="fa-regular fa-pen-to-square"></i>
                                                         Edit
                                                     </a>
-                                                    
-                                                    {{-- Delete --}}
-                                                    <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200"
-                                                                title="Delete Booking"
-                                                                onclick="return confirm('Delete this booking?')">
-                                                            Delete
-                                                        </button>
-                                                    </form>
+                                        
+                                                <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" 
+                                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all duration-200"
+                                                            title="Delete Booking"
+                                                            onclick="return confirm('Are you sure you want to delete this booking?')">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                        Delete
+                                                    </button>
+                                                </form>
                                                 </div>
                                             </td>
                                         </tr>

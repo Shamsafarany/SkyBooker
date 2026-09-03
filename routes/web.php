@@ -10,6 +10,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\SearchController;
 use App\Mail\BookingCreated;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
@@ -50,7 +51,10 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::prefix('admin')->name('admin.')->group(function() {
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['verified'])->name('dashboard');    
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['verified'])->name('dashboard');  
+        Route::get('/airports/search', [AirportController::class, 'search'])->name('airports.search'); 
+        Route::get('/flights/search', [FlightController::class, 'search'])->name('flights.search');
+        Route::get('/bookings/search', [BookingController::class, 'search'])->name('bookings.search');
         Route::resource('/airports', AirportController::class)->names('airports');
         Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
         Route::get('/flights/{flight}/weather', [FlightController::class, 'weather']);
@@ -72,6 +76,7 @@ Route::middleware('auth')->group(function(){
         ]); 
         Route::get('/profiles/delete-confirm', [ProfileController::class, 'deleteConfirm'])
         ->name('profiles.delete.confirm');
+        
     });
 });
 
