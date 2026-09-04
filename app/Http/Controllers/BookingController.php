@@ -11,15 +11,19 @@ use App\Http\Requests\booking\UpdateBookingRequest;
 use App\Http\Requests\SearchRequest;
 use App\Services\Admin\BookingService;
 use App\Services\Admin\SearchService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class BookingController extends Controller
 {
+    use AuthorizesRequests;
     public function __construct(
         private BookingService $bookingService, private SearchService $searchService
     ) {}
     
     public function index()
     {
+        $this->authorize('viewAny');
+
         $flights = $this->bookingService->getBookings();
         $stats = $this->bookingService->getBookingsWithStats();
 
@@ -51,6 +55,8 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
+        $this->authorize('view', $booking);
+
         $booking->load(['user', 'flight', 'passengers.ticket']);
         return view('admin.bookings.show', compact('booking'));
     }
@@ -90,6 +96,8 @@ class BookingController extends Controller
 
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
+        $this->authorize('update', $booking);
+
         $result = $this->bookingService->update($booking, $request->validated());
 
         if (!$result['success']) {
@@ -104,6 +112,8 @@ class BookingController extends Controller
     public function destroy($id)
     {
         $booking = Booking::withTrashed()->findOrFail($id);
+        $this->authorize('delete', $booking);
+
         $result = $this->bookingService->delete($booking);
 
         if (!$result['success']) {
@@ -117,6 +127,8 @@ class BookingController extends Controller
     public function restore(Booking $booking)
     {
         $result = $this->bookingService->restore($booking);
+        $this->authorize('restore', $booking);
+
 
         return redirect()->route('admin.bookings.index')
             ->with('success', 'Booking restored successfully!');
@@ -135,6 +147,8 @@ class BookingController extends Controller
 
     public function changeStatus(BookingChangeStatusRequest $request, Booking $booking)
     {
+        $this->authorize('update', $booking);
+
         $updated = $this->bookingService->changeStatus(
             $booking,
             $request->validated()['status']
