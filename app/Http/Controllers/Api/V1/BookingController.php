@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Booking\BookingChangeStatusRequest;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -184,6 +185,24 @@ class BookingController extends Controller
 
             return Response::error('Failed to get trashed bookings.', 500);
         }
+    }
+
+    public function changeStatus(BookingChangeStatusRequest $request, Booking $booking)
+    {
+        $updated = app(BookingService::class)->changeStatus(
+            $booking,
+            $request->validated()['status']
+        );
+
+        if (! $updated) {
+            return Response::error(
+                "Invalid status transition: {$booking->status} → {$request->status}"
+            );
+        }
+
+        return Response::success("Booking status updated successfully.", [
+            'booking' => $updated
+        ]);
     }
     
 }

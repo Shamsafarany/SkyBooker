@@ -9,6 +9,7 @@ use App\Models\Flight;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\AirportResource;
+use App\StateMachines\AirportStatusStateMachine;
 use Illuminate\Http\Request;
 
 class AirportService
@@ -103,5 +104,26 @@ class AirportService
         'flights' => $flights
     ];
     }
+
+    public function changeStatus(Airport $airport, string $newStatus)
+    {
+        $stateMachine = new AirportStatusStateMachine($airport);
+
+        if (! $stateMachine->transitionTo($newStatus)) {
+            Log::warning("Invalid airport status transition: {$airport->status} → {$newStatus}");
+            return null; 
+        }
+
+        $oldStatus = $airport->status;
+
+        $airport->status = $newStatus;
+        $airport->save();
+
+        Log::info("Airport #{$airport->code} status changed: {$oldStatus} → {$newStatus}");
+
+        return $airport;
+    }
+
+
 
 }

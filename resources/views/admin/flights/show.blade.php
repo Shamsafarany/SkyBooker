@@ -205,6 +205,143 @@
 
         {{-- Sidebar --}}
         <div>
+            {{-- Sidebar --}}
+<div class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+    <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa fa-bolt text-cyan-600"></i>
+            Quick Actions
+        </h2>
+    </div>
+
+    <div class="p-4 space-y-2">
+
+        {{-- SCHEDULED --}}
+        @if($flight->status === 'scheduled')
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="open">
+                <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-door-open mr-1"></i> Open Flight
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg"
+                        onclick="return confirm('Cancel this flight?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Flight
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="delayed">
+                <button type="submit" class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-clock mr-1"></i> Mark as Delayed
+                </button>
+            </form>
+        @endif
+
+
+        {{-- OPEN --}}
+        @if($flight->status === 'open')
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="closing">
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-door-closed mr-1"></i> Start Closing
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg"
+                        onclick="return confirm('Cancel this flight?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Flight
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="delayed">
+                <button type="submit" class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-clock mr-1"></i> Mark as Delayed
+                </button>
+            </form>
+        @endif
+
+
+        {{-- CLOSING --}}
+        @if($flight->status === 'closing')
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="completed">
+                <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-flag-checkered mr-1"></i> Mark as Completed
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg"
+                        onclick="return confirm('Cancel this flight?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Flight
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="delayed">
+                <button type="submit" class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-clock mr-1"></i> Mark as Delayed
+                </button>
+            </form>
+        @endif
+
+
+        {{-- COMPLETED / CANCELLED --}}
+        @if(in_array($flight->status, ['completed', 'cancelled']))
+            <div class="text-gray-500 text-sm italic">
+                No actions available for this flight.
+            </div>
+        @endif
+
+
+        {{-- DELAYED --}}
+        @if($flight->status === 'delayed')
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="open">
+                <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-door-open mr-1"></i> Reopen Flight
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="closing">
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg">
+                    <i class="fa fa-door-closed mr-1"></i> Start Closing
+                </button>
+            </form>
+
+            <form action="{{ route('admin.flights.changeStatus', $flight) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg"
+                        onclick="return confirm('Cancel this flight?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Flight
+                </button>
+            </form>
+        @endif
+
+    </div>
+</div>
+
             {{-- Additional Info --}}
             <div class="mt-4 bg-white rounded-2xl shadow-md p-6 border">
                 <h3 class="font-semibold text-cyan-800 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">

@@ -51,10 +51,19 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::prefix('admin')->name('admin.')->group(function() {
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['verified'])->name('dashboard');  
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['verified'])->name('dashboard');
+        
+        //search routes
         Route::get('/airports/search', [AirportController::class, 'search'])->name('airports.search'); 
         Route::get('/flights/search', [FlightController::class, 'search'])->name('flights.search');
         Route::get('/bookings/search', [BookingController::class, 'search'])->name('bookings.search');
+
+        //status routes
+        Route::post('/airports/{airport}/status', [AirportController::class, 'changeStatus'])->name('airports.changeStatus');
+        Route::post('/flights/{flight}/status', [FlightController::class, 'changeStatus'])->name('flights.changeStatus');
+        Route::post('/bookings/{booking}/status', [BookingController::class, 'changeStatus'])->name('bookings.changeStatus');
+        Route::post('/airplanes/{airplane}/status', [AirplaneController::class, 'changeStatus'])->name('airplanes.changeStatus');
+
         Route::resource('/airports', AirportController::class)->names('airports');
         Route::resource('/airplanes', AirplaneController::class)->names('airplanes');
         Route::get('/flights/{flight}/weather', [FlightController::class, 'weather']);

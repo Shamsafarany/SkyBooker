@@ -122,5 +122,39 @@ class AirplaneApiDocs
             new OA\Response(response: 404, description: 'Airplane not found')
         ]
     )]
+
+    #[OA\Post(
+    path: '/api/v1/airplanes/{id}/status',
+    tags: ['Airplanes'],
+    summary: 'Update airplane status',
+    parameters: [
+        new OA\Parameter(
+            name: 'id',
+            description: 'Airplane ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer', example: 44)
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['status'],
+            properties: [
+                new OA\Property(
+                    property: 'status',
+                    type: 'string',
+                    enum: ['active', 'inactive', 'maintenance', 'retired'],
+                    example: 'maintenance'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: 'Airplane status updated'),
+        new OA\Response(response: 422, description: 'Invalid status transition')
+    ]
+)]
+
     public static function destroy() {}
 }

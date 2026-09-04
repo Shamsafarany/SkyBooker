@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\Api\V1\PassengerResource;
+use App\StateMachines\PassengerStatusStateMachine;
 
 class PassengerService
 {
@@ -297,4 +298,23 @@ class PassengerService
         }
     }
 
+
+    public function changeStatus(Passenger $passenger, string $newStatus)
+    {
+        $stateMachine = new PassengerStatusStateMachine($passenger);
+
+        if (! $stateMachine->transitionTo($newStatus)) {
+            Log::warning("Invalid passenger status transition: {$passenger->status} → {$newStatus}");
+            return null;
+        }
+
+        $oldStatus = $passenger->status;
+
+        $passenger->status = $newStatus;
+        $passenger->save();
+
+        Log::info("Passenger #{$passenger->id} status changed: {$oldStatus} → {$newStatus}");
+
+        return $passenger;
+    }
 }

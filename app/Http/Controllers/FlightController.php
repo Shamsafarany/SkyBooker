@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\FlightUpdated;
+use App\Http\Requests\Flight\FlightChangeStatusRequest;
 use Illuminate\Http\Request;
 use App\Models\Flight;
 use App\Models\Passenger;
@@ -106,6 +107,24 @@ class FlightController extends Controller
             'airlines' => $data['airlines'],
             'results'  => $results,
         ]);
+    }
+
+    public function changeStatus(FlightChangeStatusRequest $request, Flight $flight)
+    {
+        $updated = $this->flightService->changeStatus(
+            $flight,
+            $request->validated()['status']
+        );
+
+        if (! $updated) {
+            return redirect()
+                ->back()
+                ->with('error', "Invalid status transition: {$flight->status} → {$request->status}");
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Flight status updated successfully.');
     }
 
     

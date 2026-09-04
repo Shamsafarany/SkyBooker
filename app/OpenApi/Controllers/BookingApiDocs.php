@@ -157,5 +157,39 @@ class BookingApiDocs
             new OA\Response(response: 200, description: 'List of tickets for the booking')
         ]
     )]
+
+    #[OA\Post(
+    path: '/api/v1/bookings/{id}/status',
+    tags: ['Bookings'],
+    summary: 'Update booking status',
+    parameters: [
+        new OA\Parameter(
+            name: 'id',
+            description: 'Booking ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer', example: 501)
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['status'],
+            properties: [
+                new OA\Property(
+                    property: 'status',
+                    type: 'string',
+                    enum: ['pending', 'confirmed', 'cancelled', 'completed', 'failed', 'refunded'],
+                    example: 'confirmed'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: 'Booking status updated'),
+        new OA\Response(response: 422, description: 'Invalid status transition')
+    ]
+)]
+
     public static function tickets() {}
 }

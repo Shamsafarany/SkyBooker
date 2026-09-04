@@ -8,6 +8,7 @@ use App\Models\Airplane;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\AirplaneResource;
+use App\StateMachines\AirplaneStatusStateMachine;
 use Illuminate\Http\Request;
 
 class AirplaneService
@@ -90,5 +91,24 @@ class AirplaneService
         Log::channel('booking')->info('ADMIN AIRPLANES STATS: Cache HIT');
 
         return compact(['airplanes', 'stats']);
+    }
+
+    public function changeStatus(Airplane $airplane, string $newStatus)
+    {
+        $stateMachine = new AirplaneStatusStateMachine($airplane);
+
+        if (! $stateMachine->transitionTo($newStatus)) {
+            Log::warning("Invalid airplane status transition: {$airplane->status} → {$newStatus}");
+            return null;
+        }
+
+        $oldStatus = $airplane->status;
+
+        $airplane->status = $newStatus;
+        $airplane->save();
+
+        Log::info("Airplane #{$airplane->code} status changed: {$oldStatus} → {$newStatus}");
+
+        return $airplane;
     }
 }

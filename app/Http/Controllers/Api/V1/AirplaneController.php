@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Airplane\AirplaneChangeStatusRequest;
 use App\Models\Airplane;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -89,5 +90,23 @@ class AirplaneController extends Controller
             Log::error('AIRPLANE DELETE ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to delete airplane', 500);
         }
+    }
+
+    public function changeStatus(AirplaneChangeStatusRequest $request, Airplane $airplane)
+    {
+        $updated = app(AirplaneService::class)->changeStatus(
+            $airplane,
+            $request->validated()['status']
+        );
+
+        if (!$updated) {
+            return Response::error(
+                "Invalid status transition: {$airplane->status} → {$request->status}"
+            );
+        }
+
+        return Response::success("Airplane status updated successfully.", [
+            'airplane' => $updated
+        ]);
     }
 }

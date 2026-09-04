@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Events\FlightUpdated;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Flight\FlightChangeStatusRequest;
 use App\Models\Flight;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Cache;
@@ -116,4 +117,23 @@ class FlightController extends Controller
             return Response::error('Failed to retrieve flight tickets', 500);
         }
     }
+
+    public function changeStatus(FlightChangeStatusRequest $request, Flight $flight)
+    {
+        $updated = app(FlightService::class)->changeStatus(
+            $flight,
+            $request->validated()['status']
+        );
+
+        if (! $updated) {
+            return Response::error(
+                "Invalid status transition: {$flight->status} → {$request->status}"
+            );
+        }
+
+        return Response::success("Flight status updated successfully.", [
+            'flight' => $updated
+        ]);
+    }
+
 }

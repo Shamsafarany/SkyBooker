@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             EnsureFrontendRequestsAreStateful::class,
         ]);
+        $middleware->alias([
+        'admin' => \App\Http\Middleware\Admin::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (ModelNotFoundException $e, $request) {

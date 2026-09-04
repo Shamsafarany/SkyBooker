@@ -114,5 +114,39 @@ class FlightApiDocs
             new OA\Response(response: 200, description: 'List of tickets for the flight')
         ]
     )]
+
+    #[OA\Post(
+    path: '/api/v1/flights/{id}/status',
+    tags: ['Flights'],
+    summary: 'Update flight status',
+    parameters: [
+        new OA\Parameter(
+            name: 'id',
+            description: 'Flight ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer', example: 101)
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['status'],
+            properties: [
+                new OA\Property(
+                    property: 'status',
+                    type: 'string',
+                    enum: ['scheduled', 'open', 'closing', 'completed', 'cancelled', 'delayed'],
+                    example: 'open'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: 'Flight status updated'),
+        new OA\Response(response: 422, description: 'Invalid status transition')
+    ]
+)]
+
     public static function tickets() {}
 }

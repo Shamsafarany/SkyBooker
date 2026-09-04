@@ -164,83 +164,98 @@
         {{-- Sidebar --}}
         <div class="space-y-4">
             
+            
             {{-- Quick Actions --}}
-            <div class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-                <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
-                    <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                        <i class="fa fa-bolt text-cyan-600"></i>
-                        Quick Actions
-                    </h2>
-                </div>
-                <div class="p-4 space-y-2">
-                    @if($booking->status === 'pending')
-                        <form action="#" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg hover:bg-emerald-700 transition text-sm font-medium">
-                                <i class="fa fa-check mr-1"></i>
-                                Confirm Booking
-                            </button>
-                        </form>
-                    @endif
+ <div class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+    <div class="px-6 py-4 bg-cyan-50/50 border-b border-cyan-100">
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa fa-bolt text-cyan-600"></i>
+            Quick Actions
+        </h2>
+    </div>
 
-                    @if($booking->status !== 'cancelled' && $booking->status !== 'completed')
-                        <form action="#" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg hover:bg-rose-700 transition text-sm font-medium"
-                                    onclick="return confirm('Cancel this booking?')">
-                                <i class="fa fa-xmark mr-1"></i>
-                                Cancel Booking
-                            </button>
-                        </form>
-                    @endif
+    <div class="p-4 space-y-2">
 
-                    @if($booking->status === 'cancelled' || $booking->status === 'failed')
-                        <button class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg hover:bg-amber-700 transition text-sm font-medium">
-                            <i class="fa-regular fa-rotate-left mr-1"></i>
-                            Process Refund
-                        </button>
-                    @endif
-                </div>
+        {{-- PENDING → confirm, cancel, fail --}}
+        @if($booking->status === 'pending')
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="confirmed">
+                <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2.5 rounded-lg hover:bg-emerald-700 transition text-sm font-medium">
+                    <i class="fa fa-check mr-1"></i> Confirm Booking
+                </button>
+            </form>
+
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg hover:bg-rose-700 transition text-sm font-medium"
+                        onclick="return confirm('Cancel this booking?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Booking
+                </button>
+            </form>
+
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="failed">
+                <button type="submit" class="w-full bg-gray-600 text-white px-4 py-2.5 rounded-lg hover:bg-gray-700 transition text-sm font-medium">
+                    <i class="fa fa-ban mr-1"></i> Mark as Failed
+                </button>
+            </form>
+        @endif
+
+
+        {{-- CONFIRMED → complete, cancel, refund --}}
+        @if($booking->status === 'confirmed')
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="completed">
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition text-sm font-medium">
+                    <i class="fa fa-flag-checkered mr-1"></i> Mark as Completed
+                </button>
+            </form>
+
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="w-full bg-rose-600 text-white px-4 py-2.5 rounded-lg hover:bg-rose-700 transition text-sm font-medium"
+                        onclick="return confirm('Cancel this booking?')">
+                    <i class="fa fa-xmark mr-1"></i> Cancel Booking
+                </button>
+            </form>
+
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="refunded">
+                <button type="submit" class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg hover:bg-amber-700 transition text-sm font-medium">
+                    <i class="fa fa-rotate-left mr-1"></i> Process Refund
+                </button>
+            </form>
+        @endif
+
+
+        {{-- COMPLETED → refund --}}
+        @if($booking->status === 'completed')
+            <form action="{{ route('admin.bookings.changeStatus', $booking) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="refunded">
+                <button type="submit" class="w-full bg-amber-600 text-white px-4 py-2.5 rounded-lg hover:bg-amber-700 transition text-sm font-medium">
+                    <i class="fa fa-rotate-left mr-1"></i> Refund Booking
+                </button>
+            </form>
+        @endif
+
+
+        {{-- CANCELLED / FAILED / REFUNDED → no actions --}}
+        @if(in_array($booking->status, ['cancelled', 'failed', 'refunded']))
+            <div class="text-gray-500 text-sm italic">
+                No actions available for this booking.
             </div>
+        @endif
 
-            {{-- Booking Summary --}}
-            <div class="bg-white rounded-2xl shadow-xl border overflow-hidden">
-                <div class="px-6 py-4 bg-cyan-50/50 border-b">
-                    <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                        Booking Summary
-                    </h2>
-                </div>
-                <div class="p-4 space-y-2 text-sm">
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-500">Reference</span>
-                        <span class="font-mono font-semibold text-cyan-700">{{ $booking->booking_reference }}</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-500">Status</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $booking->status_color }}">
-                            {{ ucfirst($booking->status) }}
-                        </span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-500">Booked On</span>
-                        <span class="font-medium">{{ $booking->booking_date->format('M d, Y h:i A') }}</span>
-                    </div>
-                    @if($booking->confirmed_at)
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-500">Confirmed On</span>
-                            <span class="font-medium">{{ $booking->confirmed_at->format('M d, Y h:i A') }}</span>
-                        </div>
-                    @endif
-                    @if($booking->cancelled_at)
-                        <div class="flex justify-between py-2">
-                            <span class="text-gray-500">Cancelled On</span>
-                            <span class="font-medium text-rose-600">{{ $booking->cancelled_at->format('M d, Y h:i A') }}</span>
-                        </div>
-                    @endif
-                </div>
-            </div>
+    </div>
+</div>
+
 
             {{-- Notes --}}
             @if($booking->notes || $booking->special_requests)

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
 use App\Http\Resources\Api\V1\BookingResource;
+use App\Services\LogService;
+use App\StateMachines\BookingStatusStateMachine;
 use Illuminate\Http\Request;
 
 class BookingService
@@ -500,5 +502,22 @@ private function processSeatChange(Booking $booking, array $validated, Flight $t
         });
 }
 
+    public function changeStatus(Booking $booking, string $newStatus): ?Booking
+    {
+        $stateMachine = new BookingStatusStateMachine($booking);
 
+        if (! $stateMachine->transitionTo($newStatus)) {
+            LogService::warning($booking, "Invalid booking status transition: {$booking->status} → {$newStatus}");
+            return null;
+        }
+
+        $oldStatus = $booking->status;
+
+        $booking->status = $newStatus;
+        $booking->save();
+
+        LogService::info($booking,"Booking #{$booking->id} status changed: {$oldStatus} → {$newStatus}");
+
+        return $booking;
+    }
 }

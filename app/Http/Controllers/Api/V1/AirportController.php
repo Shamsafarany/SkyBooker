@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Airport\AirportChangeStatusRequest;
 use App\Http\Resources\Api\V1\AirportResource;
 use App\Models\Airport;
 use Illuminate\Http\Request;
@@ -119,5 +120,19 @@ class AirportController extends Controller
             Log::error('AIRPORT FLIGHTS ERROR', ['error' => $e->getMessage()]);
             return Response::error('Failed to retrieve flights for airport', 500);
         }
+    }
+
+    public function changeStatus(AirportChangeStatusRequest $request, Airport $airport)
+    {
+        $updatedAirport = app(AirportService::class)
+            ->changeStatus($airport, $request->validated()['status']);
+        if (!$updatedAirport) {
+        return Response::error('Invalid Status Transition.', 500);
+        }
+
+        return response()->json([
+            'message' => 'Airport status updated successfully.',
+            'airport' => $updatedAirport
+        ]);
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Airport\AirportChangeStatusRequest;
 use App\Models\Airport;
 use App\Http\Requests\Airport\StoreAirportRequest;
 use App\Http\Requests\Airport\UpdateAirportRequest;
+use App\Http\Requests\ChangeStatusRequest;
 use App\Http\Requests\SearchRequest;
 use App\Services\Admin\AirportService;
 use App\Services\Admin\SearchService;
@@ -58,4 +60,5 @@ class AirportController extends Controller
         'results'  => $results,
     ]);
     }
+
 }

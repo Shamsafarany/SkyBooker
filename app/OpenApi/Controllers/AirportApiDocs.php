@@ -160,5 +160,40 @@ class AirportApiDocs
             new OA\Response(response: 404, description: 'Airport not found')
         ]
     )]
+
+    #[OA\Post(
+    path: '/api/v1/airports/{id}/status',
+    tags: ['Airports'],
+    summary: 'Update airport status',
+    parameters: [
+        new OA\Parameter(
+            name: 'id',
+            description: 'Airport ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer', example: 12)
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['status'],
+            properties: [
+                new OA\Property(
+                    property: 'status',
+                    type: 'string',
+                    enum: ['active', 'inactive', 'maintenance', 'closed'],
+                    example: 'maintenance'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: 'Airport status updated'),
+        new OA\Response(response: 422, description: 'Invalid status transition')
+    ]
+)]
+
+
     public static function flights() {}
 }

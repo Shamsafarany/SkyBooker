@@ -145,5 +145,39 @@ class PassengerApiDocs
             new OA\Response(response: 404, description: 'Passenger not found')
         ]
     )]
+
+    #[OA\Post(
+    path: '/api/v1/passengers/{id}/status',
+    tags: ['Passengers'],
+    summary: 'Update passenger status',
+    parameters: [
+        new OA\Parameter(
+            name: 'id',
+            description: 'Passenger ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(type: 'integer', example: 9001)
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['status'],
+            properties: [
+                new OA\Property(
+                    property: 'status',
+                    type: 'string',
+                    enum: ['pending', 'confirmed', 'checked_in', 'boarded', 'cancelled'],
+                    example: 'checked_in'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: 'Passenger status updated'),
+        new OA\Response(response: 422, description: 'Invalid status transition')
+    ]
+)]
+
     public static function ticket() {}
 }

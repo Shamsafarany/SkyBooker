@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Passenger\PassengerChangeStatusRequest;
 use App\Models\Passenger;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -154,4 +155,26 @@ class PassengerController extends Controller
             return Response::error('Failed to retrieve passenger booking', 500);
         }
     }
+
+    public function changeStatus(PassengerChangeStatusRequest $request, Passenger $passenger)
+    {
+        $updated = app(PassengerService::class)->changeStatus(
+            $passenger,
+            $request->validated()['status']
+        );
+
+        if (! $updated) {
+            return response()->json([
+                'success' => false,
+                'message' => "Invalid status transition: {$passenger->status} → {$request->status}"
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Passenger status updated successfully.',
+            'passenger' => $updated
+        ]);
+    }
+
 }

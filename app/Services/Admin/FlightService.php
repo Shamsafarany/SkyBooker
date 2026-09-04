@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Api\V1\FlightResource;
 use App\Services\WeatherService;
 use App\Http\Resources\Api\V1\FlightCollection;
+use App\StateMachines\FlightStatusStateMachine;
 use Illuminate\Http\Request;
 
 class FlightService
@@ -198,5 +199,24 @@ class FlightService
             'success' => true,
             'tickets' => $tickets
         ];
+    }
+
+    public function changeStatus(Flight $flight, string $newStatus): ?Flight
+    {
+        $stateMachine = new FlightStatusStateMachine($flight);
+
+        if (! $stateMachine->transitionTo($newStatus)) {
+            Log::warning("Invalid flight status transition: {$flight->status} → {$newStatus}");
+            return null;
+        }
+
+        $oldStatus = $flight->status;
+
+        $flight->status = $newStatus;
+        $flight->save();
+
+        Log::info("Flight #{$flight->flight_number} status changed: {$oldStatus} → {$newStatus}");
+
+        return $flight;
     }
 }

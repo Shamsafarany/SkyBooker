@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Booking\BookingChangeStatusRequest;
 use App\Models\Flight;
 use App\Models\User;
 use App\Models\Booking;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\booking\UpdateBookingRequest;
 use App\Http\Requests\SearchRequest;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\BookingCreated;
 use App\Services\Admin\BookingService;
 use App\Services\Admin\SearchService;
 
@@ -133,4 +132,23 @@ class BookingController extends Controller
             'results'
         ]));
     }
+
+    public function changeStatus(BookingChangeStatusRequest $request, Booking $booking)
+    {
+        $updated = $this->bookingService->changeStatus(
+            $booking,
+            $request->validated()['status']
+        );
+
+        if (! $updated) {
+        return redirect()
+            ->back()
+            ->with('error', "Invalid status transition: {$booking->status} → {$request->status}");
+    }
+
+    return redirect()
+        ->back()
+        ->with('success', 'Booking status updated successfully.');
+    }
+
 }
